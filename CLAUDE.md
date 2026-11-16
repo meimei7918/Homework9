@@ -30,6 +30,7 @@
 - `code/demos/` 裡老師的範例**保留它原本引用的 CDN**（OpenLayers、jQuery、Bootstrap…），只做第 9.2 節列出的必要修正。
 - 練習題的參考解答若用 OpenLayers，統一寫 `ol@v10.11.0` 的 CDN 全域寫法（`new ol.Map`），**不用** `import`。
 - 一律用**相對路徑**（網站在 `/Homework9/` 子路徑下，`/xxx` 開頭會壞掉）。
+- 改了 `style.css` 或 `site.js` 時，把所有 HTML（含 templates/）引用處的 `?v=` 版本號換新（例如 `?v=20261120a`），避免瀏覽器讀到舊快取。
 - 本機預覽：專案根目錄執行 `python3 -m http.server 8000`，開 <http://localhost:8000>。不要直接雙擊 HTML。
 
 ---
