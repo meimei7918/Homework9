@@ -45,7 +45,7 @@ a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--lecture); outline-offset: 2px; border-radius: 2px; }
 img { max-width: 100%; }
 
-/* 每種類型的路線色 */
+/* 每種類型的代表色 */
 [data-type="lecture"] { --c: var(--lecture); }
 [data-type="code"] { --c: var(--code); }
 [data-type="practice"] { --c: var(--practice); }
@@ -91,7 +91,7 @@ img { max-width: 100%; }
 .card .meta { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; color: var(--muted); }
 .empty { color: var(--muted); padding: 2rem 0; }
 
-/* 類型徽章：像路線標誌 */
+/* 類型徽章 */
 .badge { justify-self: start; display: inline-flex; align-items: center; justify-content: center; align-self: start; height: 1.6rem; padding: 0 .65rem; border-radius: 999px; font-size: .8rem; font-weight: 700; color: #fff; background: var(--c); white-space: nowrap; margin-top: .1rem; }
 .tags { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .25rem; }
 .tag { font-family: var(--font-code); font-size: .76rem; color: var(--muted); background: var(--sunken); padding: 0 .5rem; border-radius: 4px; text-decoration: none; }

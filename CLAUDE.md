@@ -39,7 +39,7 @@
 ```
 .
 ├── CLAUDE.md / AGENTS.md / README.md
-├── index.html              首頁：週次路線圖＋搜尋＋類型篩選（由 site.js 產生）
+├── index.html              首頁：週次卡片＋搜尋＋類型篩選（由 site.js 產生）
 ├── resources.html          資源總表（由 site.js 從 catalog 彙整）
 ├── .nojekyll
 ├── data/catalog.json       ★ 唯一真相來源：週次、所有頁面的標題／標籤／摘要／資源／demo 清單
