@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W05 筆記：WebGIS 與 OpenLayers 入門 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
+</head>
+<body data-id="w05-note-openlayers">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>WebGIS can be defined as any GIS that uses web technology to communicate between a server and a client.</li>
+        <li>To build a map in a web page needs three things：Include OpenLayers (*.js, *.css)、<strong>Must be a Div container</strong>、JavaScript to create a simple map</li>
+        <li><strong>OpenLayers 預設的地圖視圖使用 Web Mercator 投影</strong>：<code>ol.proj.transform([121.751, 23.8], 'EPSG:4326', 'EPSG:3857')</code></li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <p><em>原筆記中的截圖沒有隨文字匯出，以下只整理文字部分。這份筆記的後半（Accordion、Style、Coordinate）放在 W06 筆記。</em></p>
+
+      <h3>WebGIS</h3>
+      <p>A geographic information system (GIS) is a computer-based information system that enables capture, modeling, storage, retrieval, sharing, manipulation, analysis, and presentation of geographically referenced data.</p>
+      <p>WebGIS is a information system, comprising at least a server and a client, where the server is a GIS server and the client is a web browser or mobile applications. In short, WebGIS can be defined as any GIS that uses web technology to communicate between a server and a client.</p>
+      <p><strong>Advantages of WebGIS</strong></p>
+      <ul><li>global reach, large number of users, better cross-platform capability, low cost as averaged by the number of users, easy to use, unified updates, and diverse applications, etc.</li></ul>
+      <p><strong>Architecture</strong>（原筆記為截圖）</p>
+
+      <h3>OpenLayers</h3>
+      <p>OpenLayers is an open source JavaScript library for displaying map data. It makes easier to build a dynamic map and has been developed to further the use of geographic information of all kinds.</p>
+      <p>It can display map tiles, vector data and markers loaded from any sources.</p>
+      <p>Current version: 10.11.0 (Notice: examples shown on webpages are JavaScript ES6 (ECMAScript 6) (compiled needed))</p>
+      <ul>
+        <li>283 examples</li>
+        <li>Start from version 5: compiled needed (node.js server)</li>
+        <li>Writing scripts based on version 4.6.5 is recommended. Please refer source code of examples from GitHub<br>https://github.com/openlayers/openlayers/releases/tag/v4.6.5
+          <ul><li>V4.6.5-dist.zip (lib, css)</li><li>V4.6.5.zip (examples)</li></ul></li>
+      </ul>
+      <p><strong>Support data formats</strong></p>
+      <ul>
+        <li>GeoJSON, KML, Geography Markup Language (GML)</li>
+        <li>Well-Known Text (WKT)(text markup language for representing vector geometry objects)</li>
+        <li>GeoRSS, GPX, etc.</li>
+      </ul>
+
+      <h3>How to write</h3>
+      <p>To build a map in a web page needs three things</p>
+      <ol>
+        <li>Include OpenLayers (*.js) and its CSS ( from https://openlayers.org/download/)
+          <ul>
+            <li><code>&lt;script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"&gt;&lt;/script&gt;</code></li>
+            <li><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"&gt;</code></li>
+            <li>Or download the library as local files → no need for the Internet to connect</li>
+          </ul></li>
+        <li>A map container (HTML element)<br>The map in the application is contained in a &lt;div&gt; HTML element.<br><strong>Must be a Div container</strong>: <code>&lt;div id='map'&gt;&lt;/div&gt;</code></li>
+        <li>JavaScript to create a simple map (JavaScript script)
+          <ol>
+            <li>Creates an OpenLayers <u><strong>Map</strong></u> object via <u><strong>ol.Map</strong></u>.</li>
+            <li>Attaches the map object to the <strong>&lt;div&gt;</strong> via target argument.</li>
+            <li>Set layers for the map. Layers in OpenLayers are defined with a type (Image, Tile or Vector) which contains a source.</li>
+            <li>Specify a view for the map, such as the center, resolution, and rotation of the map.</li>
+          </ol></li>
+      </ol>
+
+      <div class="callout tip">
+        <p><code>let map = new ol.Map({</code> <strong>({ : 因為是新的object，建立地圖物件</strong></p>
+        <p><code>target: 'map',</code> <strong>({ : 地圖要放在哪裡</strong></p>
+        <p><code>layers: [</code> <strong>({ : 地圖要顯示哪些圖層</strong> 可以有很多圖層所以是layers, 用array存</p>
+<pre><code class="language-javascript">new ol.layer.Tile({  //這裡建立一個「圖磚圖層」（Tile Layer）
+source: new ol.source.OSM()
+})
+],</code></pre>
+        <p><code>source: new ol.source.OSM()</code></p>
+        <ul>
+          <li><code>source</code> 指定這個圖層的資料來源。</li>
+          <li><code>ol.source.OSM()</code> 表示使用 OpenStreetMap 作為底圖來源</li>
+        </ul>
+        <p><code>view: new ol.View({</code> <strong>地圖的視角</strong></p>
+        <p><code>center: ol.proj.transform(</code> center：地圖中心位置<br><code>[121.751, 23.8],</code> 座標 <strong>OpenLayers 預設的地圖視圖使用 Web Mercator 投影</strong></p>
+        <p><code>'EPSG:4326',</code> 從4326的經緯度<br><code>'EPSG:3857'</code> 轉為Web Mercator<br><code>),</code></p>
+<pre><code class="language-javascript">ol.proj.transform(
+[121.751, 23.8], // 原始座標
+'EPSG:4326',     // 原始座標系統
+'EPSG:3857'      // 目標座標系統
+)</code></pre>
+        <p>OpenLayers提供另一種: <code>center: ol.proj.fromLonLat([121.751, 23.8])</code></p>
+        <p><code>zoom: 4</code> 地圖縮放程度<br><code>})</code></p>
+        <p>ol.view也可以控制minZoom, maxZoom: 14, extent</p>
+        <p><code>});</code></p>
+      </div>
+
+      <h3>To build a map in a web page needs three things</h3>
+      <ul><li>Include OpenLayers library (*.js, *.css), &lt;div id='map'&gt;, create a simple map.</li></ul>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-TW"&gt;
+  &lt;head&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"&gt;
+    &lt;style&gt;
+      html,body{
+        margin: 0px;
+        padding: 0px;
+        height:100%;
+      }
+      #map {
+        margin: 0px;
+        padding: 0px;
+        height: 100%;
+        width: 100%;
+      }
+    &lt;/style&gt;
+    &lt;title&gt;OpenLayers map demo&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="map" class="map"&gt;&lt;/div&gt;
+    &lt;script type="text/javascript"&gt;
+      let projection = ol.proj.get('EPSG:3857'); //取得投影座標系統
+      /*
+      3857的格式是[minX, minY, maxX, maxY]
+      這邊取得的是 Web Mercator 的全球投影範圍，不是台灣的範圍
+      */
+      let projectionExtent = projection.getExtent(); //取得投影範圍
+      let size = ol.extent.getWidth(projectionExtent) / 256; //計算初始解析度
+      /*
+      ol.extent.getWidth(projectionExtent) 會計算投影範圍的寬度
+      數字代表 Zoom 0 時，每個圖磚像素對應的投影平面距離
+      因為每個圖磚是256*256(WMTS 圖磚網格採用常見的 256 × 256 像素)
+      */
+      let resolutions = new Array(20); //每個縮放層級對應的地圖解析度 20-&gt; 23
+      let matrixIds = new Array(20);   //每個縮放層級在 WMTS 中的矩陣識別碼
+      for (let z = 0; z &lt; 20; ++z) { //不同 Zoom 的解析度
+        resolutions[z] = size / Math.pow(2, z);
+        matrixIds[z] = z;
+      }/**/
+
+      let map = new ol.Map({            //create a OpenLayers Map object
+        target: 'map',
+        layers: [
+          //加入 Google Maps 圖層
+          new ol.layer.Tile({    //Google map
+              visible: false,
+              source: new ol.source.XYZ({
+                crossOrigin: 'anonymous', //載入圖磚圖片時的跨來源請求模式，不會攜帶跨來源憑證
+                url: 'https://mt{0-3}.google.com/vt/lyrs=m&amp;x={x}&amp;y={y}&amp;z={z}',
+              }),/**/
+          }),
+          //加入臺灣通用電子地圖（WMTS）
+          new ol.layer.Tile({          //通用電子地圖
+            extent: projectionExtent,  //限制圖層的繪製範圍
+            source: new ol.source.WMTS({
+              url: 'http://wmts.nlsc.gov.tw/wmts?', //提供地圖的伺服器網址
+              layer: 'EMAP', //指定臺灣通用電子地圖這個layer
+              matrixSet: 'GoogleMapsCompatible', //採用與 Google 地圖圖磚系統相容的矩陣規則
+              format: 'image/jpeg',
+              projection: projection, //使用前面設定的 EPSG:3857
+              tileGrid: new ol.tilegrid.WMTS({ //tileGrid：圖磚如何排列
+                origin: ol.extent.getTopLeft(projectionExtent), //origin：圖磚的起點,取得整個投影範圍左上角的座標
+                resolutions:resolutions, //每個層級的解析度
+                matrixIds:matrixIds,     //每個層級的編號
+              }),
+              extent: projectionExtent, //設定資料來源的範圍
+              style: 'default'
+            })
+          })
+        ],
+        view: new ol.View({
+          center: ol.proj.transform([121.751,23.8],'EPSG:4326','EPSG:3857'),
+          zoom: 4  //8
+        })
+      });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>Google maps layer types (lyrs)</h3>
+      <ul>
+        <li>h = roads only</li><li>m = standard roadmap</li><li>p = terrain</li><li>r = somehow altered</li><li>roadmap</li><li>s = satellite only</li><li>t = terrain only</li><li>y = hybrid</li>
+      </ul>
+
+      <h2>疑問與解答</h2>
+      <p>這份筆記沒有記下疑問。</p>
+
+      <h2>待辦</h2>
+      <p>這份筆記沒有記下待辦事項。</p>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

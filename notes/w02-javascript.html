@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W02 筆記：JavaScript · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
+</head>
+<body data-id="w02-note-javascript">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>Client-side programming language that runs entirely inside the web browser → Can change and access all elements of an HTML document with the HTML DOM and the BOM</li>
+        <li>const variables are not changeable. → if you use const to replace let (safer!)</li>
+        <li>JSON is an object when parsed in JavaScript. 讀取JSON檔:JSON.parse</li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <p><em>原筆記中的截圖（運算子表格等）沒有隨文字匯出，以下只整理文字部分。</em></p>
+
+      <h3>JavaScript</h3>
+      <p>Client-side programming language that runs entirely inside the web browser<br>
+        → Can change and access all elements of an HTML document with the HTML DOM(Document Object Model) and the BOM(Browser Object MOdel)</p>
+
+      <h3>DOM</h3>
+<pre><code class="language-javascript">//Find HTML Elements
+document.getElementById(id)
+document.getElementByTagName(name)
+document.getElementByClassName(name)
+
+// Change HTML Elements
+element.innerHTML = new html content
+element. attribute = new value
+element.setAttribute(attribute, value)
+element.style.property = new style</code></pre>
+
+      <h3>BOM</h3>
+      <p>The window object is supported by all browsers. It represents the browser's window.</p>
+      <ul>
+        <li>document: contains all HTML elements of the current page.</li>
+        <li>frames: any frames embedded within the current page.</li>
+        <li>history: contains a stack of sites visited in the current session.</li>
+        <li>location: stores URL of the current page.</li>
+        <li>navigator: stores information about the browser being used, and the OS used by the browser.</li>
+        <li>screen: display properties of the user's computer or device.</li>
+      </ul>
+
+      <h3>How to write JavaScript?</h3>
+      <p><code>&lt;script&gt;…&lt;/script&gt;</code><br>
+        or JavaScript file(.js)→ In the head, external file in the head, in body</p>
+<pre><code class="language-html">&lt;script type=”text/javascript” src=”file path.js”&gt;&lt;/script&gt;</code></pre>
+
+      <h3>JavaScript Variables</h3>
+      <p>Variables are declared by the "var","let", and "const" keyword, var is used from 1998 to 2015, while “ let and const have been used since 2015.</p>
+      <p>const variables are not changeable. → if you use const to replace let (safer!)</p>
+      <p>e.g., <code>let x=10; let y; let m,n; let z="WebGIS" + " " + "is fun"; let tCar="Benz";</code><br>“;” end</p>
+
+      <h3>Rules of names/identifiers while variables declaration</h3>
+      <ul>
+        <li>Names must begin with a letter, _, or $. Number is not allowed.</li>
+        <li>Names are case sensitive.</li>
+        <li>Reserved words (like JavaScript keywords) cannot be used as names<br>保留字元，無法作為變數 → 可以固定+個前墜</li>
+      </ul>
+
+      <h3>Comments</h3>
+      <p>//this is a comment (Single line comments)<br>/Here are comment/ (Multi-line comments)</p>
+
+      <h3>let</h3>
+      <p>For let keyword:</p>
+      <ul>
+        <li>Variables declared with let have Block Scope</li>
+        <li>Variables declared with let must be Declared before use → 要先宣告</li>
+        <li>Variables declared with let cannot be Redeclared in the same scope</li>
+      </ul>
+
+      <h3>JavaScript Data types</h3>
+      <p>JavaScript variables can hold many data types<br>Undefined(also a data type!), numbers, strings, objects, functions, etc.</p>
+      <p>The type of operator</p>
+      <ul>
+        <li>is used to find the data type of variables</li>
+        <li>empty of a string is not equal to undefined</li>
+        <li>Undefined is not equal to null</li>
+      </ul>
+<pre><code class="language-javascript">let t1=""; //typeof: string
+let t2=undefined; //typeof: undefined
+let t2; //typeof: undefined
+(not be defined to be anything)
+let t3=null; //typeof: object</code></pre>
+<pre><code class="language-javascript">let a = 10;
+let b = "Hello";
+let c = true;
+let d;
+let e = null;
+let f = [1, 2, 3];
+let g = {name: "Amy"};
+
+console.log(typeof a); // "number"
+console.log(typeof b); // "string"
+console.log(typeof c); // "boolean"
+console.log(typeof d); // "undefined"
+console.log(typeof e); // "object"
+console.log(typeof f); // "object"
+console.log(typeof g); // "object"</code></pre>
+
+      <h3>JavaScript Operators</h3>
+      <p>Arithmetic Operators、Assignment Operators、Logical Operators、Comparison Operators（原筆記為截圖）</p>
+
+      <h3>JavaScript Array</h3>
+      <p>Arrays are used to store multiple values in a single variable.<br>Array is an object</p>
+      <p>Syntax</p>
+<pre><code class="language-javascript">let array_name = [item1, item2, ...];
+let array_name = new Array(item1, item2, ...);
+let array_name = Array(item1, item2, ...);
+
+e.g.,
+let tArray = ['a','b','c']; //let tArray=["a","b","c"];
+let tArray = Array('a','b','c');
+let tArray = [];</code></pre>
+      <p>Different types of value are allowed stored in an array.<br><code>let a=[0,1,2,3,'abc',{'a':1,'b':2}];</code></p>
+      <p>Access</p>
+      <ul><li>access an element by referring to the index number. Index number starts from 0.<br>e.g., <code>let x=tArray[0]</code></li></ul>
+      <p>Method</p>
+      <ul>
+        <li>Get length of an array: array_name.length</li>
+        <li>Add an item to an array (add at the last): array_name.push(item)</li>
+        <li>Remove the last item from an array: array_name.pop()</li>
+        <li>Remove a specific item from an array: array_name.splice (from an index, number of items)</li>
+        <li>Sort of an array (string): array_name.sort(), array_name.reverse()</li>
+      </ul>
+<pre><code class="language-html">&lt;script&gt; //put your JavaScript here
+  let tArrayS1=["1","12","11","110"];  //add "111"
+  let tArrayn1=[1,12,11,110]; //排序(string):1 &gt; 11 &gt; 110 &gt; 12
+&lt;/script&gt;
+...
+&lt;script&gt;
+  let tArray=[];             //empty array
+  tArray=['a','b','c'];   //tArray=["a","b","c"];
+  let tArray2= [
+      'e', 'f', 'g'
+  ];
+  tArray2[3]='i';
+  tArray2.push("k");
+  //tArray2.pop();  // remove the last element
+  tArrayS1.sort();
+  document.getElementById("para1").innerHTML ="tArray2.length: " + tArray2.length;
+  document.getElementById("para2").innerHTML ="tArrayS1: " +tArrayS1;
+  tArrayS1.reverse();
+  document.getElementById("para3").innerHTML ="tArrayS1's reverse: " +tArrayS1;
+  console.log("tArrayn1:",tArrayn1);
+  console.log("tArrayn1_sort:",tArrayn1.sort());
+  console.log("tArrayn1_sort_fn:",tArrayn1.sort(
+    function (a, b)
+    {
+      console.log(typeof(a));
+      return a - b;
+    }));
+&lt;/script&gt;</code></pre>
+
+      <h3>JavaScript Conditions- if else and else if</h3>
+      <p>Conditional statements are used to perform different actions based on different conditions.</p>
+<pre><code class="language-javascript">if (condition1) {
+  block of code to be executed if condition1 is true
+}
+else if (condition2) {
+  block of code to be executed if the condition1 is false and condition2 is true
+}
+else {
+  block of code to be executed if the condition1 is false and condition2 is false
+}</code></pre>
+
+      <h3>JavaScript For Loop</h3>
+<pre><code class="language-javascript">for (statement 1; statement 2; statement 3)
+{
+  code block to be executed // if the code is only a line, you can ignore the {}.
+}</code></pre>
+      <ul>
+        <li>Statement 1 is executed (one time) before the execution of the code block. → 判斷進入迴圈條件</li>
+        <li>Statement 2 defines the condition for executing the code block. → 終止進入迴圈條件</li>
+        <li>Statement 3 is executed (every time) after the code block has been executed. → 條件在迴圈執行1次後會怎麼變</li>
+      </ul>
+<pre><code class="language-javascript">let total=0;    // let total="" ; Different!!!
+let idName=['t1','t2','t3']
+for (let i = 1; i &lt;= 100; i++) // i = 1 -&gt; i &lt;= 100 -&gt; 執行迴圈內容 -&gt; i = i+1(2)
+  total += i ;  //total = total+i;
+}
+document.getElementById("t1").innerHTML =
+total+document.getElementById("t2").innerHTML+document.getElementById("t3").innerHTML;</code></pre>
+
+      <h3>JavaScript While Loop/ Do While Loop</h3>
+<pre><code class="language-javascript">// While Loop Syntax
+while (condition) {
+  code block to be executed
+}
+
+// Do while Loop Syntax
+do {
+  code block to be executed
+}
+while (condition);</code></pre>
+
+      <h3>JavaScript Switch Statement</h3>
+      <p>The switch statement is used to perform different actions based on different conditions.</p>
+<pre><code class="language-javascript">switch(expression) {
+  case x : // x, y can either be numbers or strings
+    code block ;
+    break ;
+  case y :
+    code block;
+    break ;
+  default:
+    code block;
+}
+
+let year = 1;
+let grade;
+switch (year) {
+  case 1:
+    grade = "freshman";
+    break;
+  case 2:
+    grade = "sophomore";
+    break;
+  default:
+    grade = "other";
+}</code></pre>
+
+      <h3>JavaScript Function</h3>
+      <p>A JavaScript function is a block of code designed to perform a particular task.<br>
+        A JavaScript function is executed when "something" invokes it (calls it).</p>
+<pre><code class="language-javascript">function name (parameter1, parameter2, parameter3) {
+  code to be executed
+}
+let name = function (parameter1, parameter2, parameter3) {
+  code to be executed , e.g.,
+  return parameter1+ parameter2 + parameter3;
+};</code></pre>
+      <p>Function example: 以下都是一樣的<br>如果確認/確保其他code不會改動到function, const(不可修改) 可以取代 let</p>
+<pre><code class="language-javascript">function abc(a1){
+  return a1+1;
+}
+let abc = function (a1){
+  return a1+1;
+}
+let abc = (a1) =&gt; {
+  return a1+1;
+}
+let abc = (a1) =&gt; a1+1; //only one executed code -&gt; no need for {}</code></pre>
+
+      <h3>JavaScript Math Function</h3>
+<pre><code class="language-javascript">function tBMI(tHeight, tWeight) { return Math.round(tWeight/(tHeight/100)**2*10)/10 }
+
+calculate: () =&gt; {   -&gt;   calculate: function() {}</code></pre>
+
+      <h3>JavaScript Event</h3>
+      <p>監聽→因為發生了...→所以會有/要…</p>
+      <p>An HTML event can be something the browser does, or something a user does.<br>
+        You can accomplish an event via set of event and event handler (usually a user-defined JavaScript function).</p>
+<pre><code class="language-html">&lt;element onEvent ="EventHandler()"&gt;
+(e.g.,&lt;button onclick="alert('May I help you?')"&gt;press&lt;/button&gt; )
+(e.g., &lt;button onclick ="gradeFunction(100)"&gt;press&lt;/button&gt; )
+&lt;element onEvent ="some JavaScript"&gt;
+(e.g., &lt;button onclick =" this.innerHTML = gradeFinal "&gt;press&lt;/button&gt;)
+&lt;element onEvent ="EventHandlerA();EventHandlerB(); some JavaScript "&gt;</code></pre>
+      <ul>
+        <li>onchange: 例如輸入密碼自動轉星號</li>
+        <li>onclick: 按右鍵跳出</li>
+        <li>onmouseover</li>
+        <li>onmouseout</li>
+        <li>onkeydown: 例如按左右跳影片、上下跳音量、ctrl c/v</li>
+        <li>onload: 等網頁載入完成後才進行CSS改變等等</li>
+      </ul>
+
+      <h3>Test</h3>
+<pre><code class="language-javascript">// 1. Variable
+let x = 10;
+
+// 2. Array
+let a = [1, 2, 3];
+
+// 3. Condition
+if (x &gt; 5) {
+  console.log("Yes");
+} else {
+  console.log("No");
+}
+
+// 4. For Loop
+for (let i = 0; i &lt; 5; i++) {
+  console.log(i);
+}
+
+// 5. While Loop
+while (x &gt; 0) {
+  x--;
+}
+
+// 6. Function
+function add(a, b) {
+  return a + b;
+}</code></pre>
+
+      <h3>JavaScript Object Notation</h3>
+      <ul>
+        <li>JavaScript Object Notation is a format for storing and transporting data.</li>
+        <li>JSON is a lightweight data interchange format.</li>
+        <li>JSON is language independent and easy to understand.</li>
+        <li>JSON is an object when parsed in JavaScript.</li>
+        <li>File extension: *.json</li>
+      </ul>
+      <p>Structure</p>
+<pre><code class="language-plaintext">{ "key":value, "key":value}   → Key must need to be quoted within “”
+[
+  {"key":value},
+  {"key":value}, {"key":value}
+]   → same type</code></pre>
+<pre><code class="language-javascript">//get JSON file
+let json2='{"students": ' +
+             '[ {"Dept.":"Geography", "University":"NTU","Grade":"first","name":"Amy"},' + // + 是用來串接字串
+               '{"Dept.":"Geography", "University":"NTU","Grade":"junior","name":"Andy"},'+
+               '{"Dept.":"Geography", "University":"NTU","Grade":"senior","name":"Leo"}]}';/**/
+// 如果裡面的字串是""，外面可以是''
+//像 "Dept." 這種屬性名稱包含句點的情況，要使用方括號讀取
+
+let jsonObj1 = JSON.parse(json1); //讀取JSON檔:JSON.parse
+let jsonObj2 = JSON.parse(json2);
+document.getElementById("para1").innerHTML =jsonObj1.name; //存取jsonObj1的name是?
+document.getElementById("para2").innerHTML =jsonObj2.students[2].name; //存取jsonObj2的student的第三位的name是?</code></pre>
+      <p>上面的 json2 字串＝</p>
+<pre><code class="language-json">{
+  "students": [
+    { "Dept.": "Geography", "University": "NTU", "Grade": "first",  "name": "Amy" },
+    { "Dept.": "Geography", "University": "NTU", "Grade": "junior", "name": "Andy" },
+    { "Dept.": "Geography", "University": "NTU", "Grade": "senior", "name": "Leo" }
+  ]
+}</code></pre>
+
+      <h3>GeoJSON</h3>
+      <p>GeoJSON is a open standard format for encoding a variety of geographic data structures.<br>
+        GeoJSON supports the following geometry types: Point, LineString, Polygon, MultiPoint, MultiLineString, and MultiPolygon.<br>
+        File extension: *.json or *.geojson (better)</p>
+<pre><code class="language-json">{
+  "type": "FeatureCollection",
+  "features": [ …
+  ]
+}</code></pre>
+<pre><code class="language-json">{ "type": "Point",           "coordinates": [1, 2] }
+{ "type": "MultiPoint",      "coordinates": [[1, 2], [3, 4], [5, 6]] }
+{ "type": "LineString",      "coordinates": [[1, 2], [3, 4], [5, 6]] }
+{ "type": "MultiLineString", "coordinates": [ [[1, 2], [3, 4]], [[5, 6], [7, 8]] ] }
+{ "type": "Polygon",
+  "coordinates": [
+    [[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]]
+  ]
+}
+{ "type": "MultiPolygon",
+  "coordinates": [
+    [ [[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]] ],
+    [ [[6, 0], [8, 0], [8, 2], [6, 2], [6, 0]] ]
+  ]
+}</code></pre>
+
+      <h2>疑問與解答</h2>
+      <details class="qa">
+        <summary>存取jsonObj1的name是?／存取jsonObj2的student的第三位的name是?</summary>
+        <p>待確認</p>
+      </details>
+
+      <h2>待辦</h2>
+      <p>這份筆記沒有記下待辦事項。</p>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

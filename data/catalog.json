@@ -1625,6 +1625,138 @@
         "w06-lecture-openlayers-framework",
         "w06-code-framework"
       ]
+    },
+    {
+      "id": "w01-note-intro-html-css",
+      "type": "note",
+      "week": 1,
+      "title": "W01 筆記：WebGIS 導論、HTML、CSS",
+      "date": "2026-10-08",
+      "tags": [
+        "概論",
+        "HTML",
+        "CSS",
+        "Bootstrap"
+      ],
+      "summary": "GIS 定義與五大組成、WebGIS 範例、HTML 結構與常用元素、CSS 套用方式與選擇器、Bootstrap 格線。",
+      "path": "notes/w01-intro-html-css.html",
+      "related": [
+        "w01-lecture-intro-webgis",
+        "w01-lecture-html",
+        "w01-lecture-css"
+      ],
+      "origin": {
+        "kind": "text",
+        "ref": "Notion 匯出文字（Introduction、HTML、CSS）"
+      }
+    },
+    {
+      "id": "w02-note-javascript",
+      "type": "note",
+      "week": 2,
+      "title": "W02 筆記：JavaScript",
+      "date": "2026-10-15",
+      "tags": [
+        "JavaScript",
+        "DOM",
+        "JSON",
+        "GeoJSON"
+      ],
+      "summary": "DOM 與 BOM、變數與型別、陣列、條件與迴圈、函式、事件、JSON 與 GeoJSON 幾何範例。",
+      "path": "notes/w02-javascript.html",
+      "related": [
+        "w02-lecture-javascript"
+      ],
+      "origin": {
+        "kind": "pdf",
+        "ref": "Week2.pdf"
+      }
+    },
+    {
+      "id": "w03-note-jquery",
+      "type": "note",
+      "week": 3,
+      "title": "W03 筆記：jQuery",
+      "date": "2026-10-22",
+      "tags": [
+        "jQuery",
+        "DOM"
+      ],
+      "summary": "jQuery 引入方式、語法與 document ready、DOM 操作、走訪、Date 與計時器、jQuery UI 與圖表。",
+      "path": "notes/w03-jquery.html",
+      "related": [
+        "w03-lecture-jquery"
+      ],
+      "origin": {
+        "kind": "text",
+        "ref": "Notion 匯出文字（JQuery）"
+      }
+    },
+    {
+      "id": "w05-note-openlayers",
+      "type": "note",
+      "week": 5,
+      "title": "W05 筆記：WebGIS 與 OpenLayers 入門",
+      "date": "2026-11-05",
+      "tags": [
+        "OpenLayers",
+        "底圖",
+        "WMTS"
+      ],
+      "summary": "WebGIS 定義與優點、OpenLayers 版本與資料格式、建立地圖三要素、逐行註解的 WMTS 底圖範例、Google lyrs。",
+      "path": "notes/w05-openlayers.html",
+      "related": [
+        "w05-lecture-openlayers-basics"
+      ],
+      "origin": {
+        "kind": "text",
+        "ref": "Notion 匯出文字（WebGIS frontend）前半"
+      }
+    },
+    {
+      "id": "w06-note-openlayers-style",
+      "type": "note",
+      "week": 6,
+      "title": "W06 筆記：Accordion、圖徵樣式與座標",
+      "date": "2026-11-12",
+      "tags": [
+        "OpenLayers",
+        "樣式",
+        "proj4"
+      ],
+      "summary": "jQuery UI Accordion、點線面的 OpenLayers 樣式寫法、用 proj4 定義與註冊座標系統。",
+      "path": "notes/w06-openlayers-style.html",
+      "related": [
+        "w06-lecture-openlayers-framework"
+      ],
+      "origin": {
+        "kind": "text",
+        "ref": "Notion 匯出文字（WebGIS frontend）後半"
+      }
+    },
+    {
+      "id": "w04-note-gis-data-model",
+      "type": "note",
+      "week": 4,
+      "title": "W04 筆記：GIS 資料模型、OpenGIS、Map API",
+      "date": "2026-10-29",
+      "tags": [
+        "資料模型",
+        "OSM",
+        "OGC",
+        "圖磚",
+        "Map API"
+      ],
+      "summary": "網格與向量、Shapefile、OSM 與 Overpass turbo、OGC 三種服務、向量圖磚、XYZ／TMS、Google 地圖樣式、Map API 分類。",
+      "path": "notes/w04-gis-data-model.html",
+      "related": [
+        "w04-lecture-gis-data-model",
+        "w04-lecture-opengis-map-api"
+      ],
+      "origin": {
+        "kind": "text",
+        "ref": "Notion 匯出文字（GIS data model）"
+      }
     }
   ]
 }

@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W01 筆記：WebGIS 導論、HTML、CSS · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
+</head>
+<body data-id="w01-note-intro-html-css">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>GIS：<strong>capture, modeling, storage, retrieval, sharing, manipulation, analysis, and presentation of geographically referenced data</strong>；Five Components: Users, Hardware, Method, Software, Data</li>
+        <li>HTML describes the structure of web pages；When the server reads the file/code, it stores each element. 以DOM物件方式儲存</li>
+        <li><strong>a#btn1 is different from a #btn1.</strong></li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <p><em>原筆記中的截圖沒有隨文字匯出，以下只整理文字部分。</em></p>
+
+      <h3>Introduction</h3>
+      <div class="callout tip">
+        <p>The definition of GIS: A Geographic information system (GIS) is a computer-based information system that enables <strong>capture, modeling, storage, retrieval, sharing, manipulation, analysis, and presentation of geographically referenced data</strong> (Worboys and Duckham, 2004).</p>
+        <p>Five Components: <strong>Users</strong>(not only people now, agents as well)<strong>, Hardware</strong>(data processing efficiency, like GPU)<strong>, Method, Software, Data</strong></p>
+      </div>
+
+      <h3>WebGIS</h3>
+      <ul>
+        <li>Raw data: files → database → Input of the Server</li>
+        <li>Web Service/App(need global standard) → Input of the Server</li>
+        <li>Server: frontend, backend → what we compute/do, like coding</li>
+      </ul>
+      <p><strong>What is WebGIS?</strong> Examples:</p>
+      <ul>
+        <li>Google maps (https://www.google.com.tw/maps)</li>
+        <li>空氣品質(https://aqicn.org/map/taiwan/hk/)</li>
+        <li>氣候地圖(https://www.windy.com/)</li>
+        <li>NTPC iMAP (https://map.ntpc.gov.tw/, https://map2.ntpc.gov.tw/Map)</li>
+        <li>臺北市歷史圖資展示系統(https://www.historygis.udd.gov.taipei/urban/)</li>
+        <li>內政部不動產交易實價查詢服務網 (http://lvr.land.moi.gov.tw/)</li>
+        <li>行政院農委會水土保持局─ BigGIS 巨量空間資訊系統 (https://gis.ardswc.gov.tw/map/)</li>
+        <li>海域整合資訊 (https://ocean.taiwan.gov.tw/map.html?cate=relaxation&amp;panel=relaxation, https://ocean.taiwan.gov.tw/ )</li>
+        <li>台灣自然聲音地圖 - 台灣聲景協會(https://www.soundscape.org.tw/taiwan-nature-soundmap/)</li>
+        <li>Radio Garden (https://radio.garden/)</li>
+        <li>Taiwan Mortality Rate Map (http://me.geohealth.tw/, http://mortality.geohealth.tw/)</li>
+        <li>全面攻蚊 (https://am.geohealth.tw/)</li>
+        <li>Intuitive Navigation System</li>
+        <li>POI/ROI information: Discover Point of Interest (POI) and Region of Interest (ROI) by using Flickr geotagged data</li>
+        <li>Address information: Linked Address with semantics</li>
+        <li>SiniGIS: Semantic GIS integration, mapping and share.</li>
+      </ul>
+      <p>Topics of WebGIS/Geospatial Information（原筆記為截圖）</p>
+
+      <h3>HTML：What is HTML?</h3>
+      <div class="callout key">
+        <p><strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage (HTML) is a markup language for creating web pages.</p>
+      </div>
+      <ul>
+        <li>HTML describes the structure of web pages. If you put it on a web server, it can open as a website; however, if you simply open it, it looks like a Word file.</li>
+        <li>HTML elements are represented by tags and contents</li>
+        <li>Browsers do not display the HTML tags, but use them to render the content of the page</li>
+        <li>File extension: <strong>*.html or *.htm</strong></li>
+        <li>Current version: <strong>HTML 5</strong> (living standard)</li>
+      </ul>
+
+      <h3>Basic structure of a HTML document</h3>
+      <ul>
+        <li>The &lt;!DOCTYPE html&gt; declaration defines this document to be HTML5: 開始的宣告</li>
+        <li>The &lt;html&gt; element is the root element</li>
+        <li>The &lt;head&gt; element contains meta information</li>
+        <li>The &lt;title&gt; element specifies a title for the document: Title的話是包含&lt;title&gt;宣告</li>
+        <li>The &lt;body&gt; element contains the visible page content: 內文的話是包含&lt;body&gt;宣告</li>
+      </ul>
+      <p>Nested HTML Elements</p>
+      <ul>
+        <li>&lt;element attribute="value"&gt;
+          <ul><li>HTML elements/tags are not case sensitive</li><li>usually consists of a start tag and end tag</li></ul></li>
+        <li>Comments: &lt;!-- write anything --&gt;</li>
+      </ul>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt; &lt;!--Declaration--&gt;
+&lt;html&gt;&lt;!--begin tag--&gt;
+	&lt;head&gt; &lt;!--begin tag--&gt;
+		&lt;title&gt;This is Chiao-Ling's Webpage&lt;/title&gt;
+		&lt;!-- This is a comment --&gt;
+	&lt;/head&gt; &lt;!--end tag--&gt;
+	&lt;body&gt; &lt;!--same structural location(?) with head--&gt;
+	...
+	&lt;/body&gt;
+&lt;/html&gt;&lt;!--end tag--&gt;</code></pre>
+      <ul>
+        <li>The DOM is a W3C (World Wide Web Consortium) standard.When a web page is loaded, the browser creates a DOM of the page. → <strong>When the server reads the file/code, it stores each element. 以DOM物件方式儲存</strong></li>
+        <li>The HTML DOM model is constructed as a tree of Objects which enables to get, change, add, or delete HTML elements.</li>
+      </ul>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;This is Chiao-Ling's Webpage&lt;/title&gt;
+		&lt;!-- This is a comment --&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;h1&gt;Heading 1&lt;/h1&gt;&lt;h2&gt;Heading 2&lt;/h2&gt;
+		&lt;h3&gt;Heading 3&lt;/h3&gt;
+		&lt;h4&gt;Heading 4&lt;/h4&gt;&lt;hr/&gt;&lt;!-- 橫線 --&gt;
+		&lt;h5&gt;Heading 5&lt;/h5&gt;&lt;br/&gt;&lt;!-- 換行 --&gt;
+		&lt;h6&gt;Heading 6&lt;/h6&gt;&lt;hr/&gt;
+		&lt;a href="http://www.geog.ntu.edu.tw/index.php/tw/"
+title="Go to the Dept. of Geography, NTU"
+target="_self" &gt; &lt;!-- 超連結: href = '網址' --&gt;
+		Visit the Dept. of Geography, NTU
+		&lt;/a&gt; &lt;!-- &lt;a href="url"&gt; link text&lt;/a&gt; --&gt;
+	&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>Structure of Image</h3>
+      <ul><li>&lt;img src="url" alt="text" /&gt;</li></ul>
+<pre><code class="language-html">&lt;img src="DeptGeography.jpg"
+     alt="Dept. of Geography, NTU"
+     style="width:600px;height:450px;" /&gt;</code></pre>
+
+      <h3>HTML Image file path</h3>
+      <p>File path of src</p>
+      <ul>
+        <li>"DeptGeography.jpg"- located in the same folder as the current page</li>
+        <li>"images/DeptGeography.jpg- located in the images folder in the current folder<br>"./images/DeptGeography.jpg- located in the images folder in the current folder<br>→ same</li>
+        <li>"<strong>/images</strong>/DeptGeography.jpg“- located in the images folder at the <u><strong>root</strong></u> of the current web<br>→ 避免資料被拿走，比較安全(不知道domain name)</li>
+        <li>"../DeptGeography.jpg“- located in the folder one level up from the current folder</li>
+      </ul>
+
+      <h3>HTML Table</h3>
+      <p>An HTML table is defined with the &lt;table&gt; tag</p>
+      <p>Row:&lt;tr&gt; tag, header:&lt;th&gt; tag(加粗), cell: &lt;td&gt; tag(欄位內).</p>
+
+      <h3>HTML List</h3>
+      <p>Unordered HTML List (bullet list)</p>
+      <ul>
+        <li><strong>&lt;ul&gt; tag + &lt;li&gt; tag</strong></li>
+        <li>list-style-type: disc(default (bullet)), circle, square and none.</li>
+      </ul>
+      <p>Ordered HTML List (Number list)</p>
+      <ol>
+        <li><strong>&lt;ol&gt; tag + &lt;li&gt; tag</strong></li>
+        <li>The type attribute defines the type of the list item marker
+          <ol><li>type="1" (default), type="A",</li><li>type="a", type="I", type="i"</li></ol></li>
+      </ol>
+      <ul><li>The start attribute is used to determine a start number</li></ul>
+
+      <h3>HTML Form</h3>
+      <p>The HTML &lt;form&gt; element defines a form that is used to collect user input</p>
+      <p>&lt;form&gt; …&lt;/form&gt;<br>The &lt;input&gt; Element</p>
+      <p>type="text", type="radio", type="checkbox", type="password", type="submit", type="reset", type="button", type="color", type="date", type="datetime-local ", type="email", type="file", type="month", type="number“, …</p>
+      <p>The &lt;select&gt; Element</p>
+      <p>The &lt;textarea&gt; Element</p>
+
+      <h3>HTML Span, Paragraph (p), Preformatted text, div</h3>
+      <p>The HTML &lt;span&gt; element is used to group inline-elements in a document.<br>
+        The HTML &lt;p&gt; element defines a paragraph.<br>
+        The HTML &lt;pre&gt; element defines preformatted text.<br>
+        The HTML &lt;div&gt; element is a block-level element.</p>
+
+      <h3>HTML Text formatting</h3>
+      <p>Formatting elements were designed to display special types of text</p>
+      <ul>
+        <li>&lt;b&gt; - Bold text</li><li>&lt;strong&gt; - Important text</li><li>&lt;i&gt; - Italic text</li><li>&lt;em&gt; - Emphasized text</li><li>&lt;mark&gt; - Marked text</li>
+        <li>&lt;small&gt; - Small text</li><li>&lt;del&gt; - Deleted text</li><li>&lt;ins&gt; - Inserted text</li><li>&lt;sub&gt; - Subscript text</li><li>&lt;sup&gt; - Superscript text</li>
+      </ul>
+
+      <h3>HTML Head</h3>
+      <p>The &lt;head&gt; element is a container for metadata including:</p>
+      <ul>
+        <li>The &lt;title&gt; element defines the title of the document and is required in all HTML/XHTML documents.</li>
+        <li>The &lt;style&gt; element is used to define style information for a single HTML page.</li>
+        <li>The &lt;link&gt; element is used to link to external style sheets.</li>
+        <li>The &lt;meta&gt; element is used to specify which character set is used, page description, keywords, author, and other metadata.</li>
+        <li>The &lt;script&gt; element is used to define client-side JavaScript.</li>
+      </ul>
+
+      <h3>Element’s attributes</h3>
+      <p>HTML Attribute Reference (※practice)<br>https://www.w3schools.com/tags/ref_attributes.asp</p>
+
+      <h3>CSS Introduction</h3>
+      <div class="callout key">
+        <p><strong>C</strong>ascading <strong>S</strong>tyle <strong>S</strong>heets (CSS) is a style sheet language that describes the style of an HTML document and is used to format the layout of web pages.</p>
+      </div>
+      <p><strong>How to apply CSS</strong></p>
+      <ul>
+        <li>Inline style: style <code>&lt;img style="width:600px;height:450px;" /&gt;</code></li>
+        <li>Internal style sheet (Embedded stylesheet): <code>&lt;style&gt; body {background-color:powderblue;} &lt;/style&gt;</code><br>→ included in the <code>&lt;head&gt;</code> section
+          <ul><li>element的內容描述</li><li><strong>寫在head!!!</strong></li></ul></li>
+        <li>External style sheet: link <strong>寫在head!!!</strong><br><code>&lt;link rel="stylesheet" type="text/css" href="chiaoStyle.css"&gt;</code><br>rel: relationship (tag defines the relationship between the current document and an external resource.)</li>
+        <li>File extension: <strong>*.css</strong> (external stylesheets)</li>
+      </ul>
+
+      <h3>Inline</h3>
+      <p>Syntax of the HTML style attribute: <code>&lt;tagname style="property:value;"&gt;</code></p>
+      <ul>
+        <li>The background-color property</li><li>The color property</li><li>The font-family property</li><li>The font-size property</li><li>The text-align property</li>
+      </ul>
+      <p>Example of font size：https://www.wibibi.com/info.php?tid=93</p>
+      <p>Examples to colors：background-color、color。Colors can also be specified using <strong>RGB values, RGBA values, HEX values, HSL values, and HSLA values:</strong> https://www.rapidtables.com/web/color/RGB_Color.html</p>
+
+      <h3>Selector</h3>
+      <p>A CSS rule-set consists of a <strong>selector</strong> and a <strong>declaration block</strong></p>
+      <ul><li>Internal style sheet: &lt;style&gt;</li><li>External style sheet: link</li></ul>
+
+      <h3>CSS to HTML id, class attributes</h3>
+      <p>The id attribute specifies a <strong>unique id</strong> for an HTML element</p>
+      <p><strong><em>“#”代表</em></strong></p>
+      <p>The class attribute specifies <strong>one or more class names for an HTML element</strong>.</p>
+      <p><strong><em>class=”” 代表element=""內的樣式 → 用.(class name)</em></strong></p>
+      <p><u><strong>a#btn1 is different from a #btn1.</strong></u></p>
+      <p>常用:</p>
+      <ul>
+        <li>div: 全部的div</li>
+        <li>div p: div裡全部的p</li>
+        <li>div, p: 全部的div 和 全部的p</li>
+      </ul>
+<pre><code class="language-html">&lt;div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+  &lt;p&gt;
+  &lt;/p&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;/p&gt;</code></pre>
+      <p><u><strong>a#btn1</strong></u></p>
+<pre><code class="language-html">&lt;a id="btn1" href="#"&gt;Click me&lt;/a&gt;
+a#btn1 {color: red;}</code></pre>
+      <p><strong>a #btn1</strong></p>
+<pre><code class="language-html">&lt;a href="#"&gt;
+  &lt;span id="btn1"&gt;Click me&lt;/span&gt;
+&lt;/a&gt;
+a #btn1 { color: blue; }</code></pre>
+      <table>
+        <thead><tr><th>Selector</th><th>Meanings</th></tr></thead>
+        <tbody>
+          <tr><td><code>a#btn1</code></td><td>An <code>&lt;a&gt;</code> element with <code>id="btn1"</code></td></tr>
+          <tr><td><code>a #btn1</code></td><td>An element with <code>id="btn1"</code> inside an <code>&lt;a&gt;</code></td></tr>
+          <tr><td><code>#btn1</code></td><td>Any element with <code>id="btn1"</code></td></tr>
+          <tr><td><code>a.btn1</code></td><td>An <code>&lt;a&gt;</code> element with <code>class="btn1"</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Specifity</h3>
+      <p>Inline stylesheet &gt; Embedded stylesheet &gt; Imported stylesheet &gt; Linked stylesheet &gt; Browser's own stylesheet</p>
+
+      <h3>Responsive web design - Bootstrap</h3>
+      <p>Grid System: Bootstrap's grid system allows up to 12 columns across the page.</p>
+      <p>12 = total, set each = n, col = 12/n</p>
+      <ul>
+        <li>xs (for phones - screens less than 768px wide)</li>
+        <li>sm (for tablets - screens equal to or greater than 768px wide)</li>
+        <li>md (for small laptops - screens equal to or greater than 992px wide)</li>
+        <li>lg (for laptops and desktops - screens equal to or greater than 1200px wide)</li>
+      </ul>
+
+      <h2>疑問與解答</h2>
+      <details class="qa">
+        <summary>&lt;body&gt;: same structural location(?) with head</summary>
+        <p>待確認</p>
+      </details>
+
+      <h2>待辦</h2>
+      <ul class="todo">
+        <li>HTML Attribute Reference (※practice)：https://www.w3schools.com/tags/ref_attributes.asp</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W03 筆記：jQuery · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
+</head>
+<body data-id="w03-note-jquery">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>jQuery → function database；$ is a function, which means jQuery.</li>
+        <li><code>$(function(){ }); //same as $(document).ready(function(){ });</code></li>
+        <li><code>setTimeout</code>：只執行一次；<code>setInterval</code>：每隔指定時間，就重複執行一次</li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <p><em>原筆記中的截圖沒有隨文字匯出，以下只整理文字部分。</em></p>
+
+      <h3>JQuery</h3>
+      <div class="callout key">
+        <p>jQuery is a JavaScript Library that makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers.</p>
+      </div>
+      <p>→ function database</p>
+
+      <h3>How to use?</h3>
+      <ul>
+        <li>Download the jQuery library and include it as a local file.</li>
+        <li>Include jQuery from a CDN, like Google</li>
+      </ul>
+      <p>(https://www.hostucan.com/cdn)</p>
+      <div class="callout tip">
+        <p><strong>CDN (Content Delivery Network)</strong>: A CDN is a group of servers distributed in different locations.</p>
+      </div>
+      <p>Small CDNs may be located within a single country, while large CDNs are spread across data centers around the world (from TechTerms).</p>
+      <p><strong>How to find jQuery libraries?</strong></p>
+      <p>https://jquery.com/ → Download → https://releases.jquery.com → jQuery 4.0.0(newest) (3.7.1 more stable) →minified</p>
+<pre><code class="language-html">&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"&gt;&lt;/script&gt;
+
+&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"&gt;</code></pre>
+
+      <h3>How to use：Syntax</h3>
+      <ul>
+        <li>$(selector).action() //methods, functions<br>
+          • jQuery selectors allow you to select and manipulate HTML element(s).<br>
+          • e.g.,$("p").hide() - hides all &lt;p&gt; elements<br>
+          $(".test").hide() - hides all elements with class="test"<br>
+          $("#test").hide() - hides the element with id="test"</li>
+      </ul>
+      <p>Note</p>
+      <ul>
+        <li>$ is a function, which means jQuery.</li>
+        <li>$("p").hide(); equals to jQuery("p").hide();</li>
+      </ul>
+      <p>The Document Ready Event</p>
+      <ul>
+        <li>This is to prevent any jQuery code from running before the document is finished loading (is ready).</li>
+        <li><code>$(function(){ }); //same as $(document).ready(function(){ });</code></li>
+      </ul>
+
+      <h3>jQuery Selector</h3>
+      <p>jQuery selectors are used to "find" (or select) HTML elements based on their name, id, classes, types, attributes, values of attributes and much more.</p>
+      <p>It's based on the existing CSS Selectors, and in addition, it has some own custom selectors.</p>
+
+      <h3>jQuery Event／JQuery Effect</h3>
+      <p>（原筆記為截圖）</p>
+
+      <h3>jQuery DOM Manipulation</h3>
+      <p>Changing and manipulating HTML elements and attributes</p>
+      <ul>
+        <li><code>text()</code> - sets or returns the text content of selected elements</li>
+        <li><code>html()</code> - sets or returns the content of selected elements <strong>(including HTML markup)</strong></li>
+        <li><code>val()</code> - sets or returns the <u>value</u> of form fields</li>
+        <li><code>attr()</code> – sets or returns attribute values (※)</li>
+        <li><code>remove()</code>- remove elements with a specified condition</li>
+      </ul>
+      <p>Get contents</p>
+      <ul><li><code>$(selector).method();</code></li></ul>
+      <p>Set contents</p>
+      <ul><li><code>$(selector).method("set value”);</code></li></ul>
+      <p><strong>Add new elements and contents</strong></p>
+      <ul>
+        <li><code>append()</code> - Inserts content at the end of the selected elements</li>
+        <li><code>prepend()</code> - Inserts content at the beginning of the selected elements</li>
+        <li><code>after()</code> - Inserts content after the selected elements</li>
+        <li><code>before()</code> - Inserts content before the selected elements</li>
+      </ul>
+      <p>Remove elements</p>
+      <ul><li><code>remove()</code>:Removes the selected element (and its child elements)</li></ul>
+      <p>Empty elements</p>
+      <ul><li><code>empty()</code>: Removes the "child elements" from the selected element</li></ul>
+      <p>Get and Set CSS Classes</p>
+      <ul><li><code>addClass()</code></li><li><code>removeClass()</code></li><li><code>toggleClass()</code></li><li><code>css()</code></li></ul>
+      <div class="callout warn">
+        <p><code>&lt;p/&gt;</code> 是 jQuery 用來建立空的 <code>&lt;p&gt;</code> 元素的一種簡寫<br>
+          <code>var txt2 = $("&lt;p/&gt;").text("Text."); = var txt2 = $("&lt;p&gt;&lt;/p&gt;").text("Text.");</code></p>
+      </div>
+
+      <h3>jQuery Traversing</h3>
+      <p>jQuery traversing are used to "find" (or select) HTML elements based on their relation to other elements. In the HTML page (DOM tree), you can easily move up (ancestors), down (descendants) and sideways (siblings) in the tree, starting from the selected (current) element.</p>
+      <p><strong>Traversing Up</strong></p>
+      <ul><li><code>parent(), parents(), parentsUntil()</code></li><li>特定向上的、全部向上的、向上直到</li></ul>
+      <p><strong>Traversing Down: 向下</strong></p>
+      <ul><li><code>children(), find()</code></li><li>特定向下的、向下的</li></ul>
+      <p><strong>Traversing Sideways: 向兩側找</strong></p>
+      <ul><li><code>siblings(), next(), nextAll(), nextUntil(), prev(), prevAll(), prevUntil()</code></li></ul>
+      <p><strong>Filtering method: 找特定元素</strong></p>
+      <ul><li>The <code>first(), last(), eq()(index from 0), filter()</code> and <code>not()</code></li></ul>
+
+      <h3>JavaScript Date</h3>
+<pre><code class="language-javascript">getTime(): 多半資料庫儲存時間都是用這個(方便跨時區的計算)</code></pre>
+
+      <h3>JavaScript Timing Events</h3>
+      <p>To execute a function or a mission later or at specified time intervals.</p>
+      <ul>
+        <li>The setTimeout(function, milliseconds) method calls a function or evaluates an expression after a specified number of milliseconds.</li>
+        <li>The setInterval(function, milliseconds) method is same as setTimeout(), but repeats the execution of the function continuously.</li>
+        <li>1000 ms = 1 second.</li>
+        <li>Use the clearTimeout() method to prevent the function from running.</li>
+      </ul>
+      <p>Syntax</p>
+      <ul>
+        <li><code>setTimeout(function, milliseconds, param1, param2, ...)</code>: 只執行一次(等待指定時間後，只執行一次)</li>
+        <li><code>setInterval(function, milliseconds, param1, param2, ...)</code>: repeat的執行，不會因為中間暫停就不計沒有執行set interval的時間(每隔指定時間，就重複執行一次)</li>
+        <li>Using <code>clearTimeout()</code> to stop a function</li>
+      </ul>
+
+      <h3>jQuery User Interface (UI)</h3>
+      <p>jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the <strong>jQuery JavaScript Library</strong> (https://jqueryui.com/). It provides an advanced approach to building highly interactive web applications.</p>
+      <p><u><strong><em>Datepicker, Autocomplete, Slider, Dialog, Progressbar, etc.</em></strong></u></p>
+      <p><strong>Date picker</strong>（原筆記為截圖）</p>
+      <p><strong>Auto complete:</strong></p>
+      <ul><li>availableTags: array</li><li>source: availableTags</li><li>minLength: default=1</li></ul>
+
+      <h3>Charts and graphs</h3>
+      <p>Help in representing your data!</p>
+      <ul>
+        <li>Highcharts: https://www.highcharts.com/</li>
+        <li>D3.js: https://d3js.org/</li>
+        <li>Chart.js: http://www.chartjs.org/</li>
+        <li>Google Charts: https://developers.google.com/chart</li>
+      </ul>
+
+      <h2>疑問與解答</h2>
+      <p>這份筆記沒有記下疑問。</p>
+
+      <h2>待辦</h2>
+      <p>這份筆記沒有記下待辦事項。</p>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

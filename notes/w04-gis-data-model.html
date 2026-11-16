@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W04 筆記：GIS 資料模型、OpenGIS、Map API · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
+</head>
+<body data-id="w04-note-gis-data-model">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>Geospatial data is traditionally divided into two great classes, raster and vector.</li>
+        <li>OSM：<u><strong><em>volunteered geographic information, VGI</em></strong></u>；node, way, and relation；key: value pairs</li>
+        <li>WMS: image; WFS: vector; WMTS: 利用圖磚讓效能提升很多</li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <p><em>原筆記中的截圖沒有隨文字匯出，以下只整理文字部分。</em></p>
+
+      <h3>GIS Design</h3>
+      <p>The system life-cycle regarding the GIS design</p>
+      <ul>
+        <li>Initial study (demand)</li><li>data model</li><li>System analysis</li><li>System design</li><li>System implementation</li><li>System maintenance</li>
+      </ul>
+
+      <h3>Spatial data/ Geodata</h3>
+      <p>Geospatial data is traditionally divided into two great classes, raster and vector.</p>
+      <p>Traditionally, systems have tended to specialize in one or other of these classes; therefore, translation between them (rasterization for vector-to-raster and vectorization for raster-to-vector has been a thorny problem.</p>
+
+      <h3>Raster</h3>
+      <p>raster data is structured as <strong>an array or grid of cells</strong>, referred to as pixels (picture elements). Each cell in a raster is addressed by its position in the array (row and column number). A point may be represented by a single cell, an arc by a sequence of neighboring cells and a connected area by a collection of contiguous cells. Pixel value stands for the value of the pixel.</p>
+      <ul><li>There are two types of raster data: continuous (e.g., elevation measurements) and discrete (e.g., thematic data, raster land use data).</li></ul>
+
+      <h3>Vector</h3>
+      <p>a vector is a finite straight-line segment defined by its end-points.</p>
+      <ul>
+        <li>A point is just given as a coordinate.</li>
+        <li>An arc is discretized as an sequence of straight-line segments;</li>
+        <li>An area is defined in terms of its boundary, represented as a collection of vectors.</li>
+      </ul>
+      <p>The vector data representation is inherently more efficient in its use of computer storage than raster, because only points of interest need be stored.</p>
+      <p>A disadvantage is that vectors assume a hard-edged boundary model of the world that does not always accord with our observations.</p>
+
+      <h3>Shapefile</h3>
+      <p>An ESRI Shapefile is a binary format, not a text format.</p>
+      <p>Each layer can contain only one geometry type, such as points, polylines or polygons.</p>
+
+      <h3>GeoJSON</h3>
+      <p>（原筆記此處為空白）</p>
+
+      <h3>OpenStreetMap (OSM)</h3>
+      <p>OpenStreetMap is a website that uses an open geographic database which is updated and maintained by a community of volunteers via <strong>open collaboration</strong>.</p>
+      <p>OSM was founded in <strong>2004</strong>. It is so called <u><strong><em>volunteered geographic information, VGI</em></strong></u>.</p>
+      <p>A map feature or element is modelled as one of three geometric primitives: <strong>node, way, and relation</strong> (optional). 點、線</p>
+      <p>Attributes are represented by <strong>key: value pairs</strong>.</p>
+      <p>Sequent edits (collaborative editing) are recorded.</p>
+      <p><strong>Overpass turbo</strong></p>
+      <p>Overpass turbo (https://overpass-turbo.eu/) is a web based data mining tool for OpenStreetMap.</p>
+      <p>input: key and value of the wanted object</p>
+      <p><strong>OSM key</strong></p>
+      <p>Category:Key descriptions - OpenStreetMap Wiki</p>
+      <p><strong>Geofabric</strong></p>
+      <p>Download OSM dataset</p>
+      <ul><li>https://www.geofabrik.de/geofabrik/openstreetmap.html</li></ul>
+      <p><strong>heigit.org</strong></p>
+      <p>HeiGIT – Heidelberg Institute for Geoinformation Technology</p>
+
+      <h3>OpenGIS</h3>
+      <p>The <strong>Open Geospatial Consortium (OGC)(開放地理空間協會)</strong> is an international consortium of more than 500 businesses, government agencies, research organizations, and universities driven to make geospatial (location) information and services <strong>FAIR - Findable, Accessible, Interoperable, and Reusable</strong>, and originated in <strong>1994</strong>.</p>
+      <p>https://ogc.org/</p>
+      <p>WMS: image; WFS: vector; WMTS:…</p>
+      <p><strong>Support services (XML-based Open standards)</strong></p>
+      <ul>
+        <li><strong>OGC Web Map Service (WMS)</strong>
+          <ul><li>The WMS service returns geo-registered map images (JPEG, PNG, etc.) from one or more distributed geospatial databases (announced in 2006).</li></ul></li>
+        <li><strong>OGC Web Feature Service (WFS)</strong>
+          <ul><li>The WFS service standard returns geographical features like points, lines and polygons in a geographical file format (announced in 2005).</li></ul></li>
+        <li><strong>OGC Web Map Tile Service (WMTS)</strong>
+          <ul><li>The WMTS standard complements the existing Web Map Service standard of the OGC. For heavy use and high scalability, the OGC has developed the WMTS service standard. It is an area-wide collection of consistently addressable, seamless map image tiles organized in a pyramid with fixed scales. Clients request as many tiles as needed to cover the requested area (announced in 2010).</li>
+          <li>利用圖磚讓效能提升很多</li></ul></li>
+      </ul>
+
+      <h3>Vector Tile</h3>
+      <p>旋轉圖磚的文字與icon保持正向、可以更改字體大小等等</p>
+      <p>圖資本身的解析度會影響zoom in的細緻程度，並非後來有切出不同zoom in level就可以</p>
+      <p><strong>XYZ → Google Maps &amp; OSM</strong></p>
+      <ul>
+        <li><strong>Google Maps and OpenStreetMap</strong> follows this specification. URL is composed of XYZ, such as http://.../Z/X/Y.png. <strong>Z is the zoom level, X and Y are the number of tiles</strong>.
+          <ul><li>Google road map: http://mt0.google.com/vt/lyrs=m&amp;hl=en&amp;x={x}&amp;y={y}&amp;z={z}</li><li>OSM: http://tile.openstreetmap.org/{z}/{x}/{y}.png</li></ul></li>
+      </ul>
+      <p><strong>TMS (Tile Map Service) → 較少使用</strong></p>
+      <ul>
+        <li>Tile Map Service is a specification for tiled web maps, developed by the <strong>Open Source Geospatial Foundation (OSGeo)</strong>.</li>
+        <li>The only difference between XYZ and TMS is that the y-axis is <strong>flipped</strong>. (XY相反)</li>
+      </ul>
+      <p><strong>Map Tiles-Image Pyramid</strong></p>
+      <p>Image Pyramid<br>Zoom level=0~23 level<br>Each tile is 256*256 pixels</p>
+
+      <h3>Google Style</h3>
+      <p>https://mapstyle.withgoogle.com/</p>
+      <p>先設定好color/Icon的設計，F12選vtpb其中一個選定的風格，把https://網址複製起來，修改後丟到QGIS XYZtile的地方connect</p>
+      <p>URL:</p>
+<pre><code class="language-plaintext">https://maps.googleapis.com/maps/vt
+?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256
+!2m3!1e0!2sm!3i802568412
+!3m13!2szh-TW!3sUS!5e18
+!12m5!1e68!2m2!1sset!2sRoadmap!4e2
+!12m3!1e37!2m1!1ssmartmaps!4e0
+!5m2!1e3!5f2
+!23i46991212!23i47054750!23i47083502
+&amp;key=...
+&amp;token=...</code></pre>
+      <p>（原筆記中 <strong>1i{z}!2i{x}!3i{y}!4i256</strong> 為粗體標示）</p>
+
+      <h3>Map API</h3>
+      <p>A Map Application Programming Interface (Map API) is a tool that allows developers to embed interactive maps, geographic data, and location-based features directly into websites or mobile applications.</p>
+      <p><strong>Map rendering and visualization APIs</strong></p>
+      <ul>
+        <li>OpenLayers (https://openlayers.org/)<ul><li>Oldest</li></ul></li>
+        <li>Leaflet (https://leafletjs.com/)</li>
+        <li>MapLibre GL JS (https://maplibre.org/maplibre-gl-js/docs/)</li>
+        <li>Cesium JS</li>
+        <li>Mapbox GL JS (token-based pricing)(https://docs.mapbox.com/mapbox-gl-js/guides/)</li>
+        <li>Google Maps JavaScript API (token-based pricing)(https://developers.google.com/maps/documentation/javascript?hl=en</li>
+        <li>ArcGIS Maps SDK for JavaScript(token-basedpricing)(https://developers.arcgis.com/javascript/latest/)</li>
+      </ul>
+      <p><strong>Spatial analysis and functions APIs</strong></p>
+      <ul>
+        <li><strong>Turf.js</strong> (https://turfjs.org/): GIS operations and for spatial analysis</li>
+        <li>Route planning APIs: <strong>OpenRouteService, Google Routes API</strong></li>
+        <li>Geocoding APIs: <strong>Nominatim(地名資料庫), Google Geocoding API, Mapbox geocoding</strong></li>
+      </ul>
+
+      <h2>疑問與解答</h2>
+      <p>這份筆記沒有記下疑問。</p>
+
+      <h2>待辦</h2>
+      <p>這份筆記沒有記下待辦事項。</p>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>
