@@ -2,12 +2,16 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範在元素「裡面的最前面」插入內容：prepend()。
+         （同一組方法還有 append 加在最後、before / after 加在元素外面） -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
     </script> 
     <script>
+    // 【說明】i、j 是計數器，放在 head 的 script 裡當全域變數，按鈕每按一次就加 1。
     var i=2,j=1;
     </script>    
   </head>
@@ -15,10 +19,14 @@
     <script>        
       $(function(){                    //$(document).ready(function(){ });
         $("#b1").click(function(){
+          // 【說明】prepend(字串)：把文字插到 #para1 內容的最前面 → 按一次變成 "para2para1"，再按變成 "para3para2para1"。
           $("#para1").prepend("para"+i); 
+          // 【說明】i++ 等於 i = i + 1。
           i++;        
         });
         $("#b2").click(function(){
+          // 【說明】prepend 的內容也可以是 HTML 字串：這裡新增一個 <li> 元素到清單最上面。
+          //   把 prepend 改成 append，新項目就會加在最下面。
           $("#ul1").prepend("<li> Dept. of para"+j+"</li>");
           j++;          
         });

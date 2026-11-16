@@ -5,15 +5,22 @@
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
   </head>
   <body>
+    <!-- 【說明】這個範例用 for 迴圈計算 1 加到 100。 -->
     <div id="t1">a</div>
     <div id="t2">b</div>
     <div id="t3">c</div>
     <script>  //put your JavaScript here
+      // 【說明】total 從數字 0 開始累加。
+      //   老師提醒：如果改成 let total = ""（空字串），+= 會變成「字串相接」，結果是 "123456…100"。
       let total=0;    // let total="" ; Different!!!
+      // 【說明】這個陣列在範例中沒有用到，可以拿來練習用迴圈處理 t1、t2、t3。
       let idName=['t1','t2','t3']
+      // 【說明】for (初始值; 繼續條件; 每輪結束後做的事)：i 從 1 開始、i <= 100 時繼續、每輪 i 加 1。
       for (let i = 1; i <= 100; i++) {
+          // 【說明】total += i 等於 total = total + i。迴圈結束時 total = 5050。
           total += i ;  //total = total+i;
       }
+      // 【說明】數字 5050 接上 t2、t3 的文字 → t1 顯示 "5050bc"。
       document.getElementById("t1").innerHTML =
       total+document.getElementById("t2").innerHTML+document.getElementById("t3").innerHTML;      
     </script>

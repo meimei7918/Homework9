@@ -2,8 +2,11 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範陣列的建立、新增元素、length、sort、reverse，以及「數字排序」的陷阱。 -->
     <script> //put your JavaScript here
+      // 【說明】字串陣列。老師提示可以再加入 "111" 觀察排序結果。
       let tArrayS1=["1","12","11","110"];  //add "111"
+      // 【說明】數字陣列，內容和上面一樣，但型別是 number。
       let tArrayn1=[1,12,11,110];
     </script>
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
@@ -13,24 +16,37 @@
     <div id="para2"></div>
     <div id="para3"></div>
     <script>  //put your JavaScript here
+      // 【說明】[] 建立空陣列。
       let tArray=[];             //empty array
+      // 【說明】重新指定成三個元素的陣列；單引號、雙引號都可以。
       tArray=['a','b','c'];   //tArray=["a","b","c"];
+      // 【說明】陣列可以分成多行寫，方便閱讀。
       let tArray2= [ 
           'e', 'f', 'g'      
       ];
+      // 【說明】直接指定索引 3（第 4 個位置）加入 'i'。索引從 0 開始，所以 e=0、f=1、g=2、i=3。
       tArray2[3]='i';
+      // 【說明】push 把元素加到最後 → ['e','f','g','i','k']。
       tArray2.push("k"); 
+      // 【說明】pop 會移除最後一個元素，打開這行可以比較 length 的變化。
       //tArray2.pop();  // remove the last element
+      // 【說明】sort() 預設把元素當「字串」依字元逐一比較 → ["1","11","110","12"]。
       tArrayS1.sort();
+      // 【說明】length 是元素個數 → 5。
       document.getElementById("para1").innerHTML ="tArray2.length: " + tArray2.length;
       document.getElementById("para2").innerHTML ="tArrayS1: " +tArrayS1;     
+      // 【說明】reverse() 把順序反過來，會直接改動原陣列。
       tArrayS1.reverse();
       document.getElementById("para3").innerHTML ="tArrayS1's reverse: " +tArrayS1;
+      // 【說明】注意：Console 印出陣列時是「參考」，展開時可能已經看到排序後的結果。
       console.log("tArrayn1:",tArrayn1);
+      // 【說明】數字陣列直接 sort() 也是當字串比 → [1, 11, 110, 12]，不是由小到大！
       console.log("tArrayn1_sort:",tArrayn1.sort());
+      // 【說明】要正確排序數字，給 sort 一個比較函式：回傳 a - b 為負數時 a 排前面 → [1, 11, 12, 110]。
       console.log("tArrayn1_sort_fn:",tArrayn1.sort(
         function (a, b) 
         { 
+          // 【說明】印出 a 的型別，可以確認比較函式拿到的是 number。
           console.log(typeof(a));
           return a - b;
         }));

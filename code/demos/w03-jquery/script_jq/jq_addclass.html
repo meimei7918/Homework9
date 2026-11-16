@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範用 jQuery 切換 class：addClass、toggleClass。樣式先寫在 <style> 裡，jQuery 只負責加上或移除 class 名稱。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -10,6 +12,7 @@
     <style>
     .style1 {
         font-weight: bold;
+        /* 【說明】注意：font-size 的值缺少單位（應寫 20px），瀏覽器會把這行當成無效而忽略。 */
         font-size: 20;
         color:red;
     }
@@ -22,7 +25,10 @@
     <script>   
       $(function(){                    //$(document).ready(function(){ });
         $("button").click(function(){
+            // 【說明】選擇器可以用逗號同時選多個元素。addClass：加上 style1 → 粗體紅字。再按也只是重複加上，不會有變化。
             $("#para1, #para2").addClass("style1");
+            // 【說明】toggleClass：有就移除、沒有就加上。每按一次，input 和 ul 就在綠字與原本顏色之間切換。
+            //   另外還有 removeClass() 可以直接移除。
             $("input, ul").toggleClass("style2");
         });
       });

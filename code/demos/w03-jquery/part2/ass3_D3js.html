@@ -2,6 +2,9 @@
 <meta charset="utf-8">
 <style>
 
+/* 【說明】這個範例用 D3.js v3 畫圓餅圖，並用單選鈕切換兩組資料（Apples / Oranges）。
+   D3 不是現成的圖表，而是把資料「綁定」到 SVG 元素上自己畫，彈性最大也最難。
+   注意：這是 v3 的語法，新版 D3（v4 以後）的函式名稱不同，例如 d3.scale.category20 改成 d3.scaleOrdinal。 */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: auto;
@@ -20,6 +23,7 @@ form {
 }
 
 </style>
+<!-- 【說明】右上角的切換表單，用 CSS 的 position:absolute 定位。 -->
 <form>
   <label><input type="radio" name="dataset" value="apples" checked> Apples</label>
   <label><input type="radio" name="dataset" value="oranges"> Oranges</label>
@@ -27,18 +31,22 @@ form {
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script>
 
+// 【說明】畫布寬 960、高 500；圓餅半徑取寬高中較小者的一半 = 250。
 var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2;
 
+// 【說明】category20：D3 內建的 20 色色盤，依索引給不同顏色。
 var color = d3.scale.category20();
 
+// 【說明】在 body 裡加一個 <svg>，設定大小，再加一個群組 <g> 並移到畫布中央，圓餅圖會以 (0, 0) 為圓心畫在中間。
 var svg = d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height)
             .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+// 【說明】資料：五筆，每筆有 apples 和 oranges 兩個值。oranges 五筆都是 200，所以會切成五等分。
 var data=[
   {'apples': 53245 ,'oranges': 200},
   {'apples': 28479 ,'oranges': 200},
@@ -47,24 +55,30 @@ var data=[
   {'apples': 40245 ,'oranges': 200},
 ];
 
+// 【說明】pie 版面配置：把數值換算成每一塊的起訖角度。value() 決定用哪個欄位，sort(null) 保持原本順序。
 var pie = d3.layout.pie().value(function(d) { return d.apples; }).sort(null);
 
+// 【說明】arc：把角度轉成 SVG 路徑。innerRadius(0) 是實心圓餅；改大一點就變成甜甜圈圖。
 var arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(radius - 20);
             
+// 【說明】D3 的資料綁定三步驟：selectAll("path") 選取（一開始是空的）→ data(pie) 綁定資料 → enter().append("path") 為每筆資料新增一個 path。
 var path = svg.datum(data).selectAll("path")
               .data(pie)
               .enter().append("path")
               .attr("fill", function(d, i) { return color(i); })
               .attr("d", arc);
 
+// 【說明】單選鈕改變時呼叫 change 函式。
 d3.selectAll("input").on("change", change);
 
+// 【說明】載入 2 秒後自動切換到 oranges，示範動態更新；使用者自己點選時會取消這個自動切換。
 var timeout = setTimeout(function() {
   d3.select("input[value=\"oranges\"]").property("checked", true).each(change);
 }, 2000);
 
+// 【說明】change：this.value 是被選的單選鈕的值（apples 或 oranges），用它重新計算角度並重畫每一塊。
 function change() {
   var value = this.value;
   clearTimeout(timeout);

@@ -2,12 +2,18 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 jQuery UI 的自動完成（Autocomplete）：輸入時列出符合的選項。
+         試著在輸入框打「物理」或「研究」。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 【說明】jQuery UI 需要三樣東西：jQuery UI 的 CSS 主題、jQuery、jquery-ui.js。
+         注意：上面已經載入 jQuery 3.4.1，下一行又載入 1.12.4，後載入的會取代前面的 $，實際使用的是 1.12.4。
+         老師標註「remember to modify it」：第二個 style.css 是 jQuery UI 官網示範頁的樣式，自己的專案可以拿掉或換成自己的。 -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> <!--remember to modify it-->
     <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">  <!--remember to modify it-->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -16,6 +22,7 @@
   <body>
     <script> <!--put your JavaScript here-->       
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】候選清單是一個字串陣列。實際專案也可以改成從伺服器（AJAX）取得。
         var availableTags = [
           "數學系",
           "物理學系",
@@ -28,9 +35,13 @@
           "天文物理研究所",
           "應用物理學研究所"
         ];
+        // 【說明】對輸入框呼叫 autocomplete(設定)。
         $("#tags").autocomplete({
+          // 【說明】source：候選資料來源。
           source: availableTags,
+          // 【說明】minLength：至少輸入幾個字才開始顯示建議（jQuery UI 的預設值其實是 1，這裡設成 2）。
           minLength: 2,        //default
+          // 【說明】response：搜尋完成、選單顯示之前觸發，這裡印出目前輸入的文字。
           response: function () {
             console.log($("#tags").val());
           }          

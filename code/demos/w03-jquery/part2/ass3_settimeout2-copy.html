@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這是 ass3_settimeout2.html 的修正版（原檔名為「ass3_settimeout2 - 複製.html」）。
+         修正了兩個問題：連按 b3 會重複開計時器、第二個計時器停不掉。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->    
@@ -30,6 +33,7 @@
         });
         
         function tTimer() {
+            // 【說明】console.log 用來確認 tTimer 被呼叫了幾次，打開 Console 觀察。
             console.log('33333');
             var d = new Date();
             var h=d.getHours();
@@ -39,16 +43,20 @@
             $("#para1").text(timeString);
         }
         var setIntent;
+        // 【說明】多宣告一個變數 a，用來存第二個計時器的編號。
         var a;
         $("#b3").click(function(){
+            // 【說明】開新計時器之前先 clearInterval 清掉舊的，連按 b3 也只會有一個計時器在跑。
             clearInterval(setIntent);
             setIntent=setInterval(tTimer, 1000);
         });
         $("#b4").click(function(){
+            // 【說明】b4 把兩個計時器都停掉。
             clearTimeout(setIntent);
             clearTimeout(a);
         });
         $("#b3").click(function(){
+            // 【說明】第二個計時器同樣先清掉舊的，並把編號存進 a。
             clearInterval(a);
             a=setInterval(function() {
             var d = new Date();

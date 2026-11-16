@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例用 typeof 列出各種值的資料型別，結果依序顯示在網頁上。 -->
     <script> //put your JavaScript here
       let m=100;          
     </script>
@@ -10,19 +11,28 @@
   <body>
     <p id="para1"></p>
     <script>  //put your JavaScript here
+      // 【說明】n 沒有給值 → undefined。
       let n;
+      // 【說明】p 是空字串 → 型別仍然是 string（空字串不等於 undefined）。
       let p="";
       let tArray=['a','b','c'];      
+      // 【說明】用 + 把每個結果和換行 <br> 串成一個長字串，再一次放進 innerHTML。
       document.getElementById("para1").innerHTML =
+        // 【說明】typeof 0 和 typeof (0) 一樣，括號可有可無 → number。
         typeof 0 + "<br />" + 
         typeof (0) + "<br>" +
+        // 【說明】用雙引號或單引號包起來的都是字串 → string，即使內容是數字。
         typeof "0" + "<br>" +
         typeof '6' + "<br>" +
+        // 【說明】小數也是 number，JavaScript 不分整數和浮點數。
         typeof 10.55 + "<br>" +
         typeof (1) + "<br>" +
+        // 【說明】先算 1 + 2 = 3，再取型別 → number。
         typeof (1 + 2) + "<br>" +
+        // 【說明】陣列的 typeof 是 object（要判斷是不是陣列，可用 Array.isArray(tArray)）。
         typeof  tArray + "<br>" +
         typeof  m + "<br>" +        
+        // 【說明】n → undefined；p → string。
         typeof  n + "<br>" +
         typeof  p + "<br>";
     </script>

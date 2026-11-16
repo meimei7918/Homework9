@@ -13,6 +13,7 @@
     <!--Openlayers-->
     <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css"> 
+    <!-- 【說明】這個範例示範點擊捷運站時，彈出一個小表格顯示站名、經緯度、類型。 -->
     <style>
       html,body{
         margin: 0px;
@@ -23,6 +24,7 @@
         height: 600px;
         width: 100%;
       }
+      /* 【說明】.info：彈出視窗的樣式（白底、紅框）；下面幾條調整裡面表格的間距與表頭顏色。 */
       .info{
         background: #FFF;
         color: #000;
@@ -75,6 +77,7 @@
                     resolutions[z] = size / Math.pow(2, z);
                     matrixIds[z] = z;
                 }
+                // 【說明】baseLayers：四個底圖，對應下拉選單。
                 let baseLayers=[                //Basemaps
                   new ol.layer.Tile({           //Google
                     visible:false,
@@ -94,6 +97,7 @@
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                        // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                         url: 'https://maps.nlsc.gov.tw/S_Maps/wmts?',
                         layer: 'EMAP',
                         matrixSet: 'GoogleMapsCompatible',
@@ -113,6 +117,7 @@
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'PHOTO2',
                       matrixSet: 'GoogleMapsCompatible',
@@ -129,6 +134,7 @@
                   })
                 ];
 
+                // 【說明】建立地圖物件（底圖、View）。
                 let map = new ol.Map({            //create a OpenLayers Map object  
                   target: 'map',         
                   layers: baseLayers,
@@ -138,10 +144,13 @@
                   })
                 });
 
+                // 【說明】setLayer：切換底圖。所有底圖都已加進地圖，只把第 idx 個設為可見、其他隱藏。
+                //   for…in 走訪陣列時 i 是字串 "0"、"1"…，下拉選單的值也是字串，所以 idx==i 能正確比對。（i 沒有宣告，會變成全域變數）
                 let setLayer=function(idx){
                   for(i in baseLayers)
                     baseLayers[i].setVisible(idx==i);
                 }
+                // 【說明】loadGeoJSON(url)：讀入 GeoJSON 並用紅色圖釘顯示，寫法同 map_geojson.html。
                 let loadGeoJSON=function(url){      //function loadGeoJSON(url){};
                   geojson = new ol.layer.Vector({
                     source: new ol.source.Vector({
@@ -164,16 +173,23 @@
                   map.addLayer(geojson);
                 }
 
+                // 【說明】popup 存目前顯示中的彈出視窗，下次點擊前先移除它。
                 let popup=undefined;
+                // 【說明】singleclick：單擊地圖時觸發（和 click 的差別是：雙擊放大時不會觸發）。evt 裡有點擊位置的資訊。
                 map.on('singleclick', function(evt) {  //triger singleclick, get evt,
+                  // 【說明】forEachFeatureAtPixel：找出點擊的螢幕像素位置上有哪些圖徵；回呼函式 return 第一個找到的 feature。沒點到東西就是 undefined。
                   let feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {  //get feature and layer by evt.pixel
                     return feature;
                   });
+                  // 【說明】注意：typeof 回傳的是字串，typeof(popup) != undefined 永遠成立。這裡等於每次都先移除舊的 popup（移除不存在的也不會出錯），效果正確，但更好的寫法是 if (popup) {...}。
                   if(typeof(popup)!=undefined){
                     map.removeOverlay(popup);
                   }
                   if (feature) {
+                    // 【說明】feature.get('欄位名')：取得 GeoJSON properties 裡的屬性。有 name 才顯示（排除沒有名稱的圖徵）。
                     if(feature.get('name')!=undefined){
+                      // 【說明】ol.Overlay：把一個 HTML 元素「釘」在地圖座標上，地圖移動時會跟著動。
+                      //   element 用 jQuery 動態組出一個 div＞table：表頭一列（key / value），內容四列（名稱、lat、lng、type）。
                       popup = new ol.Overlay({
                         element: $("<div />").addClass('info').append(   //put a table to element parameter
                           $("<table />").addClass('table').append(
@@ -211,13 +227,16 @@
                               )
                             )
                           )
+                        // 【說明】[0]：從 jQuery 物件取出原生的 DOM 元素，因為 ol.Overlay 的 element 需要原生元素。
                         )[0]
                       });
+                      // 【說明】把彈出視窗放在點擊的位置（evt.coordinate 是地圖座標 EPSG:3857），再加到地圖上。
                       popup.setPosition(evt.coordinate);
                       map.addOverlay(popup);
                     }
                   }
                 });
+                // 【說明】等 DOM 建好：先顯示第 1 個底圖（OSM），再監聽下拉選單，選項改變就切換底圖。
                 $(function(){
                   let url=encodeURIComponent('https://sgis.tw/WebGIS/data/metro.geojson');
                   loadGeoJSON('metro.geojson'); // [網站版修改] 原為 sgis.tw 的 proxy.php，改讀同資料夾的 metro.geojson

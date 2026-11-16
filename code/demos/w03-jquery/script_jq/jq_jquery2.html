@@ -2,7 +2,11 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例是「反例」：比較放在 document ready 裡面和外面的差別。
+         執行結果：para1 被隱藏了，para2 卻還在。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,7 +15,11 @@
   <body>
     <div id="para1">1</div>
     <script> 
+      // 【說明】這行「不在」ready 裡面，會立刻執行。但此時 para2（寫在第 19 行附近）還沒被瀏覽器讀到，
+      //   所以 $("#para2") 找不到任何元素，hide() 沒有作用，也不會報錯。
       $("#para2").hide();
+      // 【說明】放在 ready 裡的程式，會等整個 DOM 建好才執行，所以 para1 能被正確隱藏。
+      //   結論：jQuery 程式一律包在 $(function(){ … }) 裡最安全。
       $(function(){              //$(document).ready(function(){ });
         $("#para1").hide();        
       });      

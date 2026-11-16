@@ -2,19 +2,26 @@
 <html>
   <head>
     <title>Pie Chart</title>
+    <!-- 【說明】這個範例用 Chart.js 2.7.2 畫圓餅圖。
+         Chart.bundle.min.js 已經包含 Chart.min.js 的全部內容（再加上日期函式庫），兩個擇一載入即可，這裡重複載入了。 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
   </head>
   <body>
+    <!-- 【說明】圖表畫在 <canvas> 上；外層 div 的寬度決定圖表大小（40% 視窗寬）。 -->
     <div id="canvas-holder" style="width:40%">
       <canvas id="chart-area"></canvas>
     </div>    
     <script>
+      // 【說明】config：圖表的所有設定都放在這個物件裡。
       var config = {
+        // 【說明】type：圖表種類，pie 是圓餅圖。改成 'bar'（長條）、'line'（折線）、'doughnut'（甜甜圈）就能換圖。
         type: 'pie',
         data: {
+          // 【說明】datasets：資料組（可以有多組），每組有 data（數值）與 backgroundColor（每一塊的顏色）。
           datasets: [{
             data: [
+              // 【說明】六個數值，依序對應下面 labels 的六個瀏覽器。
               60,10,5,9,12,4
             ],
             backgroundColor: [
@@ -27,6 +34,7 @@
             ],
             label: 'Dataset 1'
           }],
+          // 【說明】labels：每一塊的名稱，會顯示在圖例與滑鼠提示中。
           labels: [
             'Chrome',
             'Internet Explorer',
@@ -37,7 +45,9 @@
           ]
         }
       };
+      // 【說明】取得 canvas 的 2D 繪圖環境（context），Chart.js 會畫在上面。
       var ctx = document.getElementById('chart-area').getContext('2d');
+      // 【說明】new Chart(畫布, 設定)：建立並畫出圖表。
       var chart = new Chart(ctx, config);
     </script>
   </body>

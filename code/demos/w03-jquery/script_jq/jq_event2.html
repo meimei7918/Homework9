@@ -2,7 +2,10 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 on() 一次綁多個事件，以及表單欄位的 focus / blur 事件。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,21 +14,26 @@
   <body>
     <script>        
       $(function(){                        //$(document).ready(function(){ });
+        // 【說明】$("div") 選到全部三個 div；on({ 事件名: 函式, … }) 用一個物件同時綁定多個事件。
         $("div").on(
           {
             click: function(){
+                // 【說明】$(this)：被點到的「那一個」div，而不是全部三個。
                 $(this).css("color","red").css("background-color","black");
             },
             dblclick: function(){
                 $(this).css("color","yellow");
             },
+            // 【說明】mouseenter 被老師用 /* */ 註解掉，打開就會在滑鼠移入時跳出對話框。
             /*mouseenter:function(){
                 alert("You entered block3!");
             }*/
           });
+        // 【說明】focus：游標進入輸入框時觸發 → 背景變淺藍。
         $("input").focus(function(){
           $(this).css("background-color", "lightblue");
         });
+        // 【說明】blur：游標離開輸入框時觸發 → 背景改回白色。
         $("input").blur(function(){
           $(this).css("background-color", "#ffffff");
         });
@@ -34,8 +42,10 @@
     Name:
     <input type="text" name="fullname" value="" /><br/>
     Student ID:
+    <!-- 【說明】value 是輸入框的預設值，所以 Student ID 欄位一開始就有文字。 -->
     <input type="text" name="sid" value="student ID" /><br/><br/>
     Password:
+    <!-- 【說明】type="password" 輸入的字會顯示成圓點。 -->
     <input type="password" name="password" value="" /><br/><br/>    
     <div id="block1">blockArea1</div>
     <div id="block2">blockArea2</div>

@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範篩選：filter() 留下符合條件的，not() 留下不符合的。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,7 +13,10 @@
   <body>
     <script>        
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】$("p") 先選到四個 p，再 filter(".a") 只留 class 為 a 的 → p1、p4 被框起來。
         $("p").filter(".a").css({"color": "red", "border": "2px solid red"});  
+        // 【說明】not(".a") 正好相反 → p2、p3。
+        //   其他篩選方法：first()、last()、eq(索引)，例如 $("p").eq(1) 是第 2 個 p。
         //$("p").not(".a").css({"color": "red", "border": "2px solid red"});  
       });
     </script>    

@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範：同一個變數可以先後放入不同型別的資料（JavaScript 是動態型別）。 -->
     <script> //put your JavaScript here
       let m=100;          
     </script>
@@ -10,11 +11,17 @@
   <body>
     <p id="para1">abc</p>
     <script>  //put your JavaScript here      
+      // 【說明】一行宣告多個變數，用逗號分隔。p=15.00 在 JavaScript 裡就是數字 15，整數和小數都屬於 number 型別。
       let x = 10, y = 20, p=15.00;
+      // 【說明】z = 10 + 20 + 100 = 130。
       let z = x + y + m;
+      // 【說明】只宣告不給值，此時 name 是 undefined。
       let name;
+      // 【說明】先放數字 5……
       name=5;      
+      // 【說明】……再改成字串 "chiao"，不會出錯。
       name="chiao";      
+      // 【說明】字串與數字用 + 相接時，數字會自動轉成字串 → The value of z is: 130, Name is: chiao。
       document.getElementById("para1").innerHTML ="The value of z is: " + z + ", Name is: "+ name;
     </script>
   </body>

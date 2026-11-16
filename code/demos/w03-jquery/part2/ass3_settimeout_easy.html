@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例比較 setTimeout（只執行一次）和 setInterval（重複執行）。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->    
@@ -10,15 +12,19 @@
   <body>
     <script> <!--put your JavaScript here-->
       $(function(){                    //$(document).ready(function(){ });
+        // 【說明】i、j 分別記錄兩個方塊的數字。
         var i=0;
         var j=0;
         $("#b1").click(function(){
+          // 【說明】setTimeout(函式, 毫秒)：等 2000 毫秒（2 秒）後「執行一次」。每按一次按鈕，2 秒後數字加 1。
           setTimeout(function(){            
             i++;
             $("#para1").text(i);            
           }, 2000);  //waiting for 2 secs            
         }); 
         $("#b2").click(function(){
+          // 【說明】setInterval(函式, 毫秒)：每 2 秒「重複執行」，不會自己停。
+          //   每按一次就多開一個計時器，按越多次數字跳得越快。要停止需要 clearInterval（見 ass3_settimeout.html）。
           setInterval(function(){            
             j++;
             $("#para2").text(j);            

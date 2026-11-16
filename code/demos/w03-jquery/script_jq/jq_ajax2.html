@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例和 jq_ajax1.html 一樣送出 AJAX 請求，差別是要求伺服器回傳 JSON 並取出裡面的值。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -15,9 +17,13 @@
           url: 'https://demo.chiaoling.com/ajax002.php?demo=1&b=2',    //relative or absolute paths based on http
           type: 'POST',                              //method
           data:{id:123},                             //send 
+          // 【說明】dataType:'json'：告訴 jQuery 回應是 JSON，它會自動用 JSON.parse 轉成物件，success 拿到的就是物件。
           dataType:'json',                           // receive json
           success: function(result) {
+              // 【說明】先把整個物件印在 Console，展開看伺服器回傳了哪些資料。
               console.log(result);  
+              // 【說明】result.GET.demo：取出物件中 GET 裡的 demo（網址上的 demo=1）。
+              //   也可以用中括號寫成 result['GET']['demo']，兩者相同。
               $('#para1').text(result.GET.demo);    //result['GET']['demo']
           },
           error: function(){

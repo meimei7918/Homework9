@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- 【說明】這個範例比較 CSS 的五種 position：static、relative、fixed、absolute、sticky。
+         建議把視窗縮小、上下捲動頁面，觀察每個方塊怎麼移動。 -->
     <title>This is Chiao-Ling's Webpage</title>
     <style>    
     #deptHeader {
@@ -9,19 +11,26 @@
       padding: 40px;
       text-align: center;
     }    
+    /* 【說明】div.dept：class 為 dept 的 div 元素。 */
     div.dept {
+      /* 【說明】static 是預設值：照正常順序排版，top / left 等屬性對它無效。 */
       position: static; /*default*/
       background-color: tomato;
       color: white;
       padding: 10px;
     }
     div.course {
+      /* 【說明】relative：相對於「自己原本的位置」偏移，原本的空間仍會保留。
+         把下一行的 left:100px 打開，看它往右移 100px。 */
       position: relative; 
       /*left:100px;*/
       background-color: rgb(100, 99, 71);
       color: white;
     }
     div.society {
+      /* 【說明】fixed：相對於「瀏覽器視窗」固定，捲動頁面也不會動。
+         top / bottom / left / right 同時設定時，元素會被撐開到這四條邊界之間。
+         兩個 society 方塊位置相同，所以會完全疊在一起，只看得到後面那個（Chorus）。 */
       position: fixed;
       top: 250px;
       bottom: 0;
@@ -33,6 +42,7 @@
     }
     
     div.dorm {
+      /* 【說明】dorm 設成 relative，它就成為裡面 absolute 子元素的「定位基準」。 */
       position: relative;
       left:200px;
       width: 400px;
@@ -40,6 +50,8 @@
       border: 3px solid #73AD21;        
     }
     div.maledorm {
+      /* 【說明】absolute：相對於「最近一個 position 不是 static 的祖先」定位，這裡就是 dorm。
+         top:80px、right:0 → 貼齊 dorm 的右邊、距離上緣 80px。 */
       position: absolute;
       top: 80px;
       right: 0;
@@ -48,6 +60,7 @@
       border: 3px solid #73AD21;     
     }
     div.femaledorm {
+      /* 【說明】femaledorm 只設了 top，沒設 left / right，所以水平位置留在它原本該出現的地方（左側）。 */
       position: absolute;
       top: 80px;
       /*right: 0;*/
@@ -58,6 +71,7 @@
     
     div.sticky {
       /*position: -webkit-sticky;  /*Safari */
+      /* 【說明】sticky：還沒捲到時像 relative；捲到距離視窗頂端 50px 時就黏住，像 fixed。 */
       position: sticky;
       top: 50px;
       right: 100px;
@@ -68,6 +82,7 @@
   </head>
   <body>
     <h1 id="deptHeader">Departments, NTU</h1>
+    <!-- 【說明】sticky 的方塊放在最上面，往下捲動時會一直停在畫面上方。 -->
     <div class="sticky">Info</div><br />
     <div class="dept">Dept. of Geography</div><br />
     <div class="dept">Dept. of Bioenvironmental Systems Engineering</div><br />
@@ -77,6 +92,7 @@
     <div class="society">Tennis</div><br />
     <div class="society">Chorus</div><br />
     
+    <!-- 【說明】dorm 是外框，maledorm 和 femaledorm 是放在裡面的子元素，示範「relative 父元素＋absolute 子元素」的經典組合。 -->
     <div class="dorm">dorm
       <div class="maledorm">maledorm</div><br />
       <div class="femaledorm">femaledorm</div><br />

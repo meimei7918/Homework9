@@ -2,26 +2,39 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範 JavaScript 可以放的位置，以及 let 的區塊範圍。
+         執行後按 F12 打開 Console 看 console.log 的輸出。
+         位置 1：寫在 <head> 裡的 <script>。這裡宣告的 m，後面 body 裡的程式也能用。 -->
     <script>   //put your JavaScript here
       let m=100;      
     </script>
+    <!-- 【說明】位置 2：用 <script src="…"> 載入外部 .js 檔（原本載入的檔案不在範例包中）。 -->
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->        
   </head>
   <body>
     <p id="para1"></p>
+    <!-- 【說明】位置 3：寫在 <body> 裡。放在 <p id="para1"> 之後，執行時這個元素已經存在，才抓得到。 -->
     <script>  //put your JavaScript here
       let x = 10;
+      // 【說明】大括號 { } 形成一個「區塊」。區塊裡用 let 宣告的 x 是另一個變數，只在區塊內有效。
       {
         let x=0;
+        // 【說明】這裡印出 0（區塊內的 x），不是外面的 10。
         console.log(x);
       }
+      // 【說明】離開區塊後，改的是外面那個 x，現在 x = 20。
       x=20;
       let y = 20;
+      // 【說明】一次宣告兩個變數：a 沒有給值 → undefined；b 指定為 null。
       let a,b=null;
+      // 【說明】z = 20 + 20 + 100 = 140（m 來自 head 裡的 script）。
       let z = x + y + m;
+      // 【說明】直接使用沒宣告過的 c 會出錯（ReferenceError），所以老師把它註解掉。
       //c;    //this is wrong!      
+      // 【說明】getElementById 透過 DOM 找到元素，innerHTML 改變它的內容 → 畫面顯示 The value of z is: 140。
       document.getElementById("para1").innerHTML ="The value of z is: " + z;
       //console.log("z value:",z);
+      // 【說明】typeof(a) 是 "undefined"，typeof(b) 是 "object"（null 的 typeof 是 object，這是 JavaScript 的歷史特例）。
       console.log("a b type:",typeof(a), "b type:",typeof(b));
     </script>
   </body>

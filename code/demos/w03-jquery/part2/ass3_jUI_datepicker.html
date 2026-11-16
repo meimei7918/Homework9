@@ -2,12 +2,17 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 jQuery UI 的日期選擇器（Datepicker）：點輸入框會跳出月曆。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 【說明】jQuery UI 需要三樣東西：jQuery UI 的 CSS 主題、jQuery、jquery-ui.js。
+         注意：上面已經載入 jQuery 3.4.1，下一行又載入 1.12.4，後載入的會取代前面的 $，實際使用的是 1.12.4。
+         老師標註「remember to modify it」：第二個 style.css 是 jQuery UI 官網示範頁的樣式，自己的專案可以拿掉或換成自己的。 -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> <!--remember to modify it-->
     <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css"> <!--remember to modify it-->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -16,14 +21,18 @@
   <body>
     <script> <!--put your JavaScript here-->       
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】最簡單的用法：$("#datepicker").datepicker(); 不帶任何設定。
         //$("#datepicker").datepicker();  prototype
+        // 【說明】用 "setDate" 指令可以設定預設日期。
         //$("#datepicker").datepicker( "setDate" , "7/11/2011" );
+        // 【說明】帶設定物件的用法：onSelect 在使用者選好日期時執行，dateText 是選到的日期字串（預設格式 月/日/年）。
         $("#datepicker").datepicker({
           onSelect: function(dateText) {
             console.log($("#datepicker").val());
             console.log(dateText);
           }
         });/**/
+        // 【說明】按鈕檢查：$.trim() 去掉前後空白，若內容是空的就跳出提醒。這是表單送出前常見的「必填檢查」。
         $('#bt1').click(function(){
            if($.trim($('#datepicker').val()) == ''){
               alert('Input can not be left blank');

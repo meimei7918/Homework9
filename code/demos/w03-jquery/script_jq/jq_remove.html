@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範刪除：remove() 刪掉元素本身，empty() 只清空元素裡面的內容。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,12 +14,18 @@
     <script>       
       $(function(){                    //$(document).ready(function(){ });
         $("#b1").click(function(){
+          // 【說明】和 jq_set.html 一樣：在原本文字後面接上目前時間。Date() 不加 new 會直接回傳時間字串。
           $("#para1").text($("#para1").text()+ " "+ Date()); 
           $("#text1").val("changeValue"); //         
           $("#ul1").attr("style","list-style-type:circle");               
         });
         $("#b2").click(function(){
+          // 【說明】remove()：把整個 ul（連同裡面的 li）從 DOM 刪除，之後再按 press me 也改不到它了。
+          //   行尾註解示範 remove 也能帶篩選條件：$("div").remove("#para1") 只刪掉 div 中 id 為 para1 的那個。
           $("#ul1").remove();  //$("div").remove("#para1"); 
+          // 【說明】empty()：清空元素的子內容，但元素本身留著。
+          //   注意：empty() 不接受參數，括號裡的選擇器會被忽略，所以頁面上「所有」div 都會被清空。
+          //   若只想清空 para1、para2，應寫成 $("#para1, #para2").empty()。
           $("div").empty("#para1, #para2");             
         });
       });

@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- 【說明】這個範例示範「行內樣式」：把 CSS 直接寫在元素的 style 屬性裡，格式是 style="屬性:值;"。
+         同時也複習 HTML 的文字格式標籤（del、b、em、mark、sup、ins、sub）。 -->
     <title>This is Chiao-Ling's Webpage</title>
     <!-- Write comments here -->
   </head>
   <body>
+    <!-- 【說明】span 是行內元素，兩個 span 會排在同一行。
+         第一個字變紅色（color）；第二個字放大到 50px（font-size），並用 <del> 加上刪除線。 -->
     <span style="color:red;">1</span><span style="font-size:50px;"><del>2</del></span>
+    <!-- 【說明】外層 p 設紅色、內層 b 設綠色：內層自己的樣式會蓋過從外層「繼承」來的顏色，所以 a 是綠的。 -->
     <p style="color:red;"><b style="color:green;">a</b></p>
+    <!-- 【說明】background-color 設定背景色。注意原始碼裡的換行和多個空白，在一般元素中會被瀏覽器合併成一個空白。 -->
     <p style="background-color:pink;">b 
        c
     </p>
+    <!-- 【說明】<pre> 會完整保留空白與換行（和上面的 p 對照）。
+         裡面示範：em 強調（斜體）、mark 螢光標記、sup 上標、ins 插入（底線）、sub 下標。 -->
     <pre>
       Never underestimate your <em>power</em> to change <mark>yourself</mark>!
       ~~~
       <sup>I</sup> feel <ins>strongly</ins> that I can make <sub>it</sub>      
     </pre>
+    <!-- 【說明】div 是區塊元素，每個 div 都會獨佔一行。
+         font-family 設字型；text-align:right 讓文字靠右對齊。 -->
     <div style="font-family:verdana;">m</div><div style="text-align:right;">n</div>
   </body>
 </html>

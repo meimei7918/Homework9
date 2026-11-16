@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範 if / else 條件判斷，以及邏輯運算子 ||（或）。 -->
     <script> //put your JavaScript here              
     </script>
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
@@ -10,13 +11,18 @@
     <div id="para1"></div>
     <div id="para2"></div>    
     <script>  //put your JavaScript here
+      // 【說明】宣告兩個變數：age 先是 undefined，text 為 null。
       let age,text=null;
       age=20;
+      // 【說明】|| 代表「或」：年齡小於 18「或」大於 150，其中一個成立就進入 if。
+      //   if / else 底下只有一行時可以省略大括號，但多於一行一定要加 { }，建議一律加。
       if (age < 18 || age > 150) 
           text = "You can not vote!!";
+      // 【說明】條件不成立時執行 else。age 是 20，所以 text = "You can vote!"。
       else
           text = "You can vote!";
       
+      // 【說明】結果寫進 id 為 para2 的 div（para1 沒有用到）。
       document.getElementById("para2").innerHTML =text;      
     </script>
   </body>

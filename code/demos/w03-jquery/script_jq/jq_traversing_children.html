@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 DOM 走訪「往下」找子孫：children 與 find。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,12 +13,19 @@
   <body>
     <script>       
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】children()：只找「下一層」直接子元素。$("div") 會選到 block1 和 block2 兩個 div。
         //$("div").children().css({"color": "red", "border": "2px solid red"});
+        // 【說明】children("pre#pre1")：在直接子元素中篩選出 id 為 pre1 的 pre。
         //$("div").children("pre#pre1").css({"color": "red", "border": "2px solid red"});  
+        // 【說明】find('pre')：往下搜尋「所有層級」的子孫，找出其中的 pre → 兩個 pre 都被框起來。
+        //   find() 一定要給選擇器，children() 可以不給。
         $("div").find('pre').css({"color": "red", "border": "2px solid red"});   
+        // 【說明】find('*')：選到 div 底下所有子孫元素（包含 pre 裡的 em、sup、ins）。
         //$("div").find('*').css({"color": "red", "border": "2px solid red"});   
       });
     </script>    
+    <!-- 【說明】下面這張表單只是用來產生一棵有層次的 DOM 樹，讓走訪方法有東西可以找。
+         action 指向的 /processing.php 不存在，按 Submit 會出現 404，屬正常現象。 -->
     <form action="/processing.php" method="post">
       Name:
       <input type="text" name="fullname" value="" /><br/>
@@ -48,6 +57,7 @@
       <pre id='pre1'>
         Never underestimate your <em>power</em> to change yourself!
         ~~~       
+      <!-- 【說明】結束標籤不能有屬性，這裡的 id='pre2' 會被瀏覽器忽略。 -->
       </pre id='pre2'>
       <pre>
         <sup>I</sup> feel <ins>strongly</ins> that I can make it      

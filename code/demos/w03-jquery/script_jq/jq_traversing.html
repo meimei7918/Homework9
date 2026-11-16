@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 DOM 走訪「往上」找祖先：parent、parents、parentsUntil。
+         可以一次只打開一行，比較紅框框住的範圍。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,12 +14,19 @@
   <body>
     <script>   
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】parent()：只找「上一層」父元素 → 框住 <select>。
         //$("option").parent().css({"color": "red", "border": "2px solid red"});
+        // 【說明】parents()：一路往上找「所有」祖先，直到 <html> → 整頁幾乎都被框起來。
         //$("option").parents().css({"color": "red", "border": "2px solid red"});  //html 
+        // 【說明】parents('form')：在所有祖先中只留下 form。
         //$("option").parents('form').css({"color": "red", "border": "2px solid red"});    //specific element
+        // 【說明】parentsUntil('form')：從父元素往上找，到 form「之前」停止（不含 form）。
+        //   這份 HTML 中 option 和 form 之間只有 select，所以框住的是 select。
         $("option").parentsUntil('form').css({"color": "red", "border": "2px solid red"});   //between a <option> and a <form> element
       });
     </script>    
+    <!-- 【說明】下面這張表單只是用來產生一棵有層次的 DOM 樹，讓走訪方法有東西可以找。
+         action 指向的 /processing.php 不存在，按 Submit 會出現 404，屬正常現象。 -->
     <form action="/processing.php" method="post">
       Name:
       <input type="text" name="fullname" value="" /><br/>
@@ -28,6 +38,7 @@
       <input type="radio" name="gender" value="male" checked /> Male<br/>
       <input type="radio" name="gender" value="female" /> Female<br/><br/>
       Grade:<br/>
+      <!-- 【說明】multiple 允許多選（按住 Ctrl / Cmd 點選）；size="3" 顯示 3 行高。 -->
       <select name="grade" size="3" multiple>
         <option value="freshman">freshman</option>
         <option value="sophomore">sophomore</option>
@@ -38,6 +49,7 @@
       <input type="checkbox" name="subject1" value="WebGIS" />WebGIS<br>
       <input type="checkbox" name="sebject2" value="Statistics" /> Statistics<br/><br/>      
       Comments:<br/>
+      <!-- 【說明】textarea 的預設文字寫在開始和結束標籤之間，裡面的換行和空白都會保留。 -->
       <textarea name="opinion" rows="5" cols="30">Please write down your comments here.
       </textarea>
       <br><br>

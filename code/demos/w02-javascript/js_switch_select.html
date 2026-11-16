@@ -2,12 +2,16 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例把 switch 和下拉選單結合：選了第幾個選項就顯示對應年級。
+         實際執行會發現不管選哪個都顯示 graduate，原因寫在下面的 switch 那一行。 -->
     <script> //put your JavaScript here              
     </script>
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
   </head>
   <body>
     <div id="t1"></div>
+    <!-- 【說明】size="4" 讓 select 顯示成 4 行高的清單，而不是下拉選單。
+         <option> 沒有寫 value 時，value 就是它的文字（"1"、"2"…，是字串）。 -->
     <select name="tselect" id="tselect" size="4" >
         <option>1</option>
         <option>2</option>
@@ -15,11 +19,16 @@
         <option>4</option>
     </select>  
     <script>  //put your JavaScript here  
+      // 【說明】querySelector 用 CSS 選擇器找元素，"#tselect" 等於用 id 找。
       let selectElement = document.querySelector("#tselect");
       let nameOfgrade=null;
       let result = document.querySelector("#t1");
 
+      // 【說明】addEventListener("change", 函式)：選項改變時執行後面的箭頭函式，event 是事件物件。
       selectElement.addEventListener("change", (event) => {                    
+        // 【說明】event.target 是觸發事件的元素（select），.value 是選到的值，型別是「字串」。
+        //   switch 用 === 比較，"1" === 1 為 false，所以所有 case 都對不到，永遠跑到 default。
+        //   修正方法（老師在行尾提示 //Number）：switch (Number(event.target.value)) 或把 case 改成 case "1":。
         switch ((event.target.value)) {  //Number
           case 1:
             nameOfgrade = "freshman";
@@ -36,7 +45,9 @@
           default:
             nameOfgrade = "graduate";      
         }
+        // 【說明】反引號 ` ` 包起來的是「樣板字串」，${變數} 會被代換成變數的值。
         document.getElementById("t1").innerHTML = `You are a ${nameOfgrade} student`;
+        // 【說明】textContent 也能改內容，但只放純文字；innerHTML 會把字串當 HTML 解析。
         // result.textContent= `You are a ${nameOfgrade} student`;
       });
     </script>

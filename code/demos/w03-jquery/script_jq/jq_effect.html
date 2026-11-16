@@ -2,7 +2,10 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 jQuery 特效：hide、show、toggle、slideToggle。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,16 +15,22 @@
     <script>       
       $(function(){                    //$(document).ready(function(){ });
         $("#b1").click(function(){
+          // 【說明】hide(速度)：速度可以是毫秒數（1000 = 1 秒），或 "fast"、"slow"。
+          //   完整寫法是 hide(速度, callback)，callback 是動畫結束後要執行的函式。
           $("#div1").hide(1000);      // 1, "fast", "slow" , hide(speed,callback)
         });
         $("#b2").click(function(){
+          // 【說明】show(100)：0.1 秒內顯示出來。
           $("#div1").show(100); 
         });
         $("#b3").click(function(){
+          // 【說明】toggle()：顯示中就隱藏、隱藏中就顯示。沒給速度就立即切換。
           $("#div2").toggle(); 
         });
+        // 【說明】css() 也可以傳入一個物件，一次設定多個樣式。
         $("#div3").css({"color":"red","background-color":"blue"});
         $("#para1").click(function(){
+          // 【說明】slideToggle()：以「上下滑動」的方式切換顯示 / 隱藏。這裡是點 p 段落觸發。
           $("#div3").slideToggle(); 
         });
       });

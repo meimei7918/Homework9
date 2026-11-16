@@ -2,7 +2,10 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範用選擇器找元素、用 css() 改樣式、用 html() 改內容，以及方法串接。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,13 +15,19 @@
     <div id="para1">para1</div>
     <script>  
       $(function(){                        //$(document).ready(function(){ });
+        // 【說明】jQuery 的方法可以「串接」：css() 回傳的還是同一個 jQuery 物件，所以能接著再 .css()。
+        //   css("屬性", "值") 設定樣式 → 紅字黑底。
         $("#para1").css("color","red").css("background-color","black");        
+        // 【說明】$("button")：標籤選擇器，選到頁面上所有 <button>；.click(函式) 綁定點擊事件。
         $("button").click(function(){
+          // 【說明】.html(值)：把元素內容換成這個值（帶參數是「設值」，不帶參數是「取值」）。
           $("#para2").html(total);        //.html("value")
         });
       });      
+      // 【說明】這幾行在 ready 外面，載入時就執行；按鈕被點時 total 早已算好是 300。
       var total=0;   
       total= sumFunction(100,200);
+      // 【說明】函式宣告會被提升，所以上一行可以先呼叫它。
       function sumFunction(a, b) {
           return a + b;               // return
       }  

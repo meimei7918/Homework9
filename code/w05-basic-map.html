@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
   <title>OpenLayers 範例：基本地圖、底圖、控制項、GeoJSON、Popup · WebGIS 學習站</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
-  <link rel="stylesheet" href="../assets/css/style.css?v=20261116b">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261116c">
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
-  <script src="../assets/js/site.js?v=20261116b" data-root=".." defer></script>
+  <script src="../assets/js/site.js?v=20261116c" data-root=".." defer></script>
 </head>
 <body data-id="w05-code-basic-map">
   <div class="page">
@@ -19,6 +19,10 @@
 
       <h2>這包範例在做什麼</h2>
       <p>老師的 basicMap 範例包，6 個 HTML 一個比一個多一點功能：最小地圖 → 換底圖 → 多底圖切換 → 控制項 → 讀入捷運站 GeoJSON → 點擊捷運站彈出資訊。全部使用 CDN 版的 OpenLayers（<code>ol.js</code>），不需要編譯。</p>
+
+      <div class="callout tip">
+        <p>原始碼裡以 <code>【說明】</code> 開頭的註解是 AI 逐段加上的中文解說；老師原本的英文註解保留不動，程式本身沒有因為加註解而改變。切到「原始碼」就能邊看邊讀。</p>
+      </div>
 
       <h2>範例檔案</h2>
       <div id="demo"></div>
@@ -33,9 +37,9 @@
       <h3>map_Basemap.html：WMTS 的圖磚格網</h3>
       <p>國土測繪中心的 WMTS 要自己算每一層的解析度：以 EPSG:3857 的世界寬度除以 256 得到第 0 層的解析度，之後每層除以 2，並給每層一個 matrixId。算好之後交給 <code>ol.tilegrid.WMTS</code>。這段在 map_control.html、map_geojson.html、map_popup.html 都會重複出現，看懂一次就好。</p>
       <h3>map_control.html：控制項開關</h3>
-      <p>ZoomSlider、ScaleLine、OverviewMap 預設是註解掉的。用「下載整包」到本機，把註解拿掉再打開，就能看到每個控制項的樣子。</p>
+      <p>目前只有 Zoom 是開著的；ZoomSlider、ScaleLine、OverviewMap、MousePosition 都被註解掉了。鷹眼圖（OverviewMap）需要另一組圖層物件，所以檔案裡建了兩組一樣的底圖。用「下載整包」到本機，把註解拿掉再打開，就能看到每個控制項的樣子。</p>
       <h3>map_popup.html：點擊後彈出資訊</h3>
-      <p>點擊時用 <code>map.forEachFeatureAtPixel(evt.pixel, ...)</code> 找出被點到的捷運站，建立 <code>ol.Overlay</code> 放上站名，位置設在 <code>evt.coordinate</code>。每次點擊前先移除上一個 popup，避免疊在一起。</p>
+      <p>點擊時用 <code>map.forEachFeatureAtPixel(evt.pixel, ...)</code> 找出被點到的捷運站，建立 <code>ol.Overlay</code>，用 jQuery 組出一個表格放上站名、經緯度與車站類型，位置設在 <code>evt.coordinate</code>。每次點擊前先移除上一個 popup，避免疊在一起。</p>
 
       <h2>為了在網站上執行所做的修改</h2>
       <ul>
@@ -49,7 +53,7 @@
       <ul class="todo">
         <li>把 map.html 的中心改到臺大（121.5397, 25.0174）、zoom 改成 15</li>
         <li>在 map_Basemap.html 的下拉選單加一個 Google 衛星影像（lyrs=s）選項</li>
-        <li>讓 map_popup.html 的 popup 除了站名，也顯示這個站的經緯度</li>
+        <li>讓 map_popup.html 的 popup 多顯示站點的 <code>id</code>，並在點到空白處時關閉 popup（提示：<code>popup.setPosition(undefined)</code>）</li>
       </ul>
 
       <nav id="pager"></nav>

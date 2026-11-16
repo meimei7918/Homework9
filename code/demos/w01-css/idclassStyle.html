@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- 【說明】這個範例示範「內部樣式表」：把 CSS 寫在 <head> 的 <style> 裡，再用 id 和 class 套用到元素上。 -->
     <title>This is Chiao-Ling's Webpage</title>
     <style>    
+    /* 【說明】#deptHeader：「#」代表 id 選擇器，只會選到 id="deptHeader" 的那一個元素（id 在整頁中必須唯一）。 */
     #deptHeader {
+        /* 【說明】rgba(紅, 綠, 藍, 透明度)：最後一個值 0.5 代表半透明。 */
         background-color: rgba(255, 99, 71, 0.5);
         color: black;
+        /* 【說明】padding：內距，文字和邊框之間的空間。 */
         padding: 40px;
         text-align: center;
     }    
+    /* 【說明】.dept：「.」代表 class 選擇器，所有 class="dept" 的元素都會套用，可以重複使用。 */
     .dept {
+        /* 【說明】tomato 是 CSS 內建的顏色名稱之一。 */
         background-color: tomato;
         color: white;
         padding: 10px;
@@ -17,7 +23,9 @@
     </style>
   </head>
   <body>
+    <!-- 【說明】id 用在只出現一次的元素（頁首標題）。 -->
     <h1 id="deptHeader">Departments, NTU</h1>
+    <!-- 【說明】三個系所標題共用同一個 class，所以樣式只要寫一次。 -->
     <h2 class="dept">Dept. of Geography</h2>
     <h2 class="dept">Dept. of Bioenvironmental Systems Engineering</h2>
     <h2 class="dept">Dept. of Public Health</h2>    

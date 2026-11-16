@@ -2,14 +2,18 @@
 <html lang="zh-TW">
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>    
+    <!-- 【說明】這個範例示範多底圖切換：五個底圖都加進地圖，用下拉選單決定顯示哪一個。
+         引入 jQuery（處理下拉選單事件）。 -->
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     
     <!--bootstrap-->
+    <!-- 【說明】引入 Bootstrap 5（版面格線）。 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         
     <!--Openlayers-->
+    <!-- 【說明】引入 OpenLayers：ol.js（程式）與 ol.css（控制項等樣式）。這是不需要編譯的完整版，所有功能都掛在全域變數 ol 底下。 -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"> 
     <style>  
@@ -19,6 +23,7 @@
         height:100%;
       }
       #map {
+        /* 【說明】地圖固定高 600px。 */
         height: 600px;
         width: 100%;
       }
@@ -33,6 +38,7 @@
             <div id='map_div'>              
               <div id="map"></div>
               <div class='controle-plane'>
+                <!-- 【說明】底圖選單：value 是 baseLayers 陣列的索引。selected 代表預設選 OSM。 -->
                 <select id='layer'>
                   <option value='0'>Google maps</option>
                   <option value='1' selected>OpenStreeMap</option>
@@ -42,20 +48,30 @@
                 </select>
               </div>
               <script>
+                // 【說明】初始中心點的緯度、經度（臺灣中部）。
                 let init_lat=23.62;
                 let init_lng=120.5;
                 
+                // 【說明】WMTS 圖磚格網設定（國土測繪中心的底圖要用）：
+                //   projection：EPSG:3857（Web Mercator），網路地圖的標準投影。
+                //   projectionExtent：EPSG:3857 的世界範圍，約 ±20037508 公尺。
+                //   size：第 0 層的解析度＝世界寬度 ÷ 256 像素 ≈ 156543 公尺／像素。
                 let projection = ol.proj.get('EPSG:3857');
                 let projectionExtent = projection.getExtent();
                 let size = ol.extent.getWidth(projectionExtent) / 256;
                 let resolutions = new Array(20);
                 let matrixIds = new Array(20);
+                // 【說明】依序算出第 0～19 層的解析度：每放大一層，每個像素代表的距離減半（÷ 2^z）。
+                //   matrixIds 是每一層的編號，WMTS 用它組出圖磚網址。
                 for (let z = 0; z < 20; ++z) {
                   resolutions[z] = size / Math.pow(2, z);
                   matrixIds[z] = z;
                 }
                 
+                // 【說明】baseLayers：把五個底圖放進陣列，索引 0～4 對應下拉選單的 value。全部先設 visible:false，之後由 setLayer 決定顯示哪一個。
                 let baseLayers=[                //Basemaps
+                  // 【說明】Google 道路圖（XYZ 圖磚）。{0-3} 讓請求輪流送到 mt0～mt3 四台伺服器；lyrs=m 是道路圖，換成 s 是衛星、y 是衛星＋道路。
+                  //   crossOrigin: 'anonymous' 讓之後可以把地圖匯出成圖片。直接使用 Google 圖磚網址僅適合課堂練習。
                   new ol.layer.Tile({           //Google Maps
                     visible:false,
                     source: new ol.source.XYZ({
@@ -63,6 +79,7 @@
                       url: 'https://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                     })
                   }),
+                  // 【說明】OSM 也可以用 XYZ 的方式接：{a-c} 輪流使用 a、b、c 三台伺服器。
                   new ol.layer.Tile({          //OpenStreeMap
                     visible:false,
                     source: new ol.source.XYZ({
@@ -70,10 +87,14 @@
                       url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
                     })
                   }),
+                  // 【說明】國土測繪中心 WMTS 底圖。
+                  //   url：服務網址；layer：圖層名稱（EMAP 通用電子地圖、PHOTO2 正射影像、LUIMAP 國土利用調查）；
+                  //   matrixSet：GoogleMapsCompatible 代表切法和 Google 相同；tileGrid 用上面算好的解析度與編號。
                   new ol.layer.Tile({          //通用電子地圖
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'EMAP',
                       matrixSet: 'GoogleMapsCompatible',
@@ -88,10 +109,12 @@
                       style: 'default'
                     })
                   }),
+                  // 【說明】正射影像（PHOTO2）：航空照片。設定和通用電子地圖相同，只換 layer 名稱。
                   new ol.layer.Tile({          //正射影像
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'PHOTO2',
                       matrixSet: 'GoogleMapsCompatible',
@@ -106,10 +129,12 @@
                       style: 'default'
                     })
                   }),
+                  // 【說明】國土利用調查（LUIMAP）：土地使用分類圖。
                   new ol.layer.Tile({          //land use
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'LUIMAP',
                       matrixSet: 'GoogleMapsCompatible',
@@ -125,12 +150,15 @@
                     })
                   }),
                 ];
+                // 【說明】setLayer：切換底圖。所有底圖都已加進地圖，只把第 idx 個設為可見、其他隱藏。
+                //   for…in 走訪陣列時 i 是字串 "0"、"1"…，下拉選單的值也是字串，所以 idx==i 能正確比對。（i 沒有宣告，會變成全域變數）
                 let setLayer=function(idx){   
                   for(i in baseLayers)
                     baseLayers[i].setVisible(idx==i);
                 }
                 let map = new ol.Map({            //create a OpenLayers Map object  
                   target: 'map',         
+                  // 【說明】老師保留的最簡單寫法（只放一個 OSM），被註解掉，改用下一行的 baseLayers。
                   /*layers: [
                     new ol.layer.Tile({
                       source: new ol.source.OSM()
@@ -138,10 +166,12 @@
                   ],*/
                   layers:baseLayers,
                   view: new ol.View({
+                    // 【說明】地圖中心：經緯度（EPSG:4326）要轉成地圖的 EPSG:3857 才能使用。注意順序是 [經度, 緯度]。
                     center: ol.proj.transform([init_lng,init_lat],'EPSG:4326','EPSG:3857'),
                     zoom: 8
                   })
                 });
+                // 【說明】等 DOM 建好：先顯示第 1 個底圖（OSM），再監聽下拉選單，選項改變就切換底圖。
                 $(function(){
                   setLayer(1);
                   $('#layer').change(function(i){

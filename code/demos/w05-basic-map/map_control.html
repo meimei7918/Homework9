@@ -2,6 +2,8 @@
 <html lang="zh-TW">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 【說明】這個範例示範地圖控制項（Control）：放大縮小、縮放滑桿、比例尺、鷹眼圖、滑鼠座標。
+         目前只有 Zoom 是開著的，其他都被註解掉，請一個一個打開來看效果。 -->
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -50,16 +52,23 @@
                 let init_lng=120.5;
                 
                 //setting for tile services
+                // 【說明】WMTS 圖磚格網設定（國土測繪中心的底圖要用）：
+                //   projection：EPSG:3857（Web Mercator），網路地圖的標準投影。
+                //   projectionExtent：EPSG:3857 的世界範圍，約 ±20037508 公尺。
+                //   size：第 0 層的解析度＝世界寬度 ÷ 256 像素 ≈ 156543 公尺／像素。
                 let projection = ol.proj.get('EPSG:3857');              //projection
                 let projectionExtent = projection.getExtent();          //projectionExtent
                 let size = ol.extent.getWidth(projectionExtent) / 256;  //size
                 let resolutions = new Array(20);                        //resolutions
                 let matrixIds = new Array(20);                          //matrixIds
+                // 【說明】依序算出第 0～19 層的解析度：每放大一層，每個像素代表的距離減半（÷ 2^z）。
+                //   matrixIds 是每一層的編號，WMTS 用它組出圖磚網址。
                 for (var z = 0; z < 20; ++z) {   
                     resolutions[z] = size / Math.pow(2, z);
                     matrixIds[z] = z;
                 }
                 
+                // 【說明】baseLayers：主地圖用的四個底圖，對應下拉選單 0～3。
                 let baseLayers=[                //Basemaps
                   new ol.layer.Tile({           //Google
                     visible:false,
@@ -79,6 +88,7 @@
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                        // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                         url: 'https://maps.nlsc.gov.tw/S_Maps/wmts?',
                         layer: 'EMAP',
                         matrixSet: 'GoogleMapsCompatible',
@@ -98,6 +108,7 @@
                     visible:false,
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'PHOTO2',
                       matrixSet: 'GoogleMapsCompatible',
@@ -130,6 +141,7 @@
                   new ol.layer.Tile({        //臺灣通用電子地圖
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                        // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                         url: 'https://maps.nlsc.gov.tw/S_Maps/wmts?',
                         layer: 'EMAP',
                         matrixSet: 'GoogleMapsCompatible',
@@ -148,6 +160,7 @@
                   new ol.layer.Tile({          //正射影像
                     extent: projectionExtent,
                     source: new ol.source.WMTS({
+                      // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
                       url: 'https://wmts.nlsc.gov.tw/wmts?',
                       layer: 'PHOTO2',
                       matrixSet: 'GoogleMapsCompatible',
@@ -163,29 +176,41 @@
                     })
                   })
                 ];  ;
+                // 【說明】切換底圖時，主地圖和鷹眼圖（OverVeiwLayers，上面那組另外建立的底圖）一起切換。
+                //   鷹眼圖必須用另一組圖層物件，同一個圖層不能同時放在兩張地圖上。
                 let setLayer=function(idx){
                   for(i in baseLayers){
                     baseLayers[i].setVisible(idx==i);
                     OverVeiwLayers[i].setVisible(idx==i);
                   }
                 }
+                // 【說明】MousePosition：顯示滑鼠所在位置的座標。
+                //   projection: 'EPSG:4326' 顯示經緯度；createStringXY(4) 取到小數 4 位。
                 let mousePositionControl = new ol.control.MousePosition({
                     coordinateFormat: ol.coordinate.createStringXY(4),
                     projection: 'EPSG:4326',                    
                 });/**/
+                // 【說明】my_controls：要放進地圖的控制項陣列。一旦設定 controls，預設的控制項就不會出現，要用的都得自己列出來。
                 let my_controls=[
+                  // 【說明】Zoom：左上角的 + / − 按鈕。
                   new ol.control.Zoom(),                  
+                  // 【說明】ZoomSlider：縮放滑桿。
                   //new ol.control.ZoomSlider(),
+                  // 【說明】ScaleLine：左下角比例尺。
                   //new ol.control.ScaleLine(),
+                  // 【說明】OverviewMap：鷹眼圖（右下角小地圖），layers 指定小地圖用哪些圖層。
                   /*new ol.control.OverviewMap({
                     layers: OverVeiwLayers //[OverVeiwLayers[2]]
                   }),/**/
+                  // 【說明】不帶設定的 MousePosition 會顯示 EPSG:3857 的公尺座標。
                   //new ol.control.MousePosition(),   //default, EPSG:3857
+                  // 【說明】打開這行就會用上面設定好的經緯度版本。
                   //mousePositionControl
                 ];
                 
                 let map = new ol.Map({            //create a OpenLayers Map object  
                   target: 'map',
+                  // 【說明】controls：把控制項陣列交給地圖。
                   controls: my_controls,                  
                   layers:baseLayers,
                   view: new ol.View({
@@ -193,6 +218,7 @@
                     zoom: 8
                   })
                 });
+                // 【說明】等 DOM 建好：先顯示第 1 個底圖（OSM），再監聽下拉選單，選項改變就切換底圖。
                 $(function(){
                   setLayer(1);
                   $('#layer').change(function(i){

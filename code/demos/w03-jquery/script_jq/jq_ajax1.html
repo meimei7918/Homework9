@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 AJAX：不重新整理頁面，在背景向伺服器送出請求，拿到回應後只更新一部分畫面。
+         需要老師的 PHP 伺服器回應；若伺服器沒回應或不允許跨網域，Console 會印出 ajax error。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,20 +14,28 @@
   <body>
     <script>        
       $(function(){                          //$(document).ready(function(){ });
+        // 【說明】$.ajax({ 設定 })：不需要選擇器，直接用 $ 呼叫。
         $.ajax({
+          // 【說明】url：請求的網址。? 後面的 demo=1&b=2 是查詢字串，會以 GET 參數的形式送出。
           url: 'https://demo.chiaoling.com/ajax001.php?demo=1&b=2',    //relative or absolute paths based on http
+          // 【說明】type：HTTP 方法。這裡是 POST，所以下面的 data 會放在請求的 body 裡送出。
           type: 'POST',                              //method
+          // 【說明】data：要送給伺服器的資料，伺服器端（PHP）會收到 id=123。
           data:{id:123},                             //send 
+          // 【說明】success：請求成功時執行，result 是伺服器回傳的內容。
           success: function(result) {
               $('#para1').text(result);
           },
+          // 【說明】error：請求失敗時執行（網路錯誤、伺服器錯誤、跨網域被擋等）。
           error: function(){
              console.log('ajax error');
           }
         });
+        // 【說明】AJAX 是「非同步」的：送出請求後不會停下來等，所以這行 Hello!! 通常會比 success 更早印出。
         console.log("Hello!!");  
       });
     </script>
+    <!-- 【說明】用 <pre> 顯示結果，可以保留伺服器回傳文字的換行格式。 -->
     <pre id="para1">para1</pre> <br/>    
   </body>
 </html>

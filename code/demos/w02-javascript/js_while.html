@@ -5,21 +5,31 @@
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
   </head>
   <body>
+    <!-- 【說明】這個範例比較 while 與 do…while。 -->
     <div id="t1">here 1</div>
     <div id="t2">here 2</div>    
     <script>  //put your JavaScript here
+      // 【說明】老師提醒：改成 total = "" 會變成字串相接，結果完全不同。
       let total=0;    // var total="" ; Different!!!
       let i=0;
+      // 【說明】while：先檢查條件，成立才執行。i 從 0 到 4 → total = 0+1+2+3+4 = 10。
+      //   迴圈結束時 i = 5。
       while (i < 5) {
           total += i ;              //total = total+i;  try i=100;
+          // 【說明】一定要讓 i 改變，否則條件永遠成立，變成無窮迴圈、網頁當掉。
           i++;
       }
+      // 【說明】t1 顯示 10。
       document.getElementById("t1").innerHTML =total;      
+      // 【說明】這行被註解掉了，所以下面的 do…while 會接著用 i = 5、total = 10 繼續。
       //i=0; total=0;
+      // 【說明】do…while：先執行一次再檢查。即使 i = 5 已經不符合 i < 5，也會先做一次 → total = 10 + 5 = 15。
+      //   把上一行的註解拿掉（i=0; total=0;），結果會和 while 一樣是 10。
       do{
           total += i ;              //total = total+i;
           i++;
       }while(i < 5);      
+      // 【說明】t2 顯示 15。
       document.getElementById("t2").innerHTML =total;      
     </script>
   </body>

@@ -1,3 +1,5 @@
+/* 【說明】bar_style.css：導覽列與側邊欄的樣式。
+   側邊欄固定寬 300px，float:left 讓它排在地圖左邊。 */
 #sidebar{
 	width: 300px;
     float: left;
@@ -12,6 +14,7 @@
 	display: inline-block;
 	padding-left: 5px;
 }
+/* 【說明】導覽列左側標題文字：3vh 代表視窗高度的 3%，會隨視窗大小變化。 */
 .navbar-brand {
 	font-family: Microsoft JhengHei;
     font-weight: bold;
@@ -23,6 +26,7 @@
 	font-size: 18px;
 	font-family: Microsoft JhengHei;
 }
+/* 【說明】html、body 高度 100%，地圖才能用百分比高度填滿畫面。 */
 html, body{
 	position: relative;
 	font-family: Microsoft JhengHei;
@@ -32,6 +36,7 @@ html, body{
 #container{
 	position: relative;
 }
+/* 【說明】地圖高度 100%，配合 main.js 算出的 #container 高度。 */
 #map{
     overflow: auto;
     height: 100%;
@@ -51,12 +56,14 @@ html, body{
 	margin: 0px;
     margin-left: 3px;
 }
+/* 【說明】側邊欄收合按鈕的大小。 */
 #btn-hide{
 	font-size: 5px;
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6,.ui-widget {
 	font-family: Microsoft JhengHei;
 }
+/* 【說明】調整 jQuery UI Accordion 內容區的內距，讓側邊欄比較緊湊。 */
 .ui-accordion .ui-accordion-content {
     padding: 0.5em 0.5em;
 }

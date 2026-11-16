@@ -2,6 +2,10 @@
 <html lang='zh-TW'>
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <!-- 【說明】【v3】這是「記帳」小專案，共四個版本，每一版多加一點功能（變更紀錄見 readme.md）。
+         使用 Bootstrap 4 做版面與對話框（modal）。Bootstrap 4 的 JS 需要 jQuery 與 Popper.js，所以要依序載入下面三個 script。
+         這裡載入的是 jQuery「slim」版：去掉了 AJAX 和特效，檔案較小，本專案用不到那些功能。
+         v3 新增：開啟對話框時自動填入目前時間、資料列改成三個 td、存檔後清空輸入框。 -->
     <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css' integrity='sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO' crossorigin='anonymous'>
     <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js' integrity='sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49' crossorigin='anonymous'></script>
@@ -29,6 +33,8 @@
         </table>
       </div>
       <!------------------------------------------------------>
+      <!-- 【說明】Bootstrap 的對話框（modal）。平常是隱藏的，用 $('#dialog1').modal('show') 叫出來。
+           data-dismiss='modal' 的按鈕（右上角 ×、Cancel）不用寫程式就能關閉對話框。 -->
       <div class='modal fade' id='dialog1' tabindex='-1' role='dialog' aria-labelledby='dialog1-title' aria-hidden='true'>
         <div class='modal-dialog modal-dialog-centered' role='document'>
           <div class='modal-content'>
@@ -69,6 +75,8 @@
       </div>
       <!------------------------------------------------------>
       <script>
+        // 【說明】formatDate：把 Date 物件組成「年/月/日 時:分:秒」字串。
+        //   getMonth() 回傳 0～11（一月是 0），所以要 +1。
         function formatDate(date) {
           var Y = date.getFullYear();
           var M = date.getMonth()+1;
@@ -80,16 +88,20 @@
         }
         $(function(){
           $('#addBtn').click(function(){
+            // 【說明】開啟對話框前先把現在時間填進「時間」欄位。
             $('#time').val(formatDate(new Date()));
             $('#dialog1').modal('show');
           });
           $('#saveBtn').click(function(){
             
             //get value
+            // 【說明】Date.parse(字串)：把時間字串轉成毫秒數（從 1970/1/1 起算），之後可以拿來比較先後。
+            //   「2026/11/16 9:5:3」這種格式不是標準格式，但主流瀏覽器都能解析。
             var time=Date.parse($('#time').val());
             var cost=$('#cost').val();
             var note=$('#note').val();
 
+            // 【說明】每個值包成一個 td，用 .append() 串接三次。new Date(毫秒) 再轉回 Date 物件，交給 formatDate 顯示。
             //append a tr
             $('#table1').append(
               $('<tr />').append($('<td />').html(formatDate(new Date(time))))
@@ -99,6 +111,7 @@
             //hide dialog
             $('#dialog1').modal('hide');
 
+            // 【說明】存檔後把三個欄位清空，下次開啟時是乾淨的。
             //clear input/textarea
             $('#time').val('');
             $('#cost').val('');

@@ -2,18 +2,26 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範引入 jQuery 的兩種方式，以及 document ready。 -->
     <!--include jQuery-->
+    <!-- 【說明】方式 1：把 jquery.min.js 下載到同一個資料夾，當本機檔載入（這裡被註解掉，範例包也沒有附這個檔）。 -->
     <!--<script src="jquery.min.js"></script>-->      <!--Way 1-->
+    <!-- 【說明】方式 2：引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
     </script>                                         <!--Way 2-->     
   </head>
   <body>
+    <!-- 【說明】這個 div 的內容是「1」，載入後會被 jQuery 隱藏，所以畫面上是空白的。 -->
     <div id="para1">1</div>
     <script> 
+      // 【說明】$(function(){ … }) 是 $(document).ready(function(){ … }) 的簡寫：等 DOM 建好才執行裡面的程式。
       $(function(){         //$(document).ready(function(){ }); abbreviate (document).ready
+        // 【說明】$("#para1")：用 CSS 選擇器找到 id 為 para1 的元素；.hide() 把它隱藏（設成 display:none）。
         $("#para1").hide();  
+        // 【說明】$ 就是 jQuery 函式本身，這行和上一行完全相同。
         //jQuery("#para1").hide();        
       });      
     </script>    

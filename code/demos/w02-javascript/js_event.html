@@ -5,28 +5,37 @@
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
   </head>
   <body>
+    <!-- 【說明】這個範例示範事件：使用者做了某件事（點擊、滑鼠移入）時執行程式。 -->
     <div id="t1" style="color: red;">t1</div>
     <div id="t2" style="color: green;">t2</div>
+    <!-- 【說明】onmouseover：滑鼠移進來時把背景變紅；onmouseout：移出時改回白色。
+         this 代表觸發事件的元素本身（這個 div）。 -->
     <div id="t3" style="color: blue;" 
          onmouseover="this.style.backgroundColor='red'"
          onmouseout="this.style.backgroundColor='white'">t3</div>    
     <script>  //put your JavaScript here
       let total=0;    
       
+      // 【說明】用函式運算式定義加總函式。
       let sumFunction= function (a, b) {
           return a + b;               // return
       }      
+      // 【說明】這個函式除了 return 結果，還會直接把結果寫進 t2（函式可以同時「改畫面」又「回傳值」）。
       let gradeFunction=function (a) {
           document.getElementById('t2').innerHTML = Math.round(Math.sqrt(a)*10)
           return Math.round(Math.sqrt(a)*10);
       } 
       
+      // 【說明】頁面載入時就先算好：total = 300、gradeFinal = 89（同時 t2 被改成 89）。
       total= sumFunction(100,200);
       let gradeFinal=gradeFunction(80);
                  
     </script>
+    <!-- 【說明】按鈕 1：onclick 裡直接寫一段程式，把 t1 改成 total（300）。 -->
     <button onclick="document.getElementById('t1').innerHTML = total ">What is the total?</button>
+    <!-- 【說明】按鈕 2：this 是按鈕自己，點了之後按鈕上的文字變成 89。 -->
     <button onclick="this.innerHTML = gradeFinal ">What is the grade?</button>
+    <!-- 【說明】按鈕 3：呼叫函式並傳入 100 → √100 × 10 = 100，t2 變成 100。 -->
     <button onclick="gradeFunction(100) ">What is the grade?</button>
   </body>
 </html>

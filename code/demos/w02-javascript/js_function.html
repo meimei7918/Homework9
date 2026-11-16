@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範兩種定義函式的方法：函式宣告（function name(){}）與函式運算式（let name = function(){}）。 -->
     <script> //put your JavaScript here          
     </script>
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
@@ -12,16 +13,24 @@
     <div id="t3"></div>
     <script>  
       let total=0;    
+      // 【說明】sumFunction 定義在下面第 22 行，卻能在這裡先呼叫，因為「函式宣告」會被提升（hoisting）到最前面。
+      //   total = 100 + 200 = 300。
       total= sumFunction(100,200);
 
+      // 【說明】函式運算式：把一個沒有名字的函式指定給變數。這種寫法「不會」被提升，要先定義才能呼叫。
       let gradeFunction=function (a) {
+          // 【說明】Math.sqrt 開根號、Math.round 四捨五入。√80 ≈ 8.944，× 10 ≈ 89.44 → 89。
+          //   return 把結果回傳給呼叫的地方。
           return Math.round(Math.sqrt(a)*10);             // return
       }
 
+      // 【說明】呼叫 gradeFunction(80)，結果 89 存進 gradeFinal。
       let gradeFinal=gradeFunction(80);
+      // 【說明】函式宣告：a、b 是參數，呼叫時傳入的值會依序放進去。
       function sumFunction(a, b) {
           return a + b;               // return
       }
+      // 【說明】t1 顯示 300，t2 顯示 89；t3 沒有用到。
       document.getElementById("t1").innerHTML =total;
       document.getElementById("t2").innerHTML =gradeFinal;        
     </script>

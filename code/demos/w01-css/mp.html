@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- 【說明】這個範例示範盒模型的 margin（外距）。
+         打開開發者工具（F12）→ 點選 h1 → Styles 面板最下方的方框圖，可以看到 margin（橘色）、border、padding（綠色）。 -->
     <title>This is Chiao-Ling's Webpage</title>
     <style>    
     #deptHeader {
+        /* 【說明】border：邊框，寫法是「粗細 樣式 顏色」。 */
         border: 2px solid pink;
+        /* 【說明】margin 是「邊框外面」的空白，四個方向可以分開設定。 */
         margin-top: 200px;
         margin-bottom: 100px;
         margin-right: 150px;
         margin-left: 80px;
+        /* 【說明】padding 是「邊框裡面」的空白。四個值的順序是上、右、下、左（順時針）。
+           把這行的註解拿掉，觀察綠色背景範圍變大（padding 會套用背景色，margin 不會）。 */
         /*padding: 20px 150px 100px 80px;*/
         background-color: green;
     } 

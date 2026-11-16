@@ -2,12 +2,17 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 jQuery UI 的滑桿（Slider），可以用來做年份篩選等功能。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 【說明】jQuery UI 需要三樣東西：jQuery UI 的 CSS 主題、jQuery、jquery-ui.js。
+         注意：上面已經載入 jQuery 3.4.1，下一行又載入 1.12.4，後載入的會取代前面的 $，實際使用的是 1.12.4。
+         老師標註「remember to modify it」：第二個 style.css 是 jQuery UI 官網示範頁的樣式，自己的專案可以拿掉或換成自己的。 -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> <!--remember to modify it-->
     <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">  <!--remember to modify it-->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -16,13 +21,20 @@
   <body>
     <script> <!--put your JavaScript here-->       
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】不帶設定的最簡單用法。
         //$("#slider").slider();
         $("#slider").slider({
+          // 【說明】value：初始值。
           value: 2018,    //ini value
+          // 【說明】打開 orientation: "vertical" 會變成直式滑桿。
           //orientation: "vertical",
+          // 【說明】min / max：可選範圍 1990 到 2200。
           min: 1990,
           max: 2200,
+          // 【說明】step：每次移動的間距（預設值是 1，這裡設成 10）。
+          //   注意 2018 不是 10 的倍數，拖動後就會對齊到 2010、2020…
           step:10, //default
+          // 【說明】change：放開滑桿、值改變後觸發；ui.value 是目前的值。若要拖動中即時更新，改用 slide 事件。
           change: function(event,ui){
             console.log(ui.value);            
           }

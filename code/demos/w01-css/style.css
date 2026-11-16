@@ -1,15 +1,21 @@
+/* 【說明】這是「外部樣式表」的範例，用 <link rel="stylesheet" href="style.css"> 引入 HTML。
+   @import 可以在一個 CSS 檔裡再載入其他 CSS 檔，方便把樣式依功能拆成多個檔案。
+   （範例包裡沒有這四個被 import 的檔案，這裡只示範寫法。） */
 @import "bar.css";
 @import "sidemenu.css";
 @import "table.css";
 @import "gallery.css";
 
+/* 【說明】body：標籤選擇器，作用在整個頁面。 */
 body{
   background-color: pink;
+  /* 【說明】width:80% 搭配 margin: 0px auto → 內容寬度為視窗的 80%，左右外距自動平分，達到水平置中。 */
   width:80%;
   margin: 0px auto;
   font-size:18px;
 }
 
+/* 【說明】以空格分隔的選擇器代表「子孫關係」：body 裡的 #wrap 裡的 #header 裡的 #title。 */
 body #wrap #header #title {
   font-size: 32px;
 }

@@ -2,7 +2,9 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 DOM 走訪「同一層」：next()。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.6.0（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -11,9 +13,12 @@
   <body>
     <script>       
       $(function(){                    //$(document).ready(function(){ });        
+        // 【說明】next()：找緊接在後面的「下一個」兄弟元素 → h2 的下一個是 h3，所以只有 h3 被框起來。
+        //   可以試試：nextAll()（後面全部）、nextUntil("h6")（到 h6 之前）、prev()（前一個）、siblings()（全部兄弟）。
         $("h2").next().css({"color": "red", "border": "2px solid red"});  
       });
     </script>    
+    <!-- 【說明】這個 div 裡的 p、span、h2…h6、p 互為兄弟元素（同一個父元素）。 -->
     <div>div (parent)
       <p>p</p>
       <span>span</span>

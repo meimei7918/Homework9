@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 animate() 自訂動畫，以及 stop() 中途停止。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,7 +15,9 @@
     <script>       
       $(function(){                    //$(document).ready(function(){ });        
         $("#b1").click(function(){
+          // 【說明】animate({ CSS 屬性: 目標值 }, 時間)：在 5000 毫秒（5 秒）內把元素「漸變」到這些樣式。
           $("#para1").animate({        //params
+              // 【說明】left 要能生效，元素必須有 position（下方 div 設了 position:absolute）。
               left:'250px',
               height:'300px',
               width:'300px'
@@ -20,11 +25,13 @@
         });
        
         $("#b2").click(function(){
+            // 【說明】stop()：立刻停止正在進行的動畫，元素停在當下的大小與位置。
             $("#para1").stop();
         });
       });
     </script>
     <button id="b1">press me</button>    
+    <!-- 【說明】這個 div 用 inline style 設了初始大小 50×50 和 position:absolute，作為動畫的起點。 -->
     <div id="para1" style="background:#ffbf21;height:50px;width:50px;position:absolute;">para1</div>    
     <button id="b2" >press me for testing stop</button>    
   </body>

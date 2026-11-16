@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>JavaScript Example</title>
+    <!-- 【說明】這個範例示範 switch：依一個值的不同，執行不同的程式區塊。 -->
     <script> //put your JavaScript here              
     </script>
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
@@ -12,9 +13,11 @@
     <script>  //put your JavaScript here  
       let year="a";
       let nameOfgrade=null;      
+      // 【說明】switch 用 ===（嚴格相等）比較 year 和每個 case。year 是 "a" → 進入第一個 case。
       switch (year) {
           case "a":
               nameOfgrade = "freshman";
+              // 【說明】break 跳出 switch。忘記寫的話會「掉進」下一個 case 繼續執行。
               break;
           case "b":
               nameOfgrade = "sophomore";
@@ -25,10 +28,14 @@
           case "d":
               nameOfgrade = "senior";
               break;
+          // 【說明】default：所有 case 都不符合時執行，相當於 if 的 else。
           default:
               nameOfgrade = "graduate";      }
+      // 【說明】t1 顯示 freshman。
       document.getElementById("t1").innerHTML =nameOfgrade; 
       
+      // 【說明】第二個例子改用數字：year 是數字 1，對到 case 1（數字），所以 t2 也是 freshman。
+      //   若 year 改成字串 "1"，就對不到 case 1 了，請和 js_switch_select.html 對照。
       year=1;
       nameOfgrade=null;      
       switch (year) {

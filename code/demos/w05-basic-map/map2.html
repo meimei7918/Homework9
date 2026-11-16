@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
   <head>
+    <!-- 【說明】這個範例同時放兩個底圖：Google 道路圖與國土測繪中心的臺灣通用電子地圖（WMTS）。
+         引入 OpenLayers：ol.js（程式）與 ol.css（控制項等樣式）。這是不需要編譯的完整版，所有功能都掛在全域變數 ol 底下。 -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"> 
     <style>
@@ -21,11 +23,17 @@
   <body> 
     <div id="map" class="map"></div>
     <script type="text/javascript">
+      // 【說明】WMTS 圖磚格網設定（國土測繪中心的底圖要用）：
+      //   projection：EPSG:3857（Web Mercator），網路地圖的標準投影。
+      //   projectionExtent：EPSG:3857 的世界範圍，約 ±20037508 公尺。
+      //   size：第 0 層的解析度＝世界寬度 ÷ 256 像素 ≈ 156543 公尺／像素。
       let projection = ol.proj.get('EPSG:3857');
       let projectionExtent = projection.getExtent();
       let size = ol.extent.getWidth(projectionExtent) / 256;
       let resolutions = new Array(20);
       let matrixIds = new Array(20);
+      // 【說明】依序算出第 0～19 層的解析度：每放大一層，每個像素代表的距離減半（÷ 2^z）。
+      //   matrixIds 是每一層的編號，WMTS 用它組出圖磚網址。
       for (let z = 0; z < 20; ++z) {
         resolutions[z] = size / Math.pow(2, z);
         matrixIds[z] = z;
@@ -34,6 +42,9 @@
       let map = new ol.Map({            //create a OpenLayers Map object  
         target: 'map',         
         layers: [
+          // 【說明】Google 道路圖（XYZ 圖磚）。{0-3} 讓請求輪流送到 mt0～mt3 四台伺服器；lyrs=m 是道路圖，換成 s 是衛星、y 是衛星＋道路。
+          //   crossOrigin: 'anonymous' 讓之後可以把地圖匯出成圖片。直接使用 Google 圖磚網址僅適合課堂練習。
+          //   注意：visibile 拼錯了（應為 visible），而且 visible 是「圖層」的屬性，寫在 source 裡沒有作用。
           new ol.layer.Tile({    //Google map
               source: new ol.source.XYZ({
                 crossOrigin: 'anonymous',
@@ -41,9 +52,14 @@
                 visibile: false,
               }),/**/
           }),     
+          // 【說明】國土測繪中心 WMTS 底圖。
+          //   url：服務網址；layer：圖層名稱（EMAP 通用電子地圖、PHOTO2 正射影像、LUIMAP 國土利用調查）；
+          //   matrixSet：GoogleMapsCompatible 代表切法和 Google 相同；tileGrid 用上面算好的解析度與編號。
+          //   layers 陣列中越後面的圖層畫在越上面，所以通用電子地圖會蓋住 Google 圖。
           new ol.layer.Tile({          //通用電子地圖                
             extent: projectionExtent,
             source: new ol.source.WMTS({
+              // [網站版修改] 原為 http://，改成 https，否則 HTTPS 網站會擋下圖磚
               url: 'https://wmts.nlsc.gov.tw/wmts?',
               layer: 'EMAP',
               matrixSet: 'GoogleMapsCompatible',
@@ -60,6 +76,7 @@
           })
         ],
         view: new ol.View({
+          // 【說明】地圖中心：經緯度（EPSG:4326）要轉成地圖的 EPSG:3857 才能使用。注意順序是 [經度, 緯度]。
           center: ol.proj.transform([121.751,23.8],'EPSG:4326','EPSG:3857'),
           zoom: 4  //8
         })

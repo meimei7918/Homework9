@@ -2,6 +2,10 @@
 <html lang='zh-TW'>
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <!-- 【說明】【v2】這是「記帳」小專案，共四個版本，每一版多加一點功能（變更紀錄見 readme.md）。
+         使用 Bootstrap 4 做版面與對話框（modal）。Bootstrap 4 的 JS 需要 jQuery 與 Popper.js，所以要依序載入下面三個 script。
+         這裡載入的是 jQuery「slim」版：去掉了 AJAX 和特效，檔案較小，本專案用不到那些功能。
+         v2 新增：按 Save 時讀取輸入框的值，加一列到表格。 -->
     <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css' integrity='sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO' crossorigin='anonymous'>
     <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js' integrity='sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49' crossorigin='anonymous'></script>
@@ -29,6 +33,8 @@
         </table>
       </div>
       <!------------------------------------------------------>
+      <!-- 【說明】Bootstrap 的對話框（modal）。平常是隱藏的，用 $('#dialog1').modal('show') 叫出來。
+           data-dismiss='modal' 的按鈕（右上角 ×、Cancel）不用寫程式就能關閉對話框。 -->
       <div class='modal fade' id='dialog1' tabindex='-1' role='dialog' aria-labelledby='dialog1-title' aria-hidden='true'>
         <div class='modal-dialog modal-dialog-centered' role='document'>
           <div class='modal-content'>
@@ -74,11 +80,15 @@
             $('#dialog1').modal('show');
           });
           $('#saveBtn').click(function(){
+            // 【說明】用 val() 讀取三個輸入欄位的值。
             //get value
             var time=$('#time').val();
             var cost=$('#cost').val();
             var note=$('#note').val();
 
+            // 【說明】$('<tr />') 用 jQuery「建立」一個新的 tr 元素，append 到表格最後。
+            //   注意：這一版直接把文字放進 tr，沒有包 td，表格欄位會對不齊。
+            //   下一行被註解的寫法才是正確的：每個值各放一個 td，再依序 append 進 tr。v3 改用了正確寫法。
             //append tr
             $('#table1').append(
               $('<tr />').append(time));

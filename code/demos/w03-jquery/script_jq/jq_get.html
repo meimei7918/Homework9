@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範「取值」：text()、html()、val()、attr()。按下按鈕後到 Console 看結果。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,15 +15,23 @@
     <script>        
       $(function(){                    //$(document).ready(function(){ });
         $("#b1").click(function(){         
+          // 【說明】para1 的內容是 para<i>1</i>：
+          //   text() 只取文字 → "para1"；html() 連標籤一起取 → "para<i>1</i>"。
           console.log("para1.text:",$("#para1").text(),"vs. para1.html:",$("#para1").html()); //text() vs. html()
+          // 【說明】對 input 來說，text() 和 html() 都是空字串（input 沒有開始、結束標籤之間的內容）。
+          //   要拿輸入框的值，一定要用 val() → "defaultValue"（或使用者輸入的文字）。
           console.log("text1.text:",$("#text1").text(),"vs. text1.html:",$("#text1").html(),
                       "vs. text1.val:",$("#text1").val());         
+          // 【說明】attr("屬性名")：取得屬性值 → "list-style-type:circle"。
           console.log("ul1.attr:",$("#ul1").attr("style"));              //attr()
+          // 【說明】val("aaaa") 帶了參數，其實是在「設值」，回傳的是 jQuery 物件本身（老師的註解寫 attr，實際是 val）。
+          //   ul 不是表單欄位，設 value 在畫面上看不出效果。
           console.log("xxx:",$("#ul1").val("aaaa"));              //attr()
         });
       });
     </script>
     <button id="b1">press me</button>    
+    <!-- 【說明】<i> 讓 1 變斜體，用來比較 text() 和 html() 的差別。 -->
     <div id="para1">para<i>1</i></div> <br/>
     <div id="para2">para2</div> <br/>    
     input:<input type="text" id="text1" name="tp1" value="defaultValue" />abc    

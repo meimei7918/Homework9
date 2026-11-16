@@ -2,7 +2,11 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例結合三件事：animate 動畫、動畫結束後的 callback、setTimeout / setInterval 計時器。
+         para1 先在 10 秒內往右下長大，結束後再等 2 秒往左移回原位。
+         這一版和 ass3_settimeout.html 的差別：animate 的寫法不同，以及 b3 綁了兩個 click 事件。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->    
@@ -11,12 +15,14 @@
     <script> <!--put your JavaScript here-->       
       $(function(){                    //$(document).ready(function(){ });        
         $("#b1").click(function(){
+          // 【說明】animate(樣式, 時間, callback) 的寫法：第三個參數直接是動畫完成後要執行的函式。
           $("#para1").animate({        //params
               left:'250px',
               height:'300px',
               width:'300px'
           },10000,
              function(){
+              // 【說明】等 2 秒後執行（行尾註解寫 5 secs，但實際數字是 2000 毫秒 = 2 秒）。
               setTimeout(function(){ 
                 $("#para1").animate({        //params
                     left:'0px',
@@ -38,12 +44,18 @@
             $("#para1").text(timeString);
         }
         var setIntent;
+        // 【說明】b3 的第一個 click 事件：每秒執行 tTimer，編號存在 setIntent。
         $("#b3").click(function(){
             setIntent=setInterval(tTimer, 1000);
         });
+        // 【說明】b4 只能停掉 setIntent 這一個計時器。
         $("#b4").click(function(){
             clearTimeout(setIntent);
         });
+        // 【說明】b3 的第二個 click 事件：同一個按鈕可以綁多個事件，按一次兩個都會執行。
+        //   這個計時器每 2.5 秒用「::」格式寫入時間，但回傳的編號沒有存起來，所以 b4 停不掉它。
+        //   結果：兩個計時器輪流改寫 para1，按 b4 之後仍會繼續出現「時::分:秒」。
+        //   修正版請看 ass3_settimeout2-copy.html。
         $("#b3").click(function(){
             setInterval(function() {
             var d = new Date();

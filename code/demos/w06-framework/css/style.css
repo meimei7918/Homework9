@@ -1,3 +1,4 @@
+/* 【說明】style.css：其他樣式。這份檔案有不少規則（#showcase、#timeinfo、#legend 等）是給其他功能預留的，index.html 目前沒有對應元素。 */
 .wraper{
 	position:relative;
 	width: 100%;
@@ -92,9 +93,11 @@
   background-color: rgba(250, 250, 250, 1);
   overflow: scroll;
 }
+/* 【說明】#map 設成 relative，裡面的 OpenLayers 控制項（絕對定位）才會以地圖為基準擺放。 */
 #map{
     position: relative;
 }
+/* 【說明】Autocomplete 的建議選單要蓋在地圖上面，所以 z-index 設得很大。 */
 ul.ui-autocomplete{
 	z-index:99999999;
 }
@@ -104,6 +107,7 @@ ul.ui-autocomplete{
     border-color: #d9edf7;
     border-radius: 5px;
 }
+/* 【說明】#legend：預留的圖例區塊，固定在地圖左下角。 */
 #legend {
   left: 5px;
   bottom: 5px;

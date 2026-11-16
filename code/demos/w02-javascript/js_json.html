@@ -5,18 +5,27 @@
     <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
   </head>
   <body>
+    <!-- 【說明】這個範例示範 JSON：把「JSON 格式的字串」轉成 JavaScript 物件後取值。 -->
     <div id="para1"></div>
     <div id="para2"></div>    
     <script>  //put your JavaScript here
+      // 【說明】json1 是一個「字串」，內容剛好是 JSON 格式（鍵與字串值都要用雙引號）。
       let json1='{"Dept":"Geography","University":"NTU","Grade":"first","name":"Amy"}';
+      // 【說明】json2 的結構：物件裡有 students 陣列，陣列裡有三個學生物件。
+      //   因為字串太長，用 + 分成多行相接。
       let json2='{"students": ' +
                    '[ {"Dept.":"Geography", "University":"NTU","Grade":"first","name":"Amy"},' +
                      '{"Dept.":"Geography", "University":"NTU","Grade":"junior","name":"Andy"},'+
                      '{"Dept.":"Geography", "University":"NTU","Grade":"senior","name":"Leo"}]}';/**/
       
+      // 【說明】JSON.parse()：把 JSON 字串轉成 JavaScript 物件，之後才能用 . 取值。
+      //   反過來，JSON.stringify() 可以把物件轉回字串。
       let jsonObj1 = JSON.parse(json1);
       let jsonObj2 = JSON.parse(json2);
+      // 【說明】物件用「.鍵名」取值 → Amy。
       document.getElementById("para1").innerHTML =jsonObj1.name;
+      // 【說明】students[2] 是陣列第 3 個（索引從 0 開始）→ Leo。
+      //   「物件.陣列[索引].鍵」的寫法，之後讀 GeoJSON 時一直會用到（例如 data.features[0].properties.name）。
       document.getElementById("para2").innerHTML =jsonObj2.students[2].name;      
     </script>
   </body>

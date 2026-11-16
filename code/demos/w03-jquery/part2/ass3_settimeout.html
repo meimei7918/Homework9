@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例結合三件事：animate 動畫、動畫結束後的 callback、setTimeout / setInterval 計時器。
+         para1 先在 10 秒內往右下長大，結束後再等 2 秒往左移回原位。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery 3.4.1（CDN 壓縮版）。 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script> <!--Way 2-->    
@@ -11,13 +14,17 @@
     <script> <!--put your JavaScript here-->       
       $(function(){                    //$(document).ready(function(){ });        
         $("#b1").click(function(){
+          // 【說明】animate(樣式, 選項物件) 的寫法：第二個參數用物件，可以設定 duration（時間）與 complete（完成後執行的函式）。
           $("#para1").animate({        //params
               left:'250px',
               height:'300px',
               width:'300px'
           },{
+            // 【說明】duration：動畫時間 10000 毫秒 = 10 秒。
             duration:10000,
+            // 【說明】complete：動畫跑完後才執行這個函式（callback）。
             complete:function(){
+              // 【說明】動畫結束後再等 2 秒，用 1 秒把 left 動回 0，也就是移回左邊。
               setTimeout(function(){ 
                 $("#para1").animate({        //params
                     left:'0px',
@@ -27,10 +34,13 @@
           });   
         });
         $("#b2").click(function(){
+            // 【說明】stop()：中途停止動畫。動畫被停止時 complete 不會執行。
             $("#para1").stop();
         });
         
+        // 【說明】tTimer：把現在時間組成「時:分:秒」字串顯示在 para1。這個具名函式在下方被註解掉的版本裡使用。
         function tTimer() {
+            // 【說明】new Date() 取得現在的日期時間；getHours / getMinutes / getSeconds 分別取出時、分、秒。
             var d = new Date();
             var h=d.getHours();
             var m=d.getMinutes();
@@ -38,13 +48,18 @@
             var timeString=h+":"+m+":"+s;
             $("#para1").text(timeString);
         }
+        // 【說明】setIntent 用來存 setInterval 回傳的「計時器編號」，停止時要用到。
         var setIntent;
+        // 【說明】這段是另一種寫法：直接把函式名稱 tTimer 交給 setInterval（注意不加括號，加了會變成立刻執行一次）。
         /*$("#b3").click(function(){
             setIntent=setInterval(tTimer, 1000);
         });*/
+        // 【說明】按 b4 停止計時器。setInterval 正規的停止方法是 clearInterval；用 clearTimeout 在瀏覽器裡也有效，因為兩者共用同一組編號。
         $("#b4").click(function(){
             clearTimeout(setIntent);
         });
+        // 【說明】按 b3 開始每秒更新時間。把回傳值存進 setIntent，b4 才停得掉。
+        //   注意：連按多次會開好幾個計時器，但 setIntent 只記得最後一個，前面的就停不掉了。
         $("#b3").click(function(){
             setIntent=setInterval(function() {
             var d = new Date();

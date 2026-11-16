@@ -2,7 +2,10 @@
 <html>
   <head>  
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範「設值」：同一組方法帶參數就是設定。對照 jq_get.html。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
@@ -12,8 +15,12 @@
     <script> 
       $(function(){                    //$(document).ready(function(){ });
         $("#b1").click(function(){
+          // 【說明】先用 text() 取出原本的文字，接上現在時間（new Date()），再用 text(新值) 寫回去。
+          //   每按一次就多接一段時間。
           $("#para1").text($("#para1").text()+ " "+ new Date()); 
+          // 【說明】val("changeValue")：把輸入框的值改掉。
           $("#text1").val("changeValue"); //         
+          // 【說明】attr("style", 新值)：把 ul 的 style 屬性改成 circle → 清單符號從方塊變成空心圓。
           $("#ul1").attr("style","list-style-type:circle");               
         });
       });
@@ -21,6 +28,7 @@
     <button id="b1">press me</button>    
     <div id="para1">para1</div> <br/>    
     input:<input type="text" id="text1" name="tp1" value="defaultValue" />abc    
+    <!-- 【說明】一開始是 square（實心方塊）符號。 -->
     <ul style="list-style-type:square" id="ul1">
       <li>Dept. of Geography</li>
       <li>Dept. of Bioenvironmental Systems Engineering</li>

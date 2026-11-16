@@ -4,24 +4,31 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Highcharts Example</title>
+    <!-- 【說明】這個範例用 Highcharts 畫圓餅圖。highcharts.src.js 是未壓縮版，方便閱讀原始碼。
+         Highcharts 個人與教育用途免費，商業用途需要購買授權。 -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
   </head>
   <body>
     <div id="container"></div>
     <script>
+    // 【說明】Highcharts.chart(容器 id, 設定物件)：在 id 為 container 的 div 裡畫圖。
     Highcharts.chart('container', {
+      // 【說明】chart：整張圖的外觀。type: 'pie' 決定是圓餅圖。
       chart: {
         plotBackgroundColor: null,
         plotBorderWidth: '0px',
         plotShadow: true,
         type: 'pie'
       },
+      // 【說明】title：圖表標題。
       title: {
         text: 'Browser market shares in January, 2018'
       },
+      // 【說明】tooltip：滑鼠移上去時的提示文字。{point.percentage:.1f} 代表百分比、取到小數一位。
       tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
       },
+      // 【說明】plotOptions.pie：圓餅圖專用設定。allowPointSelect 讓扇形可以點選拉出；showInLegend 顯示圖例。
       plotOptions: {
         pie: {
           allowPointSelect: true,
@@ -32,6 +39,7 @@
           showInLegend: true
         }
       },
+      // 【說明】series：資料。每個點是 { name: 名稱, y: 數值 }，Highcharts 會自動換算成百分比。
       series: [{
         name: 'Brands',
         colorByPoint: true,

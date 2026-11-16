@@ -2,24 +2,32 @@
 <html>
   <head>
     <title>jQuery Example</title>
+    <!-- 【說明】這個範例示範 jQuery 的滑鼠事件：click、dblclick、mouseenter、hover。 -->
     <!--include jQuery-->
+    <!-- 【說明】引入 jQuery：從 CDN 載入 3.6.0 的壓縮版（min）。
+         integrity 是檔案的雜湊值，瀏覽器會比對，確保下載的檔案沒被竄改；crossorigin 搭配 integrity 使用。 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous">
     </script>     
   </head>
   <body>
+    <!-- 【說明】script 寫在 div 之前也沒關係，因為程式都包在 ready 裡，會等 DOM 建好才綁定事件。 -->
     <script>        
       $(function(){                        //$(document).ready(function(){ });
+        // 【說明】click：點一下時執行。把 block1 改成紅字黑底。
         $("#block1").click(function(){
             $("#block1").css("color","red").css("background-color","black");
         });
+        // 【說明】dblclick：連點兩下時執行。
         $("#block2").dblclick(function(){
             $("#block2").css("color","green");
         });
+        // 【說明】mouseenter：滑鼠「移進」元素時執行。alert 會跳出對話框。
         $("#block3").mouseenter(function(){
             alert("You entered block3!");
         });
+        // 【說明】hover(移入函式, 移出函式)：一次設定 mouseenter 和 mouseleave 兩個事件。
         $("#block4").hover(function(){        //combination of the mouseenter() and mouseleave() event
             alert("You entered block4!");
         },
