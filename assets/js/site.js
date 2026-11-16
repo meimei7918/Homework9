@@ -1,5 +1,5 @@
 /* =========================================================
-   WebGIS 圖層筆記 — 全站唯一共用腳本
+   WebGIS 課程資料庫 — 全站唯一共用腳本
    每頁只載入：<script src="{root}/assets/js/site.js" data-root="{root}" defer></script>
    依 data/catalog.json 產生：頁首頁尾、首頁路線圖、標題區、相關連結、
    資源清單、範例程式檢視器、測驗互動、目錄、上下篇。
@@ -33,7 +33,7 @@
     header.className = "site-header";
     const navItem = (href, label, type, key) => `<a href="${href}"${type ? ` data-type="${type}"` : ""}${page === key ? ' aria-current="page"' : ""}>${label}</a>`;
     header.innerHTML = `<div class="inner">
-      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 圖層筆記</a>
+      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 課程資料庫</a>
       <nav class="site-nav" aria-label="主選單">
         ${ORDER.map((k) => navItem(`${url("index.html")}?type=${k}`, TYPES[k].short, k, k)).join("")}
         ${navItem(url("resources.html"), "資源", "resource", "resources")}
@@ -207,6 +207,7 @@
           <div class="demo-bar"><span class="name"></span>
             <button type="button" data-mode="run">執行</button>
             <button type="button" data-mode="src">原始碼</button>
+            <button type="button" data-mode="edit">編輯練習</button>
             <a class="open" target="_blank" rel="noopener">新分頁開啟</a></div>
           <p class="demo-desc"></p>
           <div class="demo-stage"></div>
@@ -216,21 +217,91 @@
     const stage = box.querySelector(".demo-stage");
     const runBtn = box.querySelector('[data-mode="run"]');
     const srcBtn = box.querySelector('[data-mode="src"]');
+    const editBtn = box.querySelector('[data-mode="edit"]');
     let cur = 0, mode = "run";
+
+    // 編輯練習：草稿存在使用者自己的瀏覽器（localStorage），讀寫失敗時就只存在記憶體
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch { /* 忽略 */ } },
+      del(k) { try { localStorage.removeItem(k); } catch { /* 忽略 */ } },
+    };
+    async function showEditor(f, path) {
+      const key = `webgis-draft:${demo.dir}/${f.file}`;
+      let original = "";
+      try { original = await (await fetch(path, { cache: "no-cache" })).text(); }
+      catch (e) { stage.innerHTML = `<p class="empty">讀取失敗：${esc(e.message)}</p>`; return; }
+      const draft = store.get(key);
+      stage.innerHTML = `
+        <div class="editor">
+          <div class="editor-bar">
+            <button type="button" class="run-edit">執行修改（Ctrl＋Enter）</button>
+            <button type="button" class="reset-edit">還原成原始碼</button>
+            <button type="button" class="dl-edit">下載我的版本</button>
+            <span class="editor-status"></span>
+          </div>
+          <textarea class="editor-code" spellcheck="false" autocomplete="off" aria-label="編輯 ${esc(f.file)}"></textarea>
+          <iframe class="editor-preview" title="執行結果" allow="geolocation"></iframe>
+        </div>`;
+      const ta = stage.querySelector(".editor-code");
+      const frame = stage.querySelector(".editor-preview");
+      const status = stage.querySelector(".editor-status");
+      ta.value = draft ?? original;
+      const base = new URL(path, location.href).href;
+      const setStatus = () => { status.textContent = ta.value === original ? "與原始碼相同" : "已修改，草稿自動存在這台電腦的瀏覽器"; };
+      const run = () => {
+        // 加上 <base>，讓程式裡的相對路徑（例如 metro.geojson、js/map.js）仍指向範例資料夾
+        const tag = `<base href="${base}">`;
+        frame.srcdoc = /<head[^>]*>/i.test(ta.value) ? ta.value.replace(/<head[^>]*>/i, (m) => m + tag) : tag + ta.value;
+      };
+      let timer;
+      ta.addEventListener("input", () => {
+        setStatus();
+        clearTimeout(timer);
+        timer = setTimeout(() => (ta.value === original ? store.del(key) : store.set(key, ta.value)), 400);
+      });
+      ta.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {           // Tab 插入兩個空白，而不是跳到下一個欄位
+          e.preventDefault();
+          const s = ta.selectionStart;
+          ta.setRangeText("  ", s, ta.selectionEnd, "end");
+          ta.dispatchEvent(new Event("input"));
+        }
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+      });
+      stage.querySelector(".run-edit").addEventListener("click", run);
+      stage.querySelector(".reset-edit").addEventListener("click", () => {
+        if (ta.value !== original && !confirm("確定要放棄修改，還原成原始碼嗎？")) return;
+        ta.value = original; store.del(key); setStatus(); run();
+      });
+      stage.querySelector(".dl-edit").addEventListener("click", () => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([ta.value], { type: "text/html" }));
+        a.download = f.file.split("/").pop();
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      });
+      setStatus();
+      run();
+    }
 
     async function show() {
       const f = demo.files[cur];
       const path = url(`${demo.dir}/${f.file}`);
       const canRun = f.run !== false && /\.html?$/.test(f.file);
-      if (!canRun) mode = "src";
+      if (!canRun && mode !== "src") mode = "src";
       box.querySelectorAll(".demo-files button").forEach((b) => b.setAttribute("aria-current", String(+b.dataset.n === cur)));
       box.querySelector(".name").textContent = f.file;
       box.querySelector(".open").href = path;
       box.querySelector(".demo-desc").textContent = f.desc || "";
       runBtn.hidden = !canRun;
+      editBtn.hidden = !canRun;
       runBtn.setAttribute("aria-pressed", String(mode === "run"));
       srcBtn.setAttribute("aria-pressed", String(mode === "src"));
-      if (mode === "run") {
+      editBtn.setAttribute("aria-pressed", String(mode === "edit"));
+      if (mode === "edit") {
+        await showEditor(f, path);
+      } else if (mode === "run") {
         stage.innerHTML = `<iframe src="${path}" title="${esc(f.title)}" allow="geolocation" loading="lazy"></iframe>`;
       } else {
         stage.innerHTML = `<pre><code>讀取中…</code></pre>`;
@@ -246,9 +317,10 @@
         } catch (e) { stage.innerHTML = `<p class="empty">讀取失敗：${esc(e.message)}</p>`; }
       }
     }
-    box.querySelectorAll(".demo-files button").forEach((b) => b.addEventListener("click", () => { cur = +b.dataset.n; mode = "run"; show(); }));
+    box.querySelectorAll(".demo-files button").forEach((b) => b.addEventListener("click", () => { cur = +b.dataset.n; show(); }));
     runBtn.addEventListener("click", () => { mode = "run"; show(); });
     srcBtn.addEventListener("click", () => { mode = "src"; show(); });
+    editBtn.addEventListener("click", () => { mode = "edit"; show(); });
     show();
   }
 

@@ -22,7 +22,7 @@ SECTIONS = {
 RES_KINDS = {"mentioned", "practice", "reference"}
 FILE_RE = re.compile(r"^w(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.html$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-SITE_TITLE = "WebGIS 圖層筆記"
+SITE_TITLE = "WebGIS 課程資料庫"
 
 errors: list[str] = []
 err = errors.append
@@ -132,6 +132,8 @@ def main() -> int:
         html = page.read_text(encoding="utf-8")
         if f'data-id="{it["id"]}"' not in html:
             err(f"{it['path']}: <body data-id> 與 catalog id 不一致")
+        if f'data-type="{t}"' not in html.split("<body", 1)[-1].split(">", 1)[0]:
+            err(f"{it['path']}: <body> 需要 data-type=\"{t}\"（決定頁面底色）")
         if f"<title>{it['title']} · {SITE_TITLE}</title>" not in html:
             err(f"{it['path']}: <title> 應為「{it['title']} · {SITE_TITLE}」")
         for needed in ['id="page-head"', 'id="pager"', 'id="toc"', "assets/js/site.js"]:

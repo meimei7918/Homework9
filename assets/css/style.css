@@ -1,5 +1,5 @@
 /* =========================================================
-   WebGIS 圖層筆記 — 全站唯一樣式表
+   WebGIS 課程資料庫 — 全站唯一樣式表
    設計概念：紙本講義與地圖。紙色底、襯線標題、依週次排列的卡片。
    規則：顏色只用 :root 變數；新增元件請放在「元件」區並同步更新 CLAUDE.md。
    ========================================================= */
@@ -48,6 +48,13 @@ a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--lecture); outline-offset: 2px; border-radius: 2px; }
 img { max-width: 100%; }
 
+/* 每種類型頁面的底色與頁首色（首頁維持紙色） */
+body[data-type="lecture"]  { --bg: #edf3f2; --header-bg: #d7e7e7; }
+body[data-type="code"]     { --bg: #f7f0e6; --header-bg: #f0dec6; }
+body[data-type="practice"] { --bg: #f8eeea; --header-bg: #f1d8d1; }
+body[data-type="note"]     { --bg: #f0f3e7; --header-bg: #dfe7cb; }
+body[data-type="resource"] { --bg: #eef0f6; --header-bg: #d9deef; }
+
 /* 每種類型的代表色 */
 [data-type="lecture"] { --c: var(--lecture); }
 [data-type="code"] { --c: var(--code); }
@@ -57,7 +64,7 @@ img { max-width: 100%; }
 
 /* ---------- 頁首 ---------- */
 .site-header::after { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--lecture) 0 20%, var(--code) 20% 40%, var(--practice) 40% 60%, var(--note) 60% 80%, var(--resource) 80% 100%); }
-.site-header { background: rgba(244, 241, 234, .94); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 1000; }
+.site-header { background: var(--header-bg, rgba(244, 241, 234, .94)); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 1000; }
 .site-header .inner { max-width: var(--max); margin: 0 auto; padding: .7rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: .6rem; color: var(--ink); text-decoration: none; font-family: var(--font-serif); font-weight: 900; font-size: 1.2rem; }
 .brand svg { flex: none; }
@@ -186,6 +193,16 @@ ul.res .week { font-family: var(--font-serif); font-weight: 900; margin-right: .
 .demo-stage iframe { width: 100%; height: 34rem; border: 0; display: block; background: #fff; }
 .demo-stage pre { margin: 0; border-radius: 0; max-height: 34rem; white-space: pre-wrap; word-break: break-word; }
 .demo-zip { font-size: .92rem; }
+
+/* 範例程式：編輯練習（site.js 產生） */
+.editor { display: grid; grid-template-rows: auto 22rem 26rem; }
+.editor-bar { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; padding: .5rem .75rem; border-bottom: 1px solid var(--line); font-size: .85rem; }
+.editor-bar button { font: inherit; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; padding: .15rem .6rem; cursor: pointer; }
+.editor-bar .run-edit { background: var(--code); border-color: var(--code); color: #fff; }
+.editor-status { color: var(--muted); margin-left: auto; }
+.editor-code { width: 100%; border: 0; border-bottom: 1px solid var(--line); resize: vertical; padding: .75rem 1rem; font: .82rem/1.6 var(--font-code); background: #1f2a2a; color: #eae6da; tab-size: 2; }
+.editor-code:focus { outline: 2px solid var(--code); outline-offset: -2px; }
+.editor-preview { width: 100%; height: 100%; border: 0; background: #fff; }
 
 /* 課後練習：選擇題 */
 .quiz-score { position: sticky; top: 4.2rem; z-index: 5; background: var(--bg); padding: .4rem 0; font-size: .92rem; color: var(--muted); }
