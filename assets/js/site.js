@@ -1,5 +1,5 @@
 /* =========================================================
-   WebGIS 學習站 — 全站唯一共用腳本
+   WebGIS 圖層筆記 — 全站唯一共用腳本
    每頁只載入：<script src="{root}/assets/js/site.js" data-root="{root}" defer></script>
    依 data/catalog.json 產生：頁首頁尾、首頁路線圖、標題區、相關連結、
    資源清單、範例程式檢視器、測驗互動、目錄、上下篇。
@@ -33,7 +33,7 @@
     header.className = "site-header";
     const navItem = (href, label, type, key) => `<a href="${href}"${type ? ` data-type="${type}"` : ""}${page === key ? ' aria-current="page"' : ""}>${label}</a>`;
     header.innerHTML = `<div class="inner">
-      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 學習站</a>
+      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 圖層筆記</a>
       <nav class="site-nav" aria-label="主選單">
         ${ORDER.map((k) => navItem(`${url("index.html")}?type=${k}`, TYPES[k].short, k, k)).join("")}
         ${navItem(url("resources.html"), "資源", "resource", "resources")}
@@ -41,7 +41,7 @@
     document.body.prepend(header);
     const footer = document.createElement("footer");
     footer.className = "site-footer";
-    footer.innerHTML = `<div class="inner"><span>臺大地理系 WebGIS 課程的個人學習站。講義筆記與練習由 AI 依課堂講義整理，原始講義請見 NTU COOL。</span>
+    footer.innerHTML = `<div class="inner"><span>臺大地理系 WebGIS 課程的個人筆記。講義筆記與練習由 AI 依課堂講義整理，原始講義請見 NTU COOL。</span>
       <a href="https://github.com/meimei7918/Homework9">GitHub 原始碼</a></div>`;
     document.body.append(footer);
   }

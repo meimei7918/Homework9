@@ -22,7 +22,7 @@ SECTIONS = {
 RES_KINDS = {"mentioned", "practice", "reference"}
 FILE_RE = re.compile(r"^w(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.html$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-SITE_TITLE = "WebGIS 學習站"
+SITE_TITLE = "WebGIS 圖層筆記"
 
 errors: list[str] = []
 err = errors.append

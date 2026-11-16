@@ -1,5 +1,5 @@
 /* =========================================================
-   WebGIS 學習站 — 全站唯一樣式表
+   WebGIS 圖層筆記 — 全站唯一樣式表
    設計概念：紙本講義與地圖。紙色底、襯線標題、依週次排列的卡片。
    規則：顏色只用 :root 變數；新增元件請放在「元件」區並同步更新 CLAUDE.md。
    ========================================================= */
@@ -18,7 +18,10 @@
   --code: #b8651b;      /* 範例程式：赭色 */
   --practice: #c2412d;  /* 課後練習：紅 */
   --note: #5f7a32;      /* 我的筆記：苔綠 */
-  --resource: #7a6a4f;  /* 資源：褐 */
+  --resource: #3d5a98;  /* 資源：靛藍 */
+
+  /* 週次色：首頁 W01、W02… 依序循環使用 */
+  --w1: #1f6f78; --w2: #b8651b; --w3: #c2412d; --w4: #5f7a32; --w5: #3d5a98; --w6: #8a4f7d;
 
   --ok: #2f7a4f;
   --bad: #c2412d;
@@ -53,7 +56,8 @@ img { max-width: 100%; }
 [data-type="resource"] { --c: var(--resource); }
 
 /* ---------- 頁首 ---------- */
-.site-header { background: rgba(244, 241, 234, .94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 1000; }
+.site-header::after { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--lecture) 0 20%, var(--code) 20% 40%, var(--practice) 40% 60%, var(--note) 60% 80%, var(--resource) 80% 100%); }
+.site-header { background: rgba(244, 241, 234, .94); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 1000; }
 .site-header .inner { max-width: var(--max); margin: 0 auto; padding: .7rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: .6rem; color: var(--ink); text-decoration: none; font-family: var(--font-serif); font-weight: 900; font-size: 1.2rem; }
 .brand svg { flex: none; }
@@ -80,7 +84,10 @@ img { max-width: 100%; }
 .week { display: grid; grid-template-columns: 8rem 1fr; gap: 1.5rem; padding: 1.75rem 0; border-top: 1px dashed var(--line); }
 .week:first-child { border-top: 0; }
 .week-label { position: sticky; top: 5rem; align-self: start; }
-.week-label .num { font-family: var(--font-serif); font-weight: 900; font-size: 2.5rem; line-height: 1; }
+.week:nth-child(6n+1) { --wc: var(--w1); } .week:nth-child(6n+2) { --wc: var(--w2); } .week:nth-child(6n+3) { --wc: var(--w3); }
+.week:nth-child(6n+4) { --wc: var(--w4); } .week:nth-child(6n+5) { --wc: var(--w5); } .week:nth-child(6n) { --wc: var(--w6); }
+.week-label .num { font-family: var(--font-serif); font-weight: 900; font-size: 2.5rem; line-height: 1; color: var(--wc, var(--ink)); }
+.week-label .topic { border-left: 3px solid var(--wc, var(--line)); padding-left: .5rem; }
 .week-label .topic { font-size: .9rem; color: var(--muted); line-height: 1.5; margin-top: .4rem; }
 .week-label .date { font-size: .82rem; color: var(--muted); margin-top: .2rem; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr)); gap: 1rem; }
@@ -94,7 +101,7 @@ img { max-width: 100%; }
 /* 類型徽章 */
 .badge { justify-self: start; display: inline-flex; align-items: center; justify-content: center; align-self: start; height: 1.6rem; padding: 0 .65rem; border-radius: 999px; font-size: .8rem; font-weight: 700; color: #fff; background: var(--c); white-space: nowrap; margin-top: .1rem; }
 .tags { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .25rem; }
-.tag { font-family: var(--font-code); font-size: .76rem; color: var(--muted); background: var(--sunken); padding: 0 .5rem; border-radius: 4px; text-decoration: none; }
+.tag { font-family: var(--font-code); font-size: .76rem; color: var(--muted); background: color-mix(in srgb, var(--c, var(--ink)) 12%, var(--surface)); padding: 0 .5rem; border-radius: 4px; text-decoration: none; }
 a.tag:hover { color: var(--ink); }
 
 /* ---------- 內容頁 ---------- */
@@ -144,9 +151,9 @@ article pre code { font-family: var(--font-code); background: none !important; p
 .callout { border-left: 4px solid; background: var(--surface); padding: .8rem 1rem; margin: 1.25rem 0; border-radius: 0 6px 6px 0; }
 .callout > :first-child { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
 .callout::before { display: block; font-weight: 700; font-size: .9rem; margin-bottom: .2rem; }
-.callout.tip { border-color: var(--lecture); } .callout.tip::before { content: "小提示"; color: var(--lecture); }
-.callout.warn { border-color: var(--practice); } .callout.warn::before { content: "注意"; color: var(--practice); }
-.callout.key { border-color: var(--ink); background: var(--sunken); } .callout.key::before { content: "重點"; }
+.callout.tip { border-color: var(--lecture); background: #e9f2f2; } .callout.tip::before { content: "小提示"; color: var(--lecture); }
+.callout.warn { border-color: var(--practice); background: #f8eae5; } .callout.warn::before { content: "注意"; color: var(--practice); }
+.callout.key { border-color: var(--code); background: #f5eddc; } .callout.key::before { content: "重點"; color: var(--code); }
 
 ul.goals { padding-left: 1.2rem; }
 ul.goals li::marker { content: "○  "; color: var(--c); }
