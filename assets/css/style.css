@@ -195,7 +195,9 @@ ul.res .week { font-family: var(--font-serif); font-weight: 900; margin-right: .
 .demo-zip { font-size: .92rem; }
 
 /* 範例程式：編輯練習（site.js 產生） */
-.editor { display: grid; grid-template-rows: auto 22rem 26rem; }
+.editor { display: grid; grid-template-rows: auto auto 22rem 28rem; }
+.demo-files button.edited small::after { content: "  ● 已修改"; color: var(--code); font-family: var(--font); }
+.editor-note { margin: 0; padding: .4rem .75rem; font-size: .84rem; color: var(--muted); border-bottom: 1px solid var(--line); }
 .editor-bar { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; padding: .5rem .75rem; border-bottom: 1px solid var(--line); font-size: .85rem; }
 .editor-bar button { font: inherit; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; padding: .15rem .6rem; cursor: pointer; }
 .editor-bar .run-edit { background: var(--code); border-color: var(--code); color: #fff; }

@@ -226,45 +226,90 @@
       set(k, v) { try { localStorage.setItem(k, v); } catch { /* 忽略 */ } },
       del(k) { try { localStorage.removeItem(k); } catch { /* 忽略 */ } },
     };
-    async function showEditor(f, path) {
-      const key = `webgis-draft:${demo.dir}/${f.file}`;
+    // ── 編輯練習：可改 HTML、JS、CSS；執行時用「載入這支檔案的 HTML」當入口，把改過的檔案換進去 ──
+    const draftKey = (file) => `webgis-draft:${demo.dir}/${file}`;
+    const fileUrl = (file) => new URL(url(`${demo.dir}/${file}`), location.href).href;
+    const textCache = {};
+    const getText = async (file) => (textCache[file] ??= await (await fetch(url(`${demo.dir}/${file}`), { cache: "no-cache" })).text());
+    const isHtml = (file) => /\.html?$/.test(file);
+    const markEdited = () => box.querySelectorAll(".demo-files button").forEach((b) =>
+      b.classList.toggle("edited", store.get(draftKey(demo.files[+b.dataset.n].file)) != null));
+    const isEditable = (f) => f.run !== false && /\.(html?|js|css)$/.test(f.file);
+
+    async function findEntry(file) {
+      if (isHtml(file)) return file;
+      const name = file.split("/").pop();
+      for (const g of demo.files) {
+        if (!isHtml(g.file)) continue;
+        if ((store.get(draftKey(g.file)) ?? (await getText(g.file))).includes(name)) return g.file;
+      }
+      return null;
+    }
+
+    async function buildPage(entry, liveFile, liveText) {
+      let html = liveFile === entry ? liveText : (store.get(draftKey(entry)) ?? (await getText(entry)));
+      const entryUrl = fileUrl(entry);
+      const blobs = [];
+      // 把 <script src> / <link href> 指向「有草稿的檔案」的地方換成草稿內容
+      for (const g of demo.files) {
+        if (g.file === entry || !/\.(js|css)$/.test(g.file)) continue;
+        const text = g.file === liveFile ? liveText : store.get(draftKey(g.file));
+        if (text == null) continue;
+        const blobUrl = URL.createObjectURL(new Blob([text], { type: g.file.endsWith(".css") ? "text/css" : "text/javascript" }));
+        blobs.push(blobUrl);
+        const target = fileUrl(g.file);
+        html = html.replace(/(\s(?:src|href)\s*=\s*)(["'])([^"']+)\2/gi, (m, pre, q, val) => {
+          try { return new URL(val, entryUrl).href === target ? `${pre}${q}${blobUrl}${q}` : m; } catch { return m; }
+        });
+      }
+      // 加上 <base>，讓其他相對路徑（資料檔、沒改過的 js）仍指向範例資料夾
+      const tag = `<base href="${entryUrl}">`;
+      html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + tag) : tag + html;
+      return { html, blobs };
+    }
+
+    async function showEditor(f) {
+      const key = draftKey(f.file);
       let original = "";
-      try { original = await (await fetch(path, { cache: "no-cache" })).text(); }
+      try { original = await getText(f.file); }
       catch (e) { stage.innerHTML = `<p class="empty">讀取失敗：${esc(e.message)}</p>`; return; }
-      const draft = store.get(key);
+      const entry = await findEntry(f.file);
+      const note = entry && entry !== f.file
+        ? `執行時會用 ${esc(entry)} 當入口，載入你修改後的 ${esc(f.file)}（同一包其他有修改的檔案也會一起套用）。`
+        : entry ? "同一包裡有修改過的 JS／CSS 也會一起套用。" : "找不到載入這支檔案的 HTML，只能編輯與下載。";
       stage.innerHTML = `
         <div class="editor">
           <div class="editor-bar">
-            <button type="button" class="run-edit">執行修改（Ctrl＋Enter）</button>
+            <button type="button" class="run-edit"${entry ? "" : " hidden"}>執行修改（Ctrl＋Enter）</button>
             <button type="button" class="reset-edit">還原成原始碼</button>
             <button type="button" class="dl-edit">下載我的版本</button>
             <span class="editor-status"></span>
           </div>
+          <p class="editor-note">${note}</p>
           <textarea class="editor-code" spellcheck="false" autocomplete="off" aria-label="編輯 ${esc(f.file)}"></textarea>
           <iframe class="editor-preview" title="執行結果" allow="geolocation"></iframe>
         </div>`;
       const ta = stage.querySelector(".editor-code");
       const frame = stage.querySelector(".editor-preview");
       const status = stage.querySelector(".editor-status");
-      ta.value = draft ?? original;
-      const base = new URL(path, location.href).href;
+      ta.value = store.get(key) ?? original;
+      let oldBlobs = [];
       const setStatus = () => { status.textContent = ta.value === original ? "與原始碼相同" : "已修改，草稿自動存在這台電腦的瀏覽器"; };
-      const run = () => {
-        // 加上 <base>，讓程式裡的相對路徑（例如 metro.geojson、js/map.js）仍指向範例資料夾
-        const tag = `<base href="${base}">`;
-        frame.srcdoc = /<head[^>]*>/i.test(ta.value) ? ta.value.replace(/<head[^>]*>/i, (m) => m + tag) : tag + ta.value;
+      const save = () => { ta.value === original ? store.del(key) : store.set(key, ta.value); markEdited(); };
+      const run = async () => {
+        if (!entry) return;
+        save();
+        const { html, blobs } = await buildPage(entry, f.file, ta.value);
+        frame.srcdoc = html;
+        setTimeout(() => oldBlobs.forEach((b) => URL.revokeObjectURL(b)), 5000);
+        oldBlobs = blobs;
       };
       let timer;
-      ta.addEventListener("input", () => {
-        setStatus();
-        clearTimeout(timer);
-        timer = setTimeout(() => (ta.value === original ? store.del(key) : store.set(key, ta.value)), 400);
-      });
+      ta.addEventListener("input", () => { setStatus(); clearTimeout(timer); timer = setTimeout(save, 400); });
       ta.addEventListener("keydown", (e) => {
         if (e.key === "Tab") {           // Tab 插入兩個空白，而不是跳到下一個欄位
           e.preventDefault();
-          const s = ta.selectionStart;
-          ta.setRangeText("  ", s, ta.selectionEnd, "end");
+          ta.setRangeText("  ", ta.selectionStart, ta.selectionEnd, "end");
           ta.dispatchEvent(new Event("input"));
         }
         if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -272,11 +317,11 @@
       stage.querySelector(".run-edit").addEventListener("click", run);
       stage.querySelector(".reset-edit").addEventListener("click", () => {
         if (ta.value !== original && !confirm("確定要放棄修改，還原成原始碼嗎？")) return;
-        ta.value = original; store.del(key); setStatus(); run();
+        ta.value = original; store.del(key); markEdited(); setStatus(); run();
       });
       stage.querySelector(".dl-edit").addEventListener("click", () => {
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(new Blob([ta.value], { type: "text/html" }));
+        a.href = URL.createObjectURL(new Blob([ta.value], { type: "text/plain" }));
         a.download = f.file.split("/").pop();
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -289,18 +334,20 @@
       const f = demo.files[cur];
       const path = url(`${demo.dir}/${f.file}`);
       const canRun = f.run !== false && /\.html?$/.test(f.file);
-      if (!canRun && mode !== "src") mode = "src";
+      if (mode === "edit" && !isEditable(f)) mode = "src";
+      if (mode === "run" && !canRun) mode = "src";
       box.querySelectorAll(".demo-files button").forEach((b) => b.setAttribute("aria-current", String(+b.dataset.n === cur)));
+      markEdited();
       box.querySelector(".name").textContent = f.file;
       box.querySelector(".open").href = path;
       box.querySelector(".demo-desc").textContent = f.desc || "";
       runBtn.hidden = !canRun;
-      editBtn.hidden = !canRun;
+      editBtn.hidden = !isEditable(f);
       runBtn.setAttribute("aria-pressed", String(mode === "run"));
       srcBtn.setAttribute("aria-pressed", String(mode === "src"));
       editBtn.setAttribute("aria-pressed", String(mode === "edit"));
       if (mode === "edit") {
-        await showEditor(f, path);
+        await showEditor(f);
       } else if (mode === "run") {
         stage.innerHTML = `<iframe src="${path}" title="${esc(f.title)}" allow="geolocation" loading="lazy"></iframe>`;
       } else {
