@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebGIS 課程資料庫</title>
+  <meta name="description" content="WebGIS 課程的講義重點、程式碼範例與上課筆記，依週次整理。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/site.js" data-root="." defer></script>
+</head>
+<body class="home">
+
+  <section class="hero">
+    <div class="inner">
+      <div class="eyebrow">WebGIS · Course Hub · 115-1</div>
+      <h1>WebGIS 課程資料庫</h1>
+      <p class="lead">把每週的老師講義重點、可以直接跑的程式碼，以及自己的上課筆記放在同一張「地圖」上。依週次排列，用標籤串起來。</p>
+      <div class="stats">
+        <div class="stat"><b id="stat-weeks">–</b><span>週次</span></div>
+        <div class="stat lecture"><b id="stat-lecture">–</b><span>講義</span></div>
+        <div class="stat code"><b id="stat-code">–</b><span>程式碼</span></div>
+        <div class="stat note"><b id="stat-note">–</b><span>筆記</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <input class="search" type="search" placeholder="搜尋標題、摘要或標籤，例如 Leaflet、EPSG…" aria-label="搜尋">
+    <div class="chips" role="group" aria-label="類型篩選">
+      <button class="chip" type="button" data-type="all">全部</button>
+      <button class="chip" type="button" data-type="lecture">講義</button>
+      <button class="chip" type="button" data-type="code">程式碼</button>
+      <button class="chip" type="button" data-type="note">筆記</button>
+    </div>
+    <span class="active-tag"></span>
+  </div>
+
+  <main id="catalog" class="catalog"></main>
+
+</body>
+</html>

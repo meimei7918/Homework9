@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>多底圖切換＋點擊顯示座標 · WebGIS 課程資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+  <script src="src/w02-leaflet-basemap.js" defer></script>
+</head>
+<body data-id="w02-code-leaflet-basemap">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這段程式在做什麼</h2>
+      <p>把第二週講義的觀念拼起來：一張以臺北為中心的地圖，右上角可以在 OpenStreetMap、臺灣通用電子地圖、正射影像之間切換，左下角有比例尺。點地圖任何地方，會跳出該點的經緯度。</p>
+
+      <h2>Demo</h2>
+      <div id="map" class="map-demo"></div>
+
+      <h2>原始碼</h2>
+      <div id="source"></div>
+
+      <h2>逐段解說</h2>
+      <h3>1. 建立地圖</h3>
+      <p><code>L.map("map")</code> 綁定 id 為 <code>map</code> 的 div，<code>setView([緯度, 經度], 縮放)</code> 決定一開始看到哪裡。</p>
+
+      <h3>2–3. 底圖與切換控制項</h3>
+      <p>每個底圖都是一個 <code>L.tileLayer</code>，但只有 OSM 先 <code>addTo(map)</code>。<code>L.control.layers</code> 的第一個參數是「底圖」物件，同一時間只會顯示一個（單選），物件的 key 就是選單上顯示的文字。</p>
+      <div class="callout warn">
+        <p>國土測繪中心的網址是 <code>{z}/{y}/{x}</code>，和 OSM 的 <code>{z}/{x}/{y}</code> 順序不同，寫反會整片空白。</p>
+      </div>
+
+      <h3>6. 點擊事件</h3>
+      <p><code>map.on("click", handler)</code> 的事件物件裡有 <code>e.latlng</code>。用 <code>L.popup().setLatLng().setContent().openOn(map)</code> 在點擊處彈出一個不綁定任何標記的 popup。</p>
+      <pre><code class="language-javascript">map.on("click", (e) =&gt; {
+  const { lat, lng } = e.latlng;
+  L.popup().setLatLng(e.latlng)
+    .setContent(`緯度 ${lat.toFixed(5)}`)
+    .openOn(map);
+});</code></pre>
+
+      <h2>練習</h2>
+      <ul class="todo">
+        <li>把 <code>PHOTO2</code> 換成國土測繪中心的其他圖層（例如 <code>EMAP2</code>）</li>
+        <li>點擊時除了 popup，也在地圖上留下一個 <code>L.circleMarker</code></li>
+        <li>用 <code>L.control.layers</code> 的第二個參數加一個可勾選的疊加圖層</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

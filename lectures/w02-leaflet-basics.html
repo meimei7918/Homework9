@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leaflet 入門：地圖、圖層與控制項 · WebGIS 課程資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w02-lecture-leaflet-basics">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>在空白網頁裡用 Leaflet 建出一張可以拖曳縮放的地圖</li>
+        <li>分清楚 Map、Layer、Control 三種物件</li>
+        <li>知道怎麼接上臺灣國土測繪中心的 WMTS 底圖</li>
+      </ul>
+
+      <h2>最小可執行的地圖</h2>
+      <p><dfn class="term">Leaflet<span>Leaflet.js</span></dfn> 是輕量的開源地圖函式庫。要讓它跑起來只需要三樣東西：CSS、JS、一個有高度的 <code>div</code>。</p>
+      <pre><code class="language-html">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"&gt;
+&lt;script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"&gt;&lt;/script&gt;
+
+&lt;div id="map" style="height: 400px"&gt;&lt;/div&gt;
+&lt;script&gt;
+  const map = L.map("map").setView([25.04, 121.54], 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&amp;copy; OpenStreetMap contributors"
+  }).addTo(map);
+&lt;/script&gt;</code></pre>
+      <div class="callout warn">
+        <p><code>div</code> 一定要有高度，否則地圖高度是 0，畫面一片空白但也不會報錯。</p>
+      </div>
+
+      <h2>三種核心物件</h2>
+      <table>
+        <thead><tr><th>物件</th><th>是什麼</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td><code>L.map</code></td><td>畫布本身，管理中心點與縮放</td><td><code>setView</code>、<code>fitBounds</code>、<code>on("click")</code></td></tr>
+          <tr><td>Layer</td><td>疊在地圖上的東西</td><td><code>L.tileLayer</code>、<code>L.marker</code>、<code>L.geoJSON</code></td></tr>
+          <tr><td>Control</td><td>浮在角落的介面元件</td><td><code>L.control.layers</code>、<code>L.control.scale</code></td></tr>
+        </tbody>
+      </table>
+      <p>幾乎所有東西都是「建立物件 → <code>.addTo(map)</code>」這個模式。</p>
+
+      <h2>座標順序：[緯度, 經度]</h2>
+      <p>Leaflet 的 <code>setView</code>、<code>L.marker</code> 都吃 <code>[lat, lng]</code>，也就是<strong>緯度在前</strong>。臺北大約是 <code>[25.04, 121.54]</code>。</p>
+      <div class="callout key">
+        <p>GeoJSON 剛好相反，是 <code>[lng, lat]</code>。兩個混用時最容易把點畫到印度洋去。</p>
+      </div>
+
+      <h2>臺灣的 WMTS 底圖</h2>
+      <p>國土測繪中心提供 <dfn class="term">網路地圖圖磚服務<span>WMTS</span></dfn>，其中 GoogleMapsCompatible 的切法與 Leaflet 相容，可以直接用 <code>L.tileLayer</code> 接：</p>
+      <pre><code class="language-javascript">// 臺灣通用電子地圖（注意網址裡是 {y}/{x}）
+L.tileLayer("https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}", {
+  attribution: "&amp;copy; 內政部國土測繪中心",
+  maxZoom: 19
+});</code></pre>
+      <p>把 <code>EMAP</code> 換成 <code>PHOTO2</code> 就是正射影像。實際的切換範例見本週程式碼頁。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>Leaflet 的一切都是 Map ＋ Layer ＋ Control。座標記住「Leaflet 緯度先、GeoJSON 經度先」。底圖只要有 <code>{z}/{x}/{y}</code> 網址就能接。</p>
+      </div>
+
+      <h2>附件與延伸閱讀</h2>
+      <div id="files"></div>
+      <ul>
+        <li><a href="https://leafletjs.com/reference.html" target="_blank" rel="noopener">Leaflet 官方 API 文件</a></li>
+        <li><a href="https://maps.nlsc.gov.tw/" target="_blank" rel="noopener">國土測繪圖資服務雲</a></li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

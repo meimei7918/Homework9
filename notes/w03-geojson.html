@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W03 筆記：GeoJSON 結構與 style 函式 · WebGIS 課程資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w03-note-geojson">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>今日重點</h2>
+      <ol>
+        <li>GeoJSON 最外層通常是 FeatureCollection，裡面一堆 Feature</li>
+        <li>點用 <code>pointToLayer</code>，線面用 <code>style</code></li>
+        <li>直接雙擊打開 HTML 時 fetch 會失敗，要開本機伺服器</li>
+      </ol>
+
+      <h2>課堂筆記</h2>
+      <h3>GeoJSON 的結構</h3>
+      <p>一個 Feature ＝ 幾何 <code>geometry</code> ＋ 屬性 <code>properties</code>。幾何類型有 Point、LineString、Polygon，以及前面加 Multi 的版本。</p>
+      <pre><code class="language-json">{
+  "type": "Feature",
+  "properties": { "name": "臺北車站", "category": "交通" },
+  "geometry": { "type": "Point", "coordinates": [121.517, 25.0478] }
+}</code></pre>
+      <div class="callout warn">
+        <p>Polygon 的座標多包一層陣列（外環＋可能的內環），而且<strong>第一點和最後一點要一樣</strong>才算封閉。</p>
+      </div>
+
+      <h3>上色的邏輯</h3>
+      <p>老師的建議：顏色對照表放在一個物件裡，地圖和圖例共用。實作在 <a href="../code/w03-geojson-layer.html">本週程式碼頁</a>。</p>
+
+      <h2>疑問與解答</h2>
+      <details class="qa">
+        <summary>為什麼 circleMarker 也吃 style？</summary>
+        <p>因為 <code>circleMarker</code> 其實是向量圖形（Path），跟線、面一樣有 <code>color</code>、<code>fillColor</code>。一般的 <code>L.marker</code> 是圖片圖示，就不吃 style。</p>
+      </details>
+      <details class="qa">
+        <summary>雙擊打開 HTML，fetch GeoJSON 為什麼出現 CORS 錯誤？</summary>
+        <p><code>file://</code> 協定下瀏覽器不允許 fetch 本機檔案。在專案資料夾執行 <code>python3 -m http.server</code>，改用 <code>http://localhost:8000</code> 開就好。放到 GitHub Pages 上也沒問題。</p>
+      </details>
+
+      <h2>待辦</h2>
+      <ul class="todo">
+        <li>到 geojson.io 自己畫一個多邊形，下載後丟進範例</li>
+        <li>找一份政府開放資料的 GeoJSON（例如公園綠地）試著上色</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

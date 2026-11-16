@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebGIS 概論：架構、圖磚與座標系統 · WebGIS 課程資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w01-lecture-intro-webgis">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>說得出 WebGIS 前端、地圖服務、資料庫各自負責什麼</li>
+        <li>理解網路地圖為什麼要切成 <code>z/x/y</code> 的圖磚</li>
+        <li>分辨 EPSG:4326、EPSG:3857、EPSG:3826 的用途</li>
+      </ul>
+
+      <h2>WebGIS 的三層架構</h2>
+      <p><dfn class="term">網路地理資訊系統<span>WebGIS</span></dfn> 就是把 GIS 的「看圖、查詢、分析」搬到瀏覽器上。可以拆成三層來想：</p>
+      <table>
+        <thead><tr><th>層</th><th>負責什麼</th><th>常見工具</th></tr></thead>
+        <tbody>
+          <tr><td>前端（瀏覽器）</td><td>畫地圖、處理使用者互動</td><td>Leaflet、OpenLayers、MapLibre GL</td></tr>
+          <tr><td>地圖服務</td><td>把資料變成圖磚或 API 提供出去</td><td>GeoServer、WMTS / WMS、向量圖磚服務</td></tr>
+          <tr><td>資料層</td><td>存放與查詢空間資料</td><td>PostGIS、GeoJSON 檔、Shapefile</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip">
+        <p>這門課前半段幾乎都在「前端」這一層：資料先用靜態 GeoJSON 檔，地圖服務直接用公開的圖磚。</p>
+      </div>
+
+      <h2>圖磚：網路地圖的切法</h2>
+      <p>一次把整張世界地圖傳給瀏覽器太大了，所以網路地圖會把每個縮放層級切成 256×256 像素的 <dfn class="term">圖磚<span>Tile</span></dfn>，網址通常長這樣：</p>
+      <pre><code class="language-plaintext">https://tile.openstreetmap.org/{z}/{x}/{y}.png</code></pre>
+      <ul>
+        <li><code>z</code>：縮放層級，0 是整個世界一張圖，每加 1 級邊長加倍、張數變 4 倍</li>
+        <li><code>x</code>、<code>y</code>：該層級裡第幾欄、第幾列</li>
+      </ul>
+      <p>瀏覽器只下載畫面範圍內的那幾張，所以拖曳、縮放才會順。</p>
+
+      <h2>三種一定會遇到的座標系統</h2>
+      <p><dfn class="term">座標參考系統<span>CRS</span></dfn> 決定「一組數字代表地球上哪個位置」。每個系統都有一個 <dfn class="term">EPSG 代碼<span>EPSG code</span></dfn> 當身分證。</p>
+      <table>
+        <thead><tr><th>代碼</th><th>名稱</th><th>單位</th><th>什麼時候用</th></tr></thead>
+        <tbody>
+          <tr><td><code>EPSG:4326</code></td><td>WGS84 經緯度</td><td>度</td><td>GPS、GeoJSON 標準、資料交換</td></tr>
+          <tr><td><code>EPSG:3857</code></td><td>Web Mercator</td><td>公尺</td><td>幾乎所有網路底圖的「顯示」座標</td></tr>
+          <tr><td><code>EPSG:3826</code></td><td>TWD97 / TM2 (121°)</td><td>公尺</td><td>臺灣政府開放資料、量測面積距離</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        <p>Web Mercator 越往高緯度面積放大越誇張，<strong>不能拿來算面積</strong>。要算臺灣的面積或距離，先轉成 TWD97。</p>
+      </div>
+      <p>好消息是 Leaflet 預設已經幫我們處理：我們給它 WGS84 經緯度，它自己投影成 Web Mercator 畫出來。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>WebGIS ＝ 前端畫圖 ＋ 服務供圖 ＋ 資料庫存資料。底圖是切好的圖磚；資料用 EPSG:4326 存，用 EPSG:3857 顯示，用 EPSG:3826 計算。</p>
+      </div>
+
+      <h2>附件與延伸閱讀</h2>
+      <div id="files"></div>
+      <ul>
+        <li><a href="https://epsg.io/" target="_blank" rel="noopener">epsg.io — 查詢任何 EPSG 代碼</a></li>
+        <li><a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames" target="_blank" rel="noopener">OSM Wiki：Slippy map tilenames（圖磚編號規則）</a></li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

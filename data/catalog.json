@@ -1,0 +1,105 @@
+{
+  "course": {
+    "name": "WebGIS 課程資料庫",
+    "term": "115-1",
+    "owner": "meimei7918"
+  },
+  "weeks": {
+    "01": "WebGIS 概論與座標系統",
+    "02": "Leaflet 入門與底圖",
+    "03": "GeoJSON 與向量圖層"
+  },
+  "items": [
+    {
+      "id": "w01-lecture-intro-webgis",
+      "type": "lecture",
+      "week": 1,
+      "title": "WebGIS 概論：架構、圖磚與座標系統",
+      "date": "2026-09-15",
+      "tags": [
+        "概論",
+        "座標系統",
+        "EPSG",
+        "圖磚"
+      ],
+      "summary": "WebGIS 的前後端分工、為什麼網路地圖要切成圖磚，以及 WGS84、Web Mercator、TWD97 三種最常見的座標系統。",
+      "path": "lectures/w01-intro-webgis.html",
+      "files": []
+    },
+    {
+      "id": "w01-note-intro-webgis",
+      "type": "note",
+      "week": 1,
+      "title": "W01 筆記：經緯度順序是個坑",
+      "date": "2026-09-15",
+      "tags": [
+        "座標系統",
+        "EPSG",
+        "踩雷"
+      ],
+      "summary": "第一週上課筆記：lat/lng 與 lng/lat 的順序差異、EPSG 代碼怎麼查，以及課後要裝好的工具。",
+      "path": "notes/w01-intro-webgis.html"
+    },
+    {
+      "id": "w02-lecture-leaflet-basics",
+      "type": "lecture",
+      "week": 2,
+      "title": "Leaflet 入門：地圖、圖層與控制項",
+      "date": "2026-09-22",
+      "tags": [
+        "Leaflet",
+        "底圖",
+        "圖層"
+      ],
+      "summary": "Leaflet 的三個核心物件（Map、Layer、Control），以及如何疊加 OSM 與國土測繪中心的 WMTS 底圖。",
+      "path": "lectures/w02-leaflet-basics.html",
+      "files": []
+    },
+    {
+      "id": "w02-code-leaflet-basemap",
+      "type": "code",
+      "week": 2,
+      "title": "多底圖切換＋點擊顯示座標",
+      "date": "2026-09-22",
+      "tags": [
+        "Leaflet",
+        "底圖",
+        "WMTS",
+        "事件"
+      ],
+      "summary": "用 L.control.layers 切換 OSM、臺灣通用電子地圖與正射影像，點地圖任一處顯示經緯度。",
+      "path": "code/w02-leaflet-basemap.html",
+      "src": "code/src/w02-leaflet-basemap.js"
+    },
+    {
+      "id": "w03-code-geojson-layer",
+      "type": "code",
+      "week": 3,
+      "title": "GeoJSON 分類著色＋圖例",
+      "date": "2026-09-29",
+      "tags": [
+        "Leaflet",
+        "GeoJSON",
+        "樣式",
+        "圖例"
+      ],
+      "summary": "讀取外部 GeoJSON，依屬性 category 給不同顏色，點擊彈出資訊，並自製一個圖例控制項。",
+      "path": "code/w03-geojson-layer.html",
+      "src": "code/src/w03-geojson-layer.js"
+    },
+    {
+      "id": "w03-note-geojson",
+      "type": "note",
+      "week": 3,
+      "title": "W03 筆記：GeoJSON 結構與 style 函式",
+      "date": "2026-09-29",
+      "tags": [
+        "GeoJSON",
+        "樣式",
+        "Leaflet"
+      ],
+      "summary": "Feature / FeatureCollection 的差別、pointToLayer 與 style 什麼時候用哪一個，還有 fetch 本機檔案的 CORS 問題。",
+      "path": "notes/w03-geojson.html"
+    }
+  ]
+}

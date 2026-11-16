@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoJSON 分類著色＋圖例 · WebGIS 課程資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+  <script src="src/w03-geojson-layer.js" defer></script>
+</head>
+<body data-id="w03-code-geojson-layer">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這段程式在做什麼</h2>
+      <p>從 <code>data/geo/w03-taipei-landmarks.geojson</code> 讀入臺北幾個地點（7 個點、1 個面），依屬性 <code>category</code> 上色，點擊顯示名稱，並在右下角放一個自製圖例。</p>
+
+      <h2>Demo</h2>
+      <div id="map" class="map-demo"></div>
+
+      <h2>原始碼</h2>
+      <div id="source"></div>
+
+      <h2>逐段解說</h2>
+      <h3>2. 顏色對照表</h3>
+      <p>把「分類 → 顏色」集中在 <code>COLORS</code> 一個物件裡，圖徵上色和圖例都讀同一份，新增分類只要改一個地方，不會出現圖例和地圖顏色對不上的情況。</p>
+
+      <h3>3. L.geoJSON 的三個選項</h3>
+      <table>
+        <thead><tr><th>選項</th><th>作用在</th><th>回傳</th></tr></thead>
+        <tbody>
+          <tr><td><code>pointToLayer</code></td><td>Point</td><td>一個 Layer（這裡是 <code>circleMarker</code>）</td></tr>
+          <tr><td><code>style</code></td><td>LineString、Polygon（和 circleMarker）</td><td>樣式物件</td></tr>
+          <tr><td><code>onEachFeature</code></td><td>每一個圖徵</td><td>不用回傳，拿來綁 popup 或事件</td></tr>
+        </tbody>
+      </table>
+
+      <h3>4. fitBounds</h3>
+      <p><code>layer.getBounds()</code> 取得所有圖徵的外框，<code>map.fitBounds</code> 自動調整縮放，比手動猜 <code>setView</code> 穩定。</p>
+
+      <h3>5. 自製圖例</h3>
+      <p>任何 HTML 都能變成控制項：建立 <code>L.control()</code>，在 <code>onAdd</code> 回傳一個 DOM 元素即可。</p>
+      <pre><code class="language-javascript">const legend = L.control({ position: "bottomright" });
+legend.onAdd = () =&gt; { const div = L.DomUtil.create("div"); /* ... */ return div; };
+legend.addTo(map);</code></pre>
+
+      <h2>練習</h2>
+      <ul class="todo">
+        <li>在 GeoJSON 裡加一條 LineString（例如一段捷運路線），確認 <code>style</code> 有作用</li>
+        <li>做一個勾選框，只顯示某一個分類（提示：<code>filter</code> 選項）</li>
+        <li>把 popup 改成滑鼠移過去就顯示的 <code>bindTooltip</code></li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>
