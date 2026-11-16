@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    </script> <!--Way 2-->    
+  </head>
+  <body>
+    <script> <!--put your JavaScript here-->       
+      $(function(){                    //$(document).ready(function(){ });        
+        $("#b1").click(function(){
+          $("#para1").animate({        //params
+              left:'250px',
+              height:'300px',
+              width:'300px'
+          },{
+            duration:10000,
+            complete:function(){
+              setTimeout(function(){ 
+                $("#para1").animate({        //params
+                    left:'0px',
+                },1000); 
+              }, 2000);  //waiting for 2 secs
+            }
+          });   
+        });
+        $("#b2").click(function(){
+            $("#para1").stop();
+        });
+        
+        function tTimer() {
+            var d = new Date();
+            var h=d.getHours();
+            var m=d.getMinutes();
+            var s=d.getSeconds();
+            var timeString=h+":"+m+":"+s;
+            $("#para1").text(timeString);
+        }
+        var setIntent;
+        /*$("#b3").click(function(){
+            setIntent=setInterval(tTimer, 1000);
+        });*/
+        $("#b4").click(function(){
+            clearTimeout(setIntent);
+        });
+        $("#b3").click(function(){
+            setIntent=setInterval(function() {
+            var d = new Date();
+            var h=d.getHours();
+            var m=d.getMinutes();
+            var s=d.getSeconds();
+            var timeString=h+":"+m+":"+s;
+            $("#para1").text(timeString);
+          }, 1000);
+        });/**/
+        
+      });
+    </script>
+    <button id="b1">press me</button>    
+    <div id="para1" style="background:#ffbf21;height:50px;width:50px;position:absolute;">para1</div>    
+    <button id="b2" >press me to stop animation</button>
+    <button id="b3" >press me for testing setInterval</button>
+    <button id="b4" >press me to stop setInterval</button> 
+  </body>
+</html>
+
+

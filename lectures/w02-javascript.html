@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>JavaScript：變數、流程控制、函式、事件與 JSON · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w02-lecture-javascript">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說明 JavaScript 如何透過 DOM 改變網頁內容與樣式</li>
+        <li>能正確使用 let / const、陣列方法、if / for / while / switch 與函式</li>
+        <li>能用事件呼叫自己寫的函式</li>
+        <li>能讀懂 JSON 與 GeoJSON 的結構，並取出裡面的值</li>
+      </ul>
+
+      <h2>JavaScript 在網頁裡的角色</h2>
+      <p>JavaScript 是在<strong>瀏覽器裡</strong>執行的程式語言（用戶端語言）。它能改 HTML 內容、屬性值、CSS 樣式，靠的是兩個模型：</p>
+      <ul>
+        <li><dfn class="term">文件物件模型<span>DOM</span></dfn>：網頁內容的物件樹，例如 <code>document.getElementById("abc")</code></li>
+        <li><dfn class="term">瀏覽器物件模型<span>BOM</span></dfn>：以 <code>window</code> 為首，底下有 <code>document</code>、<code>history</code>（瀏覽紀錄）、<code>location</code>（目前網址，例如 <code>window.location.hostname</code>）、<code>navigator</code>（瀏覽器與作業系統資訊）、<code>screen</code>（螢幕資訊）</li>
+      </ul>
+
+      <h2>放 JavaScript 的三個位置</h2>
+      <ol>
+        <li>寫在 <code>&lt;head&gt;</code> 的 <code>&lt;script&gt;</code> 裡</li>
+        <li>寫成外部 <code>.js</code> 檔，用 <code>&lt;script src="..."&gt;</code> 引入</li>
+        <li>寫在 <code>&lt;body&gt;</code> 的 <code>&lt;script&gt;</code> 裡</li>
+      </ol>
+      <div class="callout warn">
+        <p>放在 head 的程式執行時，body 的元素還沒產生，用 <code>getElementById</code> 會拿到 <code>null</code>。要嘛放到 body 最後，要嘛等文件載入完再執行（下週的 jQuery 會用 document ready 解決）。</p>
+      </div>
+      <p>除錯時最常用 <code>console.log()</code>，在瀏覽器開發者工具的 Console 面板看結果。</p>
+
+      <h2>變數</h2>
+      <p>宣告變數有三個關鍵字：<code>var</code>（1998–2015 的舊寫法）、<code>let</code> 與 <code>const</code>（2015 起）。<code>const</code> 宣告後不能重新指定。</p>
+      <pre><code class="language-javascript">let x = 10;
+let m, n;
+let z = "WebGIS" + " " + "is fun";
+const PI = 3.14159;</code></pre>
+      <p><code>let</code> 的三個規則：有<strong>區塊範圍</strong>（只在 <code>{ }</code> 內有效）、<strong>要先宣告才能用</strong>、<strong>同一範圍內不能重複宣告</strong>。</p>
+      <p>命名規則：開頭只能是字母、<code>_</code> 或 <code>$</code>，不能是數字；大小寫有別；不能用保留字（如 <code>let</code>、<code>class</code>、<code>return</code>）。</p>
+
+      <h2>資料型別與 typeof</h2>
+      <p>變數可以放數字、字串、物件、函式、undefined 等。用 <code>typeof</code> 查型別時有幾個容易混淆的地方：</p>
+      <pre><code class="language-javascript">let t1 = "";         // typeof → "string"（空字串不是 undefined）
+let t2 = undefined;  // typeof → "undefined"（還沒被指定任何東西）
+let t3 = null;       // typeof → "object"（語言的歷史包袱）</code></pre>
+
+      <h2>運算子</h2>
+      <p>算術 <code>+ - * / % **</code>、指定 <code>= += -=</code>、比較 <code>== === != !== &gt; &lt;</code>、邏輯 <code>&amp;&amp; || !</code>。</p>
+      <div class="callout key">
+        <p><code>==</code> 會先轉型再比（<code>"5" == 5</code> 是 true），<code>===</code> 連型別一起比（<code>"5" === 5</code> 是 false）。一律用 <code>===</code> 比較安全。</p>
+      </div>
+
+      <h2>陣列</h2>
+      <pre><code class="language-javascript">let tArray = ["a", "b", "c"];
+let mixed = [0, 1, "abc", { a: 1, b: 2 }];  // 可以混放不同型別
+tArray[0];             // "a"，索引從 0 開始
+tArray.length;         // 3
+tArray.push("d");      // 加到最後
+tArray.pop();          // 移除最後一個
+tArray.splice(1, 1);   // 從索引 1 開始刪 1 個
+tArray.sort();         // 排序（字串）
+tArray.reverse();      // 反轉</code></pre>
+
+      <h2>流程控制</h2>
+      <h3>if / else if / else</h3>
+      <pre><code class="language-javascript">if (score &gt;= 80) { grade = "A"; }
+else if (score &gt;= 60) { grade = "B"; }
+else { grade = "C"; }</code></pre>
+      <h3>for、while、do while</h3>
+      <pre><code class="language-javascript">for (let i = 0; i &lt; 5; i++) { ... }   // 初始 → 條件 → 每輪結束後執行
+while (i &lt; 5) { ...; i++; }            // 條件成立才執行，可能一次都不跑
+do { ...; i++; } while (i &lt; 5);        // 先跑一次再檢查，至少跑一次</code></pre>
+      <h3>switch</h3>
+      <pre><code class="language-javascript">switch (city) {
+  case "Taipei":  msg = "臺北"; break;
+  case "Tainan":  msg = "臺南"; break;
+  default:        msg = "其他";
+}</code></pre>
+      <p>忘了 <code>break</code> 會「掉到」下一個 case 繼續執行。另外 switch 用 <code>===</code> 比較，表單取得的值是字串，<code>case 1</code> 對不到 <code>"1"</code>，範例 js_switch_select.html 就是這個陷阱。</p>
+
+      <h2>函式</h2>
+      <p>函式是一段完成特定工作的程式碼，被呼叫時才執行。同一個函式有四種寫法：</p>
+      <pre><code class="language-javascript">function abc(a1) { return a1 + 1; }          // 宣告式
+const abc = function (a1) { return a1 + 1; }; // 函式運算式（用 const 比 let 安全）
+const abc = (a1) =&gt; { return a1 + 1; };       // 箭頭函式
+const abc = (a1) =&gt; a1 + 1;                   // 只有一行時可省略大括號與 return</code></pre>
+      <p>產生 0–9 的隨機整數：<code>Math.floor(Math.random() * 10)</code>。<code>Math.random()</code> 回傳 0（含）到 1（不含）之間的數。</p>
+
+      <h2>事件</h2>
+      <p>事件是瀏覽器或使用者做的事（點擊、輸入、載入完成）。用「事件＋事件處理函式」讓網頁回應：</p>
+      <pre><code class="language-html">&lt;button onclick="alert('May I help you?')"&gt;按我&lt;/button&gt;
+&lt;button onclick="gradeFunction(100)"&gt;算等第&lt;/button&gt;
+&lt;button onclick="funcA(); funcB();"&gt;一次呼叫兩個&lt;/button&gt;</code></pre>
+
+      <h2>JSON 與 GeoJSON</h2>
+      <p><dfn class="term">JSON<span>JavaScript Object Notation</span></dfn> 是輕量、跨語言的資料交換格式，副檔名 <code>.json</code>。結構只有兩種：物件 <code>{"key": value}</code> 與陣列 <code>[ ... ]</code>，兩者可以互相巢狀。在 JavaScript 裡解析後就是一般物件。</p>
+      <p>講義用政府開放資料的「展覽資訊」示範：下載 JSON → 在 Chrome 打開看結構 → 用 JavaScript 取值。</p>
+      <p><dfn class="term">GeoJSON<span>GeoJSON</span></dfn> 是描述地理資料的 JSON 開放標準，支援 Point、LineString、Polygon、MultiPoint、MultiLineString、MultiPolygon。副檔名可用 <code>.json</code>，建議用 <code>.geojson</code>。</p>
+      <pre><code class="language-json">{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "臺大" },
+      "geometry": { "type": "Point", "coordinates": [121.5397, 25.0174] }
+    }
+  ]
+}</code></pre>
+      <div class="callout warn">
+        <p>GeoJSON 的座標順序是 <strong>[經度, 緯度]</strong>（EPSG:4326），和口語的「緯度、經度」相反。</p>
+      </div>
+      <p>可以到 geojson.io 在地圖上畫圖形，右邊會即時顯示對應的 GeoJSON。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>JavaScript 透過 DOM 改網頁。用 let / const 宣告變數，用 === 比較，陣列索引從 0 開始。函式可以寫成箭頭函式，事件負責呼叫它。JSON 是資料格式，GeoJSON 是加上幾何的 JSON，座標經度在前。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

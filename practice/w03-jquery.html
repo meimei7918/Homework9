@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W03 課後練習：jQuery · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w03-practice-jquery">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">1. <code>$(function () { ... });</code> 的作用是？</p>
+        <ol class="opts"><li>宣告一個叫 $ 的函式</li><li>等文件載入完成後才執行裡面的程式</li><li>立刻執行，不管元素是否存在</li><li>等所有圖片下載完才執行</li></ol>
+        <p class="explain">它是 <code>$(document).ready(...)</code> 的簡寫，DOM 建好就執行，避免選不到元素。等圖片全部載入的是 window 的 load 事件。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">2. <code>$(".layer")</code> 選到的是？</p>
+        <ol class="opts"><li>id 為 layer 的元素</li><li>所有 &lt;layer&gt; 標籤</li><li>所有 class 含 layer 的元素</li><li>name 為 layer 的表單欄位</li></ol>
+        <p class="explain">jQuery 選擇器沿用 CSS：點是 class、井號是 id、沒有符號是標籤名。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">3. <code>$("#box").append("&lt;p&gt;新&lt;/p&gt;")</code> 和 <code>$("#box").after("&lt;p&gt;新&lt;/p&gt;")</code> 的差別？</p>
+        <ol class="opts"><li>append 加在 #box 裡面的最後；after 加在 #box 外面、緊接在它之後</li><li>兩者相同</li><li>append 加在外面；after 加在裡面</li><li>after 會取代 #box</li></ol>
+        <p class="explain">append / prepend 作用在元素「裡面」，after / before 作用在元素「外面」。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">4. 想清空清單 <code>&lt;ul id="todo"&gt;</code> 裡所有項目，但保留 ul 本身，該用？</p>
+        <ol class="opts"><li><code>$("#todo").remove()</code></li><li><code>$("#todo").hide()</code></li><li><code>$("#todo").text()</code></li><li><code>$("#todo").empty()</code></li></ol>
+        <p class="explain">empty() 只刪除子元素；remove() 連 ul 本身一起刪掉；hide() 只是看不見，項目還在。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">5. 要讀取 <code>&lt;input id="city"&gt;</code> 使用者輸入的文字，用哪個方法？</p>
+        <ol class="opts"><li><code>$("#city").text()</code></li><li><code>$("#city").html()</code></li><li><code>$("#city").val()</code></li><li><code>$("#city").attr("text")</code></li></ol>
+        <p class="explain">表單欄位的值用 val()。text() 和 html() 讀的是元素「之間」的內容，input 沒有內容。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">6. <code>children()</code> 和 <code>find()</code> 的差別？</p>
+        <ol class="opts"><li>沒有差別</li><li>children 只找下一層；find 會找所有層的子孫</li><li>children 找所有子孫；find 只找下一層</li><li>find 往上找祖先</li></ol>
+        <p class="explain">children() 只看直接的子元素；find() 往下搜尋所有層級，通常要給選擇器，例如 find("li")。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">7. 每 1 秒更新一次時鐘，並在按下按鈕時停止，應該用？</p>
+        <ol class="opts"><li>setInterval 搭配 clearInterval</li><li>setTimeout 搭配 clearInterval</li><li>setInterval 搭配 stop()</li><li>for 迴圈跑 1000 次</li></ol>
+        <p class="explain">setInterval 會重複執行，回傳的編號交給 clearInterval 停止。setTimeout 只執行一次；stop() 是停止 jQuery 動畫。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">8. 關於 HTTP 的 GET，下列何者正確？</p>
+        <ol class="opts"><li>資料放在請求的 body 裡</li><li>適合傳送密碼</li><li>只能由表單發出</li><li>資料以查詢字串附在網址後面，例如 <code>?id=3</code></li></ol>
+        <p class="explain">GET 把參數放在網址上，看得到也會被記錄，不適合傳密碼；POST 才把資料放在 body。AJAX 也能發 GET。</p>
+      </div>
+
+      <h2>實作題</h2>
+
+      <div class="task">
+        <h3>1. 待辦清單<span class="level">事件、append、toggleClass</span></h3>
+        <p>一個輸入框、一個「新增」按鈕、一個「全部清除」按鈕和一個清單。按新增時把輸入的文字加成新的項目並清空輸入框（空白不加）；點某個項目時切換刪除線；按全部清除時清空清單。</p>
+        <details class="hint"><summary>提示</summary><p>新增的項目是之後才產生的，直接 <code>$("li").click()</code> 綁不到，要用事件委派：<code>$("#list").on("click", "li", ...)</code>。刪除線可以用一個 class 搭配 <code>text-decoration: line-through</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;style&gt; .done { text-decoration: line-through; color: gray; } &lt;/style&gt;
+&lt;input id="task"&gt; &lt;button id="add"&gt;新增&lt;/button&gt; &lt;button id="clear"&gt;全部清除&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+
+&lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  $(function () {
+    $("#add").click(function () {
+      const text = $("#task").val().trim();
+      if (text === "") return;
+      $("#list").append($("&lt;li&gt;").text(text));   // 用 text() 放入，避免使用者輸入被當成 HTML
+      $("#task").val("");
+    });
+    $("#list").on("click", "li", function () {
+      $(this).toggleClass("done");
+    });
+    $("#clear").click(function () {
+      $("#list").empty();
+    });
+  });
+&lt;/script&gt;</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 十秒倒數<span class="level">setInterval</span></h3>
+        <p>按「開始」後畫面從 10 倒數到 0，每秒減 1；到 0 時顯示「時間到」並停止。倒數中再按開始不應該出現兩個計時器同時跑。</p>
+        <details class="hint"><summary>提示</summary><p>把 setInterval 回傳的編號存在外層變數；開始前先 clearInterval 一次。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;button id="start"&gt;開始&lt;/button&gt; &lt;span id="count"&gt;10&lt;/span&gt;
+
+&lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  $(function () {
+    let timer = null;
+    $("#start").click(function () {
+      clearInterval(timer);              // 避免重複的計時器
+      let n = 10;
+      $("#count").text(n);
+      timer = setInterval(function () {
+        n--;
+        if (n &lt;= 0) {
+          clearInterval(timer);
+          $("#count").text("時間到");
+        } else {
+          $("#count").text(n);
+        }
+      }, 1000);
+    });
+  });
+&lt;/script&gt;</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 用 AJAX 讀捷運站資料做成表格<span class="level">$.getJSON</span></h3>
+        <p>從 W05 範例包下載 <code>metro.geojson</code> 放在練習檔旁邊，用 <code>$.getJSON</code> 讀進來，把每一站的 name、stype、lat、lng 做成表格，表格上方顯示「共 N 站」。</p>
+        <details class="hint"><summary>提示</summary><p><code>$.getJSON(網址, function (data) { ... })</code> 是 <code>$.ajax</code> 的簡寫。直接雙擊 HTML 打開時讀檔會被瀏覽器擋，要在資料夾執行 <code>python3 -m http.server</code> 或用 VS Code 的 Live Server。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;p id="total"&gt;&lt;/p&gt;
+&lt;table border="1"&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;站名&lt;/th&gt;&lt;th&gt;類型&lt;/th&gt;&lt;th&gt;緯度&lt;/th&gt;&lt;th&gt;經度&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody id="rows"&gt;&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  $(function () {
+    $.getJSON("metro.geojson", function (data) {
+      $("#total").text("共 " + data.features.length + " 站");
+      $.each(data.features, function (i, f) {
+        const p = f.properties;
+        $("#rows").append(
+          $("&lt;tr&gt;").append(
+            $("&lt;td&gt;").text(p.name), $("&lt;td&gt;").text(p.stype),
+            $("&lt;td&gt;").text(p.lat),  $("&lt;td&gt;").text(p.lng)
+          )
+        );
+      });
+    }).fail(function () {
+      $("#total").text("讀取失敗：請確認是用本機伺服器開啟，且 metro.geojson 在同一個資料夾");
+    });
+  });
+&lt;/script&gt;</code></pre></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

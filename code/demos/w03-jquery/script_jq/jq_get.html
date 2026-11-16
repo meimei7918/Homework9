@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>    
+  </head>
+  <body>
+    <script>        
+      $(function(){                    //$(document).ready(function(){ });
+        $("#b1").click(function(){         
+          console.log("para1.text:",$("#para1").text(),"vs. para1.html:",$("#para1").html()); //text() vs. html()
+          console.log("text1.text:",$("#text1").text(),"vs. text1.html:",$("#text1").html(),
+                      "vs. text1.val:",$("#text1").val());         
+          console.log("ul1.attr:",$("#ul1").attr("style"));              //attr()
+          console.log("xxx:",$("#ul1").val("aaaa"));              //attr()
+        });
+      });
+    </script>
+    <button id="b1">press me</button>    
+    <div id="para1">para<i>1</i></div> <br/>
+    <div id="para2">para2</div> <br/>    
+    input:<input type="text" id="text1" name="tp1" value="defaultValue" />abc    
+    <ul style="list-style-type:circle" id="ul1">
+      <li>Dept. of Geography</li>
+      <li>Dept. of Bioenvironmental Systems Engineering</li>
+      <li>Dept. of Public Health</li>
+    </ul>
+  </body>
+</html>
+
+

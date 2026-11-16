@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <script> //put your JavaScript here              
+    </script>
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="t1"></div>
+    <div id="t2"></div>    
+    <script>  //put your JavaScript here  
+      let year="a";
+      let nameOfgrade=null;      
+      switch (year) {
+          case "a":
+              nameOfgrade = "freshman";
+              break;
+          case "b":
+              nameOfgrade = "sophomore";
+              break;
+          case "c":
+              nameOfgrade = "junior";
+              break;
+          case "d":
+              nameOfgrade = "senior";
+              break;
+          default:
+              nameOfgrade = "graduate";      }
+      document.getElementById("t1").innerHTML =nameOfgrade; 
+      
+      year=1;
+      nameOfgrade=null;      
+      switch (year) {
+          case 1:
+              nameOfgrade = "freshman";
+              break;
+          case 2:
+              nameOfgrade = "sophomore";
+              break;
+          case 3:
+              nameOfgrade = "junior";
+              break;
+          case 4:
+              nameOfgrade = "senior";
+              break;
+          default:
+              nameOfgrade = "graduate";      }
+      document.getElementById("t2").innerHTML =nameOfgrade;      
+    </script>
+  </body>
+</html>
+
+

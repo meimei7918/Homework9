@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>   <!--Way 2-->
+  </head>
+  <body>
+    <script> <!--put your JavaScript here-->       
+      $(function(){                          //$(document).ready(function(){ });
+        $.ajax({
+          url: 'https://demo.chiaoling.com/ajax002.php?demo=1&b=2',    //relative or absolute paths based on http
+          type: 'POST',                              //method
+          data:{id:123},                             //send 
+          dataType:'json',                           // receive json
+          success: function(result) {
+              console.log(result);  
+              $('#para1').text(result.GET.demo);    //result['GET']['demo']
+          },
+          error: function(){
+             console.log('ajax error');
+          }
+        });
+      });
+    </script>
+    <pre id="para1">para1</pre> <br/>    
+  </body>
+</html>
+

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W02 課後練習：JavaScript 與 GeoJSON · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w02-practice-javascript">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">1. <code>typeof null</code> 的結果是？</p>
+        <ol class="opts"><li>"null"</li><li>"undefined"</li><li>"object"</li><li>"string"</li></ol>
+        <p class="explain">這是 JavaScript 早期留下的特例，null 的 typeof 是 "object"。講義也特別點出 undefined 和 null 不一樣。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">2. <code>"5" === 5</code> 的結果是？</p>
+        <ol class="opts"><li>true</li><li>false</li><li>undefined</li><li>會出錯</li></ol>
+        <p class="explain"><code>===</code> 連型別一起比，字串和數字型別不同，所以是 false。若用 <code>==</code> 會先轉型，結果是 true。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">3. 下面程式最後印出什麼？<br><code>let x = 1; { let x = 2; } console.log(x);</code></p>
+        <ol class="opts"><li>1</li><li>2</li><li>undefined</li><li>出錯：x 重複宣告</li></ol>
+        <p class="explain">let 有區塊範圍，大括號裡的 x 是另一個變數，出了大括號就不存在。在不同區塊宣告同名變數是允許的。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">4. <code>let a = [1, 2, 3, 4]; a.splice(1, 2);</code> 之後 a 是？</p>
+        <ol class="opts"><li>[1, 2]</li><li>[1, 4]</li><li>[3, 4]</li><li>[2, 3]</li></ol>
+        <p class="explain">splice(起始索引, 刪幾個)：從索引 1（數字 2）開始刪 2 個，刪掉 2 和 3，剩下 [1, 4]。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">5. 哪一種迴圈「保證至少執行一次」？</p>
+        <ol class="opts"><li>for</li><li>while</li><li>switch</li><li>do … while</li></ol>
+        <p class="explain">do while 先執行一次再檢查條件。for 和 while 都是先檢查，條件一開始就不成立時一次都不跑。switch 不是迴圈。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">6. <code>Math.floor(Math.random() * 10)</code> 可能產生哪些數？</p>
+        <ol class="opts"><li>1 到 10</li><li>0 到 10</li><li>0 到 9 的整數</li><li>0 到 1 之間的小數</li></ol>
+        <p class="explain">Math.random() 產生 0（含）到 1（不含），乘 10 是 0 到 9.999…，再用 floor 無條件捨去，得到 0 到 9。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">7. GeoJSON 裡臺大的座標應該寫成？</p>
+        <ol class="opts"><li>[25.0174, 121.5397]</li><li>[121.5397, 25.0174]</li><li>{"lat": 25.0174, "lng": 121.5397}</li><li>"25.0174, 121.5397"</li></ol>
+        <p class="explain">GeoJSON 的座標是 [經度, 緯度] 的陣列，經度在前。這是最常見的錯誤：寫反了點會跑到海上。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">8. 變數 data 是一個 FeatureCollection，要取得第一個圖徵的 name 屬性，該怎麼寫？</p>
+        <ol class="opts"><li><code>data.name[0]</code></li><li><code>data.features.name</code></li><li><code>data[0].properties.name</code></li><li><code>data.features[0].properties.name</code></li></ol>
+        <p class="explain">FeatureCollection → features 陣列 → 第 0 個 Feature → properties 物件 → name。物件用點、陣列用中括號。</p>
+      </div>
+
+      <h2>實作題</h2>
+
+      <div class="task">
+        <h3>1. 成績等第計算器<span class="level">函式、if、事件</span></h3>
+        <p>做一個輸入框和一個按鈕。按下按鈕時讀取分數，用自己寫的函式 <code>grade(score)</code> 回傳等第（90 以上 A+、80 以上 A、70 以上 B、60 以上 C、其餘 F），把結果顯示在網頁上。分數不是 0–100 的數字時顯示「請輸入 0–100 的分數」。</p>
+        <details class="hint"><summary>提示</summary><p>輸入框的 <code>.value</code> 是字串，先用 <code>Number()</code> 轉成數字；<code>isNaN()</code> 可以判斷轉換失敗。if 要從高分往低分判斷。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;input id="score" type="number" placeholder="分數"&gt;
+&lt;button onclick="showGrade()"&gt;計算&lt;/button&gt;
+&lt;p id="result"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  const grade = (score) =&gt; {
+    if (score &gt;= 90) return "A+";
+    else if (score &gt;= 80) return "A";
+    else if (score &gt;= 70) return "B";
+    else if (score &gt;= 60) return "C";
+    else return "F";
+  };
+
+  function showGrade() {
+    const s = Number(document.getElementById("score").value);
+    const out = document.getElementById("result");
+    if (isNaN(s) || s &lt; 0 || s &gt; 100) {
+      out.innerHTML = "請輸入 0–100 的分數";
+    } else {
+      out.innerHTML = s + " 分的等第是 " + grade(s);
+    }
+  }
+&lt;/script&gt;</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 一週氣溫統計<span class="level">陣列、for</span></h3>
+        <p>給定 <code>const temps = [28, 31, 33, 29, 35, 30, 27];</code>（週一到週日），用 for 迴圈算出平均氣溫（取到小數一位）、最高溫，以及超過 30 度的有哪幾天，印在 Console。</p>
+        <details class="hint"><summary>提示</summary><p>準備一個星期名稱的陣列，用同一個索引 i 去對應。小數一位可用 <code>toFixed(1)</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const temps = [28, 31, 33, 29, 35, 30, 27];
+const days = ["一", "二", "三", "四", "五", "六", "日"];
+let sum = 0;
+let max = temps[0];
+const hot = [];
+
+for (let i = 0; i &lt; temps.length; i++) {
+  sum += temps[i];
+  if (temps[i] &gt; max) max = temps[i];
+  if (temps[i] &gt; 30) hot.push("週" + days[i]);
+}
+
+console.log("平均：" + (sum / temps.length).toFixed(1));   // 平均：30.4
+console.log("最高：" + max);                                // 最高：35
+console.log("超過 30 度：" + hot.join("、"));                // 超過 30 度：週二、週三、週五</code></pre>
+<p>30 度那天（週六）不算「超過」，所以用 <code>&gt;</code> 而不是 <code>&gt;=</code>。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 從 GeoJSON 列出地點<span class="level">JSON、DOM</span></h3>
+        <p>把下面的 GeoJSON 存成變數，用迴圈在網頁上產生一個清單，每一項顯示「名稱（經度, 緯度）」。</p>
+<pre><code class="language-javascript">const places = {
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "臺大" },     "geometry": { "type": "Point", "coordinates": [121.5397, 25.0174] } },
+    { "type": "Feature", "properties": { "name": "台北 101" }, "geometry": { "type": "Point", "coordinates": [121.5645, 25.0340] } },
+    { "type": "Feature", "properties": { "name": "臺北車站" }, "geometry": { "type": "Point", "coordinates": [121.5170, 25.0478] } }
+  ]
+};</code></pre>
+        <details class="hint"><summary>提示</summary><p>先在 HTML 放一個 <code>&lt;ul id="list"&gt;</code>，迴圈裡把每一項的字串加起來，最後一次寫進 innerHTML。coordinates[0] 是經度、[1] 是緯度。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+  // const places = { ... 上面的資料 ... };
+  let html = "";
+  for (let i = 0; i &lt; places.features.length; i++) {
+    const f = places.features[i];
+    const [lng, lat] = f.geometry.coordinates;
+    html += "&lt;li&gt;" + f.properties.name + "（" + lng + ", " + lat + "）&lt;/li&gt;";
+  }
+  document.getElementById("list").innerHTML = html;
+&lt;/script&gt;</code></pre>
+<p><code>const [lng, lat] = ...</code> 是陣列解構，等於分別寫 <code>coordinates[0]</code> 和 <code>coordinates[1]</code>。</p></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

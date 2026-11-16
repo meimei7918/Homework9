@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>This is Chiao-Ling's Webpage</title>
+    <style>    
+    #deptHeader {
+      background-color: rgba(255, 99, 71, 0.5);
+      color: black;
+      padding: 40px;
+      text-align: center;
+    }    
+    div.dept {
+      position: static; /*default*/
+      background-color: tomato;
+      color: white;
+      padding: 10px;
+    }
+    div.course {
+      position: relative; 
+      /*left:100px;*/
+      background-color: rgb(100, 99, 71);
+      color: white;
+    }
+    div.society {
+      position: fixed;
+      top: 250px;
+      bottom: 0;
+      left:250px;
+      right: 0;
+      /*width: 300px;*/
+      background-color: rgb(0, 100, 255);
+      color: white;        
+    }
+    
+    div.dorm {
+      position: relative;
+      left:200px;
+      width: 400px;
+      height: 1000px;
+      border: 3px solid #73AD21;        
+    }
+    div.maledorm {
+      position: absolute;
+      top: 80px;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      border: 3px solid #73AD21;     
+    }
+    div.femaledorm {
+      position: absolute;
+      top: 80px;
+      /*right: 0;*/
+      width: 100px;
+      height: 100px;
+      border: 3px solid #73AD21;         
+    }
+    
+    div.sticky {
+      /*position: -webkit-sticky;  /*Safari */
+      position: sticky;
+      top: 50px;
+      right: 100px;
+      background-color: red;
+      border: 2px solid #4CAF50;
+    }
+    </style>
+  </head>
+  <body>
+    <h1 id="deptHeader">Departments, NTU</h1>
+    <div class="sticky">Info</div><br />
+    <div class="dept">Dept. of Geography</div><br />
+    <div class="dept">Dept. of Bioenvironmental Systems Engineering</div><br />
+    <div class="dept">Dept. of Public Health</div><br />
+    <div class="course">WebGIS</div><br />
+    <div class="course">Python</div><br />
+    <div class="society">Tennis</div><br />
+    <div class="society">Chorus</div><br />
+    
+    <div class="dorm">dorm
+      <div class="maledorm">maledorm</div><br />
+      <div class="femaledorm">femaledorm</div><br />
+    </div><br />    
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

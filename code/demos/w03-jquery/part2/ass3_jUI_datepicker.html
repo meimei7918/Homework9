@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    </script> <!--Way 2-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> <!--remember to modify it-->
+    <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css"> <!--remember to modify it-->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>    
+  </head>
+  <body>
+    <script> <!--put your JavaScript here-->       
+      $(function(){                    //$(document).ready(function(){ });        
+        //$("#datepicker").datepicker();  prototype
+        //$("#datepicker").datepicker( "setDate" , "7/11/2011" );
+        $("#datepicker").datepicker({
+          onSelect: function(dateText) {
+            console.log($("#datepicker").val());
+            console.log(dateText);
+          }
+        });/**/
+        $('#bt1').click(function(){
+           if($.trim($('#datepicker').val()) == ''){
+              alert('Input can not be left blank');
+           }
+        });
+        
+      });
+    </script>
+    <p>Date: <input type="text" id="datepicker"></p>
+    <button id='bt1'>Click me</button>   
+  </body>
+</html>
+
+

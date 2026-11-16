@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Highcharts Example</title>
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+    Highcharts.chart('container', {
+      chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: '0px',
+        plotShadow: true,
+        type: 'pie'
+      },
+      title: {
+        text: 'Browser market shares in January, 2018'
+      },
+      tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: false
+          },
+          showInLegend: true
+        }
+      },
+      series: [{
+        name: 'Brands',
+        colorByPoint: true,
+        data: [{
+          name: 'Chrome',
+          y: 60
+        }, {
+          name: 'Internet Explorer',
+          y: 10
+        }, {
+          name: 'Firefox',
+          y: 5
+        }, {
+          name: 'Edge',
+          y: 9
+        }, {
+          name: 'Safari',
+          y: 12
+        }, {
+          name: 'Other',
+          y: 4
+        }]
+      }]
+    });
+    </script>
+  </body>
+</html>

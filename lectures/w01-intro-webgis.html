@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WebGIS 概論：架構、圖磚與座標系統 · WebGIS 課程資料庫</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>WebGIS 導論：GIS 是什麼、WebGIS 長什麼樣子 · WebGIS 學習站</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
@@ -19,60 +19,76 @@
 
       <h2>學習目標</h2>
       <ul class="goals">
-        <li>說得出 WebGIS 前端、地圖服務、資料庫各自負責什麼</li>
-        <li>理解網路地圖為什麼要切成 <code>z/x/y</code> 的圖磚</li>
-        <li>分辨 EPSG:4326、EPSG:3857、EPSG:3826 的用途</li>
+        <li>能用一句話說明 GIS 是什麼，並列出它的五個組成</li>
+        <li>能畫出 WebGIS 的前端、伺服器、資料庫三段架構，說出每段用什麼技術</li>
+        <li>能說出這門課在理論、技能、開發三方面要學什麼，以及評分方式</li>
       </ul>
 
-      <h2>WebGIS 的三層架構</h2>
-      <p><dfn class="term">網路地理資訊系統<span>WebGIS</span></dfn> 就是把 GIS 的「看圖、查詢、分析」搬到瀏覽器上。可以拆成三層來想：</p>
+      <h2>這門課在學什麼</h2>
       <table>
-        <thead><tr><th>層</th><th>負責什麼</th><th>常見工具</th></tr></thead>
+        <thead><tr><th>面向</th><th>內容</th></tr></thead>
         <tbody>
-          <tr><td>前端（瀏覽器）</td><td>畫地圖、處理使用者互動</td><td>Leaflet、OpenLayers、MapLibre GL</td></tr>
-          <tr><td>地圖服務</td><td>把資料變成圖磚或 API 提供出去</td><td>GeoServer、WMTS / WMS、向量圖磚服務</td></tr>
-          <tr><td>資料層</td><td>存放與查詢空間資料</td><td>PostGIS、GeoJSON 檔、Shapefile</td></tr>
+          <tr><td>理論</td><td>WebGIS 架構、GIS 組成、GIS 資料模型、GIS 演算法、OpenGIS 技術</td></tr>
+          <tr><td>技能</td><td>網頁設計語言 HTML、CSS；網頁程式語言 JavaScript、jQuery、PHP；資料庫 MySQL（SQL）</td></tr>
+          <tr><td>開發</td><td>能獨立開發，也能和組員協作</td></tr>
         </tbody>
       </table>
-      <div class="callout tip">
-        <p>這門課前半段幾乎都在「前端」這一層：資料先用靜態 GeoJSON 檔，地圖服務直接用公開的圖磚。</p>
+      <p>課程進度大致是：前六週做「前端」（HTML → CSS → JavaScript → jQuery → GIS 資料 → OpenLayers），第七週起轉到「後端」（PHP、空間資料庫、WebGIS 後端），第 11 週期末考，第 12 週期末專題。</p>
+      <div class="callout key">
+        <p>評分：出席與參與 5%、作業十次 40%、期末考 25%、期末專題 30%（四人一組，含提案、報告與一個 WebGIS 網站）。提案期限 11/13，報告期限 12/31。</p>
       </div>
 
-      <h2>圖磚：網路地圖的切法</h2>
-      <p>一次把整張世界地圖傳給瀏覽器太大了，所以網路地圖會把每個縮放層級切成 256×256 像素的 <dfn class="term">圖磚<span>Tile</span></dfn>，網址通常長這樣：</p>
-      <pre><code class="language-plaintext">https://tile.openstreetmap.org/{z}/{x}/{y}.png</code></pre>
+      <h2>GIS 的定義與五個組成</h2>
+      <p>課本對 <dfn class="term">地理資訊系統<span>GIS</span></dfn> 的定義可以拆成一句話：<strong>以電腦為基礎，處理「有地理位置的資料」的資訊系統</strong>，從擷取、建模、儲存、查詢、分享、操作、分析一路到呈現。</p>
+      <p>GIS 不只是軟體，它由五個部分組成：</p>
       <ul>
-        <li><code>z</code>：縮放層級，0 是整個世界一張圖，每加 1 級邊長加倍、張數變 4 倍</li>
-        <li><code>x</code>、<code>y</code>：該層級裡第幾欄、第幾列</li>
+        <li><strong>硬體</strong>：電腦、伺服器、GPS 等設備</li>
+        <li><strong>軟體</strong>：QGIS、ArcGIS，或我們要自己寫的網頁</li>
+        <li><strong>資料</strong>：有座標的資料加上它的屬性</li>
+        <li><strong>方法</strong>：分析流程與演算法</li>
+        <li><strong>人</strong>：設計、使用與維護系統的人</li>
       </ul>
-      <p>瀏覽器只下載畫面範圍內的那幾張，所以拖曳、縮放才會順。</p>
 
-      <h2>三種一定會遇到的座標系統</h2>
-      <p><dfn class="term">座標參考系統<span>CRS</span></dfn> 決定「一組數字代表地球上哪個位置」。每個系統都有一個 <dfn class="term">EPSG 代碼<span>EPSG code</span></dfn> 當身分證。</p>
+      <h2>WebGIS 的架構</h2>
+      <p><dfn class="term">網路地理資訊系統<span>WebGIS</span></dfn> 就是用網路技術讓「伺服器」和「瀏覽器」溝通的 GIS。整體可以分成三段，資料從右往左流：</p>
       <table>
-        <thead><tr><th>代碼</th><th>名稱</th><th>單位</th><th>什麼時候用</th></tr></thead>
+        <thead><tr><th>位置</th><th>做什麼</th><th>本課會用到的技術</th></tr></thead>
         <tbody>
-          <tr><td><code>EPSG:4326</code></td><td>WGS84 經緯度</td><td>度</td><td>GPS、GeoJSON 標準、資料交換</td></tr>
-          <tr><td><code>EPSG:3857</code></td><td>Web Mercator</td><td>公尺</td><td>幾乎所有網路底圖的「顯示」座標</td></tr>
-          <tr><td><code>EPSG:3826</code></td><td>TWD97 / TM2 (121°)</td><td>公尺</td><td>臺灣政府開放資料、量測面積距離</td></tr>
+          <tr><td>用戶端（瀏覽器）</td><td>畫地圖、處理使用者操作、送出請求</td><td>HTML / CSS / JavaScript，地圖 API：OpenLayers、Leaflet、Google Maps API</td></tr>
+          <tr><td>伺服器</td><td>接收請求、執行伺服器端程式、回傳結果</td><td>Apache 等網頁伺服器，PHP 等伺服器端語言</td></tr>
+          <tr><td>資料與服務</td><td>存放資料、提供底圖與統計等服務</td><td>MySQL、PostgreSQL 等資料庫；WMS、WFS、圖磚服務</td></tr>
         </tbody>
       </table>
-      <div class="callout warn">
-        <p>Web Mercator 越往高緯度面積放大越誇張，<strong>不能拿來算面積</strong>。要算臺灣的面積或距離，先轉成 TWD97。</p>
+      <p>原始資料要先經過<strong>前處理</strong>再匯入資料庫；現成的外部資源（例如政府的圖磚服務、別人的 API）也可以直接被伺服器或瀏覽器呼叫。</p>
+
+      <h2>WebGIS 的實例</h2>
+      <p>講義列了很多可以直接打開來玩的例子（連結都整理在最下面的「外部資源」），大致可以分成幾類：</p>
+      <ul>
+        <li><strong>通用地圖</strong>：Google Maps</li>
+        <li><strong>即時資料</strong>：空氣品質、Windy 氣象、北市好停車、YouBike 站點</li>
+        <li><strong>政府圖資平台</strong>：新北 iMAP、臺北市歷史圖資、實價登錄、水保署 BigGIS、海域整合資訊</li>
+        <li><strong>研究應用</strong>：死亡率地圖、全面攻蚊、直覺式導航、從 Flickr 照片找熱門地點（POI / ROI）、地址語意連結、SiniGIS 時空資訊平台</li>
+        <li><strong>有趣的互動</strong>：Radio Garden、台灣自然聲音地圖</li>
+      </ul>
+      <p>歷屆學長姐的期末專題也很多元：路殺地圖、公投概況地圖、國道車流量、租屋地圖、長照服務平台、校園登革熱孳生源紀錄、雲林旅遊網等。</p>
+      <div class="callout tip">
+        <p>期末專題可以從<a href="https://data.gov.tw/" target="_blank" rel="noopener">政府資料開放平臺</a>找資料起頭。先想「誰會用、要解決什麼問題」，再決定要放哪些圖層。</p>
       </div>
-      <p>好消息是 Leaflet 預設已經幫我們處理：我們給它 WGS84 經緯度，它自己投影成 Web Mercator 畫出來。</p>
+
+      <h2>課本與教材</h2>
+      <ul>
+        <li>Duckham、Sun、Worboys，《GIS: A Computing Perspective》第三版（CRC Press, 2023）</li>
+        <li>Robin Nixon，《Learning PHP, MySQL &amp; JavaScript》第五版（O'Reilly, 2018）</li>
+        <li>線上教材：W3Schools；老師自編教材在 NTU COOL</li>
+      </ul>
 
       <h2>小結</h2>
       <div class="callout key">
-        <p>WebGIS ＝ 前端畫圖 ＋ 服務供圖 ＋ 資料庫存資料。底圖是切好的圖磚；資料用 EPSG:4326 存，用 EPSG:3857 顯示，用 EPSG:3826 計算。</p>
+        <p>GIS 是處理地理參考資料的資訊系統，由硬體、軟體、資料、方法、人組成。WebGIS 把它搬上網路，分成瀏覽器、伺服器、資料服務三段。這門課先學前端，再學後端，最後做一個四人一組的 WebGIS 專題。</p>
       </div>
 
-      <h2>附件與延伸閱讀</h2>
-      <div id="files"></div>
-      <ul>
-        <li><a href="https://epsg.io/" target="_blank" rel="noopener">epsg.io — 查詢任何 EPSG 代碼</a></li>
-        <li><a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames" target="_blank" rel="noopener">OSM Wiki：Slippy map tilenames（圖磚編號規則）</a></li>
-      </ul>
+      <h2>外部資源</h2>
+      <div id="resources"></div>
 
       <nav id="pager"></nav>
     </article>

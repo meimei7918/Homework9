@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W06 課後練習：樣式、Popup、座標轉換與繪圖 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w06-practice-openlayers-framework">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">1. 在老師的框架裡，「側邊欄開關」的程式應該寫在哪個檔案？</p>
+        <ol class="opts"><li>index.html</li><li>main.js</li><li>map.js</li><li>style.css</li></ol>
+        <p class="explain">main.js 負責介面互動（面板、表格、頁面控制）；map.js 負責地圖、圖層與樣式；index.html 是介面骨架並引入所有檔案。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">2. 幫「點」圖徵設定樣式，<code>ol.style.Style</code> 裡要用哪個屬性？</p>
+        <ol class="opts"><li>image</li><li>stroke</li><li>fill</li><li>text</li></ol>
+        <p class="explain">點用 image，放 <code>ol.style.Circle</code> 或 <code>ol.style.Icon</code>。線用 stroke，面用 stroke 加 fill。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">3. 要把線畫成虛線，應設定？</p>
+        <ol class="opts"><li><code>fill: new ol.style.Fill({ dash: true })</code></li><li><code>width: "dashed"</code></li><li><code>stroke: new ol.style.Stroke({ lineDash: [4, 8] })</code></li><li><code>image: new ol.style.Circle({ dash: 4 })</code></li></ol>
+        <p class="explain">lineDash 是 Stroke 的屬性，陣列代表「畫 4 像素、空 8 像素」反覆。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">4. 做點擊 Popup 時，用哪個方法找出被點到的圖徵？</p>
+        <ol class="opts"><li><code>map.getView()</code></li><li><code>map.addOverlay()</code></li><li><code>evt.coordinate</code></li><li><code>map.forEachFeatureAtPixel(evt.pixel, ...)</code></li></ol>
+        <p class="explain">forEachFeatureAtPixel 依點擊的螢幕像素找圖徵。evt.coordinate 是點擊位置的地圖座標，用來設定 Popup 的位置。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">5. 要讓 Popup 關閉，最簡單的寫法是？</p>
+        <ol class="opts"><li><code>map.removeLayer(popup)</code></li><li><code>popup.setPosition(undefined)</code></li><li><code>popup.setVisible(false)</code></li><li>重新整理頁面</li></ol>
+        <p class="explain">Overlay 沒有位置就不會顯示。Overlay 不是圖層，不能用 removeLayer；要移除可以用 map.removeOverlay。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">6. 關於 <code>ol.Geolocation</code>，下列何者正確？</p>
+        <ol class="opts"><li>不需要使用者同意就能取得位置</li><li>在 http:// 網站一定可以使用</li><li>需要使用者允許，且網站要是 HTTPS（或 localhost）</li><li>回傳的座標一定是 EPSG:4326</li></ol>
+        <p class="explain">瀏覽器的定位要使用者同意，也只在安全連線下開放。回傳座標的系統由 projection 參數決定，通常設成地圖的 EPSG:3857。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">7. 一份 GeoJSON 的座標是 TWD97（EPSG:3826），直接用 <code>new ol.format.GeoJSON()</code> 讀會怎樣？</p>
+        <ol class="opts"><li>OpenLayers 會把數字當成經緯度，點的位置完全錯誤；需要用 proj4 定義並註冊 EPSG:3826</li><li>會自動辨識並轉換</li><li>只要把 View 改成 EPSG:3826 就好，不用 proj4</li><li>GeoJSON 不能存 TWD97 座標</li></ol>
+        <p class="explain">OpenLayers 內建只認識 4326 與 3857。TWD97 要先 <code>proj4.defs(...)</code>、<code>ol.proj.proj4.register(proj4)</code>，讀檔時指定 <code>dataProjection: "EPSG:3826"</code>。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">8. 要讓使用者能「拖動已畫好圖徵的節點」，需要加入哪些互動？</p>
+        <ol class="opts"><li>只要 Draw</li><li>Draw 加 Snap</li><li>只要 Overlay</li><li>Select 加 Modify</li></ol>
+        <p class="explain">Select 選取圖徵，Modify 讓被選取的圖徵可以拖動節點。Draw 是新增圖徵用的。</p>
+      </div>
+
+      <h2>實作題</h2>
+
+      <div class="task">
+        <h3>1. 依車站類型上色<span class="level">Style function</span></h3>
+        <p>在 W06 框架範例的 map.js 中，把捷運站圖層的樣式改成：地下車站藍色、高架車站橘色（屬性欄位是 <code>stype</code>，值為「地下車站」或「高架車站」）。</p>
+        <details class="hint"><summary>提示</summary><p>Vector 圖層的 <code>style</code> 可以是一個函式，OpenLayers 會對每個圖徵呼叫一次，傳入 feature，回傳要用的 Style。先把兩種 Style 建好放在物件裡，不要在函式裡每次 new。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const makeDot = (color) =&gt; new ol.style.Style({
+  image: new ol.style.Circle({
+    radius: 6,
+    fill: new ol.style.Fill({ color: color }),
+    stroke: new ol.style.Stroke({ color: "#ffffff", width: 2 })
+  })
+});
+const stationStyles = {
+  "地下車站": makeDot("#0070bd"),
+  "高架車站": makeDot("#e8730c")
+};
+
+// 在 layers.metro 的 ol.layer.Vector 設定裡：
+style: function (feature) {
+  return stationStyles[feature.get("stype")] || makeDot("gray");
+}</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 讀入 TWD97 座標的 GeoJSON<span class="level">proj4</span></h3>
+        <p>下面的 GeoJSON 座標是 TWD97（EPSG:3826）。存成 <code>twd97.geojson</code>，在 OpenLayers 地圖上正確顯示這三個點。</p>
+<pre><code class="language-json">{ "type": "FeatureCollection", "features": [
+  { "type": "Feature", "properties": { "name": "國立臺灣大學" }, "geometry": { "type": "Point", "coordinates": [304470.2, 2767813.3] } },
+  { "type": "Feature", "properties": { "name": "台北101" },     "geometry": { "type": "Point", "coordinates": [306965.5, 2769662.2] } },
+  { "type": "Feature", "properties": { "name": "臺北車站" },   "geometry": { "type": "Point", "coordinates": [302166.2, 2771171.6] } }
+] }</code></pre>
+        <details class="hint"><summary>提示</summary><p>proj4 的定義字串可以在 epsg.io/3826 複製。順序是：引入 proj4.js → <code>proj4.defs</code> → <code>ol.proj.proj4.register(proj4)</code> → 讀檔時指定 dataProjection。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/proj4@2.12.1/dist/proj4.js"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  proj4.defs("EPSG:3826",
+    "+proj=tmerc +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=m +no_defs");
+  ol.proj.proj4.register(proj4);
+
+  const points = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: "twd97.geojson",
+      format: new ol.format.GeoJSON({
+        dataProjection: "EPSG:3826",      // 檔案裡的座標
+        featureProjection: "EPSG:3857"    // 地圖顯示的座標
+      })
+    })
+  });
+
+  const map = new ol.Map({
+    target: "map",
+    layers: [new ol.layer.Tile({ source: new ol.source.OSM() }), points],
+    view: new ol.View({ center: ol.proj.fromLonLat([121.54, 25.035]), zoom: 13 })
+  });
+&lt;/script&gt;</code></pre>
+<p>三個點應出現在臺大、101、臺北車站。如果點跑到很遠的地方，通常是忘了 register，或 dataProjection 沒設。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 幫框架接上繪圖功能，並加上刪除<span class="level">Interaction</span></h3>
+        <p>W06 範例的 draw.js 已經寫好繪製、編輯、匯出，但 index.html 沒有載入它，也沒有按鈕。請：(1) 在側邊欄加入「畫點／畫線／畫面／編輯／匯出」按鈕；(2) 載入 draw.js；(3) 新增功能：選取圖徵後按 Delete 鍵刪除。</p>
+        <details class="hint"><summary>提示</summary><p>看 draw.js 用了哪些選擇器：<code>.btn-draw</code> 搭配 <code>drawType</code> 屬性、<code>#btn-edit</code>、<code>#btn-json</code>。draw.js 用到 <code>map</code>，所以要在 map.js 之後載入。刪除要拿 Select 互動的 <code>getFeatures()</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<p>index.html 的側邊欄（Accordion 裡）加一段：</p>
+<pre><code class="language-html">&lt;h3&gt;繪圖工具&lt;/h3&gt;
+&lt;div&gt;
+  &lt;button class="btn btn-default btn-draw" drawType="Point"&gt;畫點&lt;/button&gt;
+  &lt;button class="btn btn-default btn-draw" drawType="LineString"&gt;畫線&lt;/button&gt;
+  &lt;button class="btn btn-default btn-draw" drawType="Polygon"&gt;畫面&lt;/button&gt;
+  &lt;button class="btn btn-default" id="btn-edit"&gt;編輯&lt;/button&gt;
+  &lt;a class="btn btn-default" id="btn-json"&gt;匯出 GeoJSON&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+<p>body 最後，在 map.js 之後加：</p>
+<pre><code class="language-html">&lt;script src="./js/map.js"&gt;&lt;/script&gt;
+&lt;script src="./js/main.js"&gt;&lt;/script&gt;
+&lt;script src="./js/draw.js"&gt;&lt;/script&gt;</code></pre>
+<p>在 draw.js 的 <code>$('#btn-edit').click(...)</code> 之後加上刪除功能（select_interaction 是 draw.js 裡原本的變數）：</p>
+<pre><code class="language-javascript">document.addEventListener("keydown", function (e) {
+  if (e.key !== "Delete" &amp;&amp; e.key !== "Backspace") return;
+  if (!select_interaction) return;               // 沒有在編輯模式
+  const selected = select_interaction.getFeatures();
+  selected.forEach(function (f) {
+    if (drawSource.hasFeature(f)) drawSource.removeFeature(f);  // 只刪自己畫的
+  });
+  selected.clear();
+});</code></pre>
+<p>加上 <code>hasFeature</code> 判斷，是因為 Select 也能選到捷運站等其他圖層的圖徵，不應該刪到它們。Mac 筆電鍵盤的刪除鍵是 Backspace，所以兩個都接受。</p></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

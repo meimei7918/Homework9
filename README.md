@@ -1,28 +1,37 @@
-# WebGIS 課程資料庫
+# WebGIS 學習站
 
-把 WebGIS 課程的**老師講義重點**、**可以直接執行的 Leaflet 程式碼**和**自己的上課筆記**，依週次整理成一個靜態網站。
+臺大地理系 115-1 WebGIS 課程的個人學習站：每週的**講義筆記**（AI 依老師講義改寫）、老師的**範例程式**（可直接在網頁上執行）、**課後練習**（選擇題＋實作題＋參考解答），以及整理好的**外部資源**。
 
-🌐 網站：<https://meimei7918.github.io/Homework9/>
-📐 專案規則（給 AI 與自己）：[CLAUDE.md](./CLAUDE.md)
+- 網站：<https://meimei7918.github.io/Homework9/>
+- 專案規則：[CLAUDE.md](./CLAUDE.md)（AI 與人共用的開發規範）
 
-## 特色
+## 目前內容
 
-- **週次時間軸首頁**：搜尋、依類型（講義／程式碼／筆記）或標籤篩選
-- **程式碼頁即 Demo**：地圖直接在頁面上跑，原始碼區自動讀取 `code/src/*.js`，只維護一份
-- **單一索引**：所有頁面的標題、標籤、摘要都在 `data/catalog.json`
-- **規則可驗證**：`scripts/check.py` 會檢查命名、必要段落、孤兒頁、模板佔位文字
+| 週 | 主題 | 講義筆記 | 範例程式 | 課後練習 |
+|---|---|---|---|---|
+| W01 | WebGIS 導論、開發環境、HTML、CSS | 4 | CSS | ✓ |
+| W02 | CSS（二）、JavaScript | 1 | JavaScript | ✓ |
+| W03 | jQuery | 1 | jQuery | ✓ |
+| W04 | GIS 資料模型、OpenGIS、Map API | 2 | — | ✓ |
+| W05 | OpenLayers 入門 | 1 | basicMap | ✓ |
+| W06 | OpenLayers 框架、樣式、互動 | 1 | framework | ✓ |
 
-## 新增內容
+## 怎麼新增內容
+
+把資料交給 AI 並說「依照 CLAUDE.md 處理」即可：
+
+- 老師講義 PDF → 講義筆記＋外部資源＋課後練習
+- 老師 demo ZIP → 範例程式頁
+- 我的筆記（PDF、網址或直接貼上）→ 我的筆記頁
+
+手動操作：
 
 ```bash
-python3 scripts/new.py code 4 leaflet-heatmap "熱區圖範例" --tags Leaflet,熱區圖 --topic "點資料分析"
-# 編輯 code/w04-leaflet-heatmap.html 與 code/src/w04-leaflet-heatmap.js
-python3 scripts/check.py
-python3 -m http.server 8000   # 預覽 http://localhost:8000
+python3 scripts/new.py lecture 7 php "PHP：伺服器端程式入門" --source PHP.pdf --date 2026-11-19 --topic "PHP 後端入門"
+python3 scripts/check.py           # 規則檢查
+python3 -m http.server 8000        # 本機預覽
 ```
 
-或直接對 AI 說：「依照 CLAUDE.md，幫我把這份第四週講義加進來」。
+## 說明
 
-## 技術
-
-HTML / CSS / 原生 JavaScript、Leaflet 1.9.4、highlight.js，部署於 GitHub Pages。
+講義筆記與練習由 AI 依課堂講義整理，若有出入以老師講義為準；原始講義 PDF 請至 NTU COOL 下載，本 repo 不收錄。`code/demos/` 為老師提供的範例程式，僅為了在 HTTPS 上執行做最小修改，修改處皆有註解。

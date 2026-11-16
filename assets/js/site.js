@@ -1,95 +1,98 @@
 /* =========================================================
-   WebGIS 課程資料庫 — 全站共用腳本
-   - 每一頁都只載入這支腳本：<script src="{root}/assets/js/site.js" data-root="{root}" defer></script>
-   - 頁首、頁尾、標題區、目錄、上下篇、原始碼區都由這裡依 data/catalog.json 產生
-   - 內容頁只需要寫 <article> 內的正文
+   WebGIS 學習站 — 全站唯一共用腳本
+   每頁只載入：<script src="{root}/assets/js/site.js" data-root="{root}" defer></script>
+   依 data/catalog.json 產生：頁首頁尾、首頁路線圖、標題區、相關連結、
+   資源清單、範例程式檢視器、測驗互動、目錄、上下篇。
    ========================================================= */
 (() => {
-  const script = document.currentScript;
-  const ROOT = (script && script.dataset.root) || ".";
-  const url = (p) => `${ROOT}/${p}`.replace(/^\.\//, "./");
+  const ROOT = document.currentScript?.dataset.root || ".";
+  const url = (p) => `${ROOT}/${p}`;
 
   const TYPES = {
-    lecture: { label: "講義", folder: "lectures" },
-    code: { label: "程式碼", folder: "code" },
-    note: { label: "筆記", folder: "notes" },
+    lecture: { label: "講義筆記", short: "講義", folder: "lectures" },
+    code: { label: "範例程式", short: "程式", folder: "code" },
+    practice: { label: "課後練習", short: "練習", folder: "practice" },
+    note: { label: "我的筆記", short: "筆記", folder: "notes" },
+  };
+  const ORDER = Object.keys(TYPES);
+  const RES_KIND = {
+    mentioned: "講義中提到的",
+    practice: "練習用",
+    reference: "延伸參考",
   };
   const pad = (n) => String(n).padStart(2, "0");
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+  const badge = (type, short) => `<span class="badge" data-type="${type}">${short ? TYPES[type].short : TYPES[type].label}</span>`;
 
   /* ---------- 頁首／頁尾 ---------- */
-  const LOGO = `<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12.5" fill="none" stroke="#1d2a2a" stroke-width="1.5"/><path d="M3 15c4-3 7 2 11-1s6-5 11-2" fill="none" stroke="#1f6f78" stroke-width="1.5"/><path d="M5 20c4-2 7 1 10-1s5-3 9-1" fill="none" stroke="#b8651b" stroke-width="1.5"/><path d="M14 4.5c-2.6 0-4.5 2-4.5 4.4 0 3.2 4.5 7.6 4.5 7.6s4.5-4.4 4.5-7.6c0-2.4-1.9-4.4-4.5-4.4z" fill="#c2412d"/><circle cx="14" cy="9" r="1.6" fill="#fffdf8"/></svg>`;
+  const LOGO = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 22 L13 13 L26 13" fill="none" stroke="#0070bd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 4 L13 13 L13 26" fill="none" stroke="#e3002c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="13" r="4.2" fill="#fff" stroke="#18252b" stroke-width="2.4"/></svg>`;
 
-  function renderChrome() {
+  function renderChrome(page) {
     const header = document.createElement("header");
     header.className = "site-header";
+    const navItem = (href, label, type, key) => `<a href="${href}"${type ? ` data-type="${type}"` : ""}${page === key ? ' aria-current="page"' : ""}>${label}</a>`;
     header.innerHTML = `<div class="inner">
-      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 課程資料庫</a>
-      <nav class="site-nav">
-        <a href="${url("index.html")}">全部</a>
-        ${Object.entries(TYPES).map(([k, t]) => `<a data-type="${k}" href="${url("index.html")}?type=${k}">${t.label}</a>`).join("")}
+      <a class="brand" href="${url("index.html")}">${LOGO}WebGIS 學習站</a>
+      <nav class="site-nav" aria-label="主選單">
+        ${ORDER.map((k) => navItem(`${url("index.html")}?type=${k}`, TYPES[k].short, k, k)).join("")}
+        ${navItem(url("resources.html"), "資源", "resource", "resources")}
       </nav></div>`;
     document.body.prepend(header);
-
     const footer = document.createElement("footer");
     footer.className = "site-footer";
-    footer.innerHTML = `<div class="inner">
-      <span>WebGIS 課程資料庫 · 個人課程筆記與程式碼整理</span>
-      <span>規則文件：<a href="https://github.com/meimei7918/Homework9/blob/main/CLAUDE.md">CLAUDE.md</a></span></div>`;
+    footer.innerHTML = `<div class="inner"><span>臺大地理系 WebGIS 課程的個人學習站。講義筆記與練習由 AI 依課堂講義整理，原始講義請見 NTU COOL。</span>
+      <a href="https://github.com/meimei7918/Homework9">GitHub 原始碼</a></div>`;
     document.body.append(footer);
   }
 
   async function loadCatalog() {
     const res = await fetch(url("data/catalog.json"), { cache: "no-cache" });
-    if (!res.ok) throw new Error("無法讀取 data/catalog.json");
+    if (!res.ok) throw new Error("catalog");
     const cat = await res.json();
-    cat.items.sort((a, b) => a.week - b.week || ["lecture", "code", "note"].indexOf(a.type) - ["lecture", "code", "note"].indexOf(b.type) || a.date.localeCompare(b.date));
+    cat.items.sort((a, b) => a.week - b.week || ORDER.indexOf(a.type) - ORDER.indexOf(b.type) || (a.order ?? 0) - (b.order ?? 0));
     return cat;
   }
 
-  /* ---------- 首頁 ---------- */
+  /* ---------- 首頁：週次路線圖 ---------- */
   function renderHome(cat) {
     const params = new URLSearchParams(location.search);
     const state = { type: params.get("type") || "all", tag: params.get("tag") || "", q: "" };
-
-    for (const k of Object.keys(TYPES)) {
-      const el = document.querySelector(`#stat-${k}`);
-      if (el) el.textContent = cat.items.filter((i) => i.type === k).length;
-    }
-    const weeksEl = document.querySelector("#stat-weeks");
-    if (weeksEl) weeksEl.textContent = new Set(cat.items.map((i) => i.week)).size;
-
     const chips = document.querySelectorAll(".chip");
     const search = document.querySelector(".search");
     const tagBox = document.querySelector(".active-tag");
-    const list = document.querySelector("#catalog");
+    const list = document.querySelector("#line-map");
+
+    const row = (i) => `<li class="row" data-type="${i.type}"><a href="${url(i.path)}">
+        ${badge(i.type, true)}<span class="title">${esc(i.title)}</span>
+        <span class="summary">${esc(i.summary)}</span>
+        <span class="tags">${i.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</span></a></li>`;
 
     function draw() {
-      chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.type === state.type)));
-      tagBox.innerHTML = state.tag ? `標籤：<code>${esc(state.tag)}</code> <button type="button">✕ 清除</button>` : "";
+      chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.filter === state.type)));
+      tagBox.innerHTML = state.tag ? `標籤「${esc(state.tag)}」<button type="button">清除</button>` : "";
       const q = state.q.trim().toLowerCase();
       const items = cat.items.filter((i) =>
         (state.type === "all" || i.type === state.type) &&
         (!state.tag || i.tags.includes(state.tag)) &&
         (!q || [i.title, i.summary, ...i.tags].join(" ").toLowerCase().includes(q)));
-
-      if (!items.length) { list.innerHTML = `<p class="empty">找不到符合的內容。</p>`; return; }
-      const weeks = [...new Set(items.map((i) => i.week))];
-      list.innerHTML = weeks.map((w) => `
-        <section class="week" id="w${pad(w)}">
-          <div class="week-label"><div class="num">W${pad(w)}</div><div class="topic">${esc(cat.weeks[pad(w)] || "")}</div></div>
-          <div class="cards">${items.filter((i) => i.week === w).map(card).join("")}</div>
-        </section>`).join("");
+      if (!items.length) {
+        list.innerHTML = state.type === "note" && !q && !state.tag
+          ? `<p class="empty">還沒有筆記。把上課筆記（PDF、網址或文字）交給 AI，照 CLAUDE.md 的流程新增。</p>`
+          : `<p class="empty">沒有符合的內容，換個關鍵字或清除篩選試試。</p>`;
+        return;
+      }
+      const weeks = Object.keys(cat.weeks).map(Number).filter((w) => items.some((i) => i.week === w));
+      list.innerHTML = weeks.map((w) => {
+        const wk = cat.weeks[pad(w)];
+        return `<section class="station" id="w${pad(w)}">
+          <div class="stop"><span class="dot"></span><span class="num">W${pad(w)}</span><span class="date">${esc(wk.date.slice(5).replace("-", "/"))}</span></div>
+          <div class="station-body"><h2>${esc(wk.topic)}</h2>
+            <ul class="rows">${items.filter((i) => i.week === w).map(row).join("")}</ul></div>
+        </section>`;
+      }).join("");
     }
-    const card = (i) => `
-      <a class="card" data-type="${i.type}" href="${url(i.path)}">
-        <div class="meta"><span class="badge">${TYPES[i.type].label}</span><time>${i.date}</time></div>
-        <h3>${esc(i.title)}</h3>
-        <p>${esc(i.summary)}</p>
-        <div class="tags">${i.tags.map((t) => `<span class="tag">#${esc(t)}</span>`).join("")}</div>
-      </a>`;
-
-    chips.forEach((c) => c.addEventListener("click", () => { state.type = c.dataset.type; sync(); draw(); }));
+    chips.forEach((c) => c.addEventListener("click", () => { state.type = c.dataset.filter; sync(); draw(); }));
     search.addEventListener("input", () => { state.q = search.value; draw(); });
     tagBox.addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") { state.tag = ""; sync(); draw(); } });
     function sync() {
@@ -97,7 +100,43 @@
       if (state.type !== "all") p.set("type", state.type);
       if (state.tag) p.set("tag", state.tag);
       history.replaceState(null, "", p.toString() ? `?${p}` : location.pathname);
+      document.querySelectorAll(".site-nav a").forEach((a) => a.toggleAttribute("aria-current", a.dataset.type === state.type));
     }
+    draw();
+  }
+
+  /* ---------- 資源總表 ---------- */
+  function resourceList(list, withWeek) {
+    return `<ul class="res">${list.map((r) => `<li>
+      ${withWeek ? `<span class="week">W${pad(r.week)}</span>` : ""}<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span class="host">${esc(host(r.url))}</span>
+      ${r.desc ? `<p>${esc(r.desc)}</p>` : ""}</li>`).join("")}</ul>`;
+  }
+
+  function renderResources(cat) {
+    const all = [];
+    const seen = new Set();
+    for (const i of cat.items) for (const r of i.resources || []) {
+      const key = r.url + "|" + r.kind;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      all.push({ ...r, week: i.week, from: i });
+    }
+    const box = document.querySelector("#resource-list");
+    const chips = document.querySelectorAll(".chip");
+    const search = document.querySelector(".search");
+    const state = { kind: "all", q: "" };
+    function draw() {
+      chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.filter === state.kind)));
+      const q = state.q.trim().toLowerCase();
+      const shown = all.filter((r) => (state.kind === "all" || r.kind === state.kind) &&
+        (!q || [r.title, r.desc, r.url].join(" ").toLowerCase().includes(q)));
+      box.innerHTML = Object.entries(RES_KIND).map(([k, label]) => {
+        const g = shown.filter((r) => r.kind === k);
+        return g.length ? `<section class="res-group"><h2>${label}（${g.length}）</h2>${resourceList(g, true)}</section>` : "";
+      }).join("") || `<p class="empty">沒有符合的資源。</p>`;
+    }
+    chips.forEach((c) => c.addEventListener("click", () => { state.kind = c.dataset.filter; draw(); }));
+    search.addEventListener("input", () => { state.q = search.value; draw(); });
     draw();
   }
 
@@ -108,45 +147,46 @@
     if (!item) {
       const warn = document.createElement("div");
       warn.className = "catalog-warning";
-      warn.textContent = `此頁 data-id="${id}" 尚未登錄在 data/catalog.json，請補上。`;
+      warn.textContent = `此頁 data-id="${id}" 尚未登錄在 data/catalog.json。`;
       document.querySelector(".site-header").after(warn);
       return;
     }
     document.body.dataset.type = item.type;
+    document.querySelector(`.site-nav a[data-type="${item.type}"]`)?.setAttribute("aria-current", "page");
     const t = TYPES[item.type];
+    const wk = cat.weeks[pad(item.week)];
+
+    // 相關內容：雙向（我列出的＋列出我的）
+    const relIds = new Set(item.related || []);
+    cat.items.forEach((o) => { if ((o.related || []).includes(item.id)) relIds.add(o.id); });
+    const rel = cat.items.filter((o) => relIds.has(o.id));
 
     const head = document.querySelector("#page-head");
-    if (head) {
-      head.className = "page-head";
-      head.innerHTML = `
-        <div class="crumbs"><a href="${url("index.html")}">首頁</a> / <a href="${url("index.html")}?type=${item.type}">${t.label}</a> / <a href="${url("index.html")}#w${pad(item.week)}">W${pad(item.week)} ${esc(cat.weeks[pad(item.week)] || "")}</a></div>
-        <h1>${esc(item.title)}</h1>
-        <div class="meta"><span class="badge">${t.label}</span><time>${item.date}</time>
-          <span class="tags">${item.tags.map((g) => `<a class="tag" href="${url("index.html")}?tag=${encodeURIComponent(g)}">#${esc(g)}</a>`).join("")}</span></div>
-        <p class="summary">${esc(item.summary)}</p>`;
+    head.className = "page-head";
+    head.innerHTML = `
+      <div class="crumbs"><a href="${url("index.html")}">首頁</a> / <a href="${url("index.html")}?type=${item.type}">${t.label}</a> / <a href="${url("index.html")}#w${pad(item.week)}">W${pad(item.week)} ${esc(wk.topic)}</a></div>
+      <h1>${esc(item.title)}</h1>
+      <div class="meta">${badge(item.type)}<time>${item.date}</time>
+        <span class="tags">${item.tags.map((g) => `<a class="tag" href="${url("index.html")}?tag=${encodeURIComponent(g)}">${esc(g)}</a>`).join("")}</span></div>
+      <p class="summary">${esc(item.summary)}</p>
+      ${rel.length ? `<div class="related"><span>相關：</span>${rel.map((o) => `<a href="${url(o.path)}" data-type="${o.type}">${badge(o.type, true)}${esc(o.title)}</a>`).join("")}</div>` : ""}
+      ${item.type === "lecture" || item.type === "practice" ? `<p class="ai-note">這份${t.label}由 AI 依老師講義${item.source ? `〈${esc(item.source)}〉` : ""}整理改寫，不是老師的原文；若有出入以課堂講義為準。</p>` : ""}`;
+
+    // 講義的外部資源
+    const resBox = document.querySelector("#resources");
+    if (resBox) {
+      const list = item.resources || [];
+      resBox.innerHTML = Object.entries(RES_KIND).map(([k, label]) => {
+        const g = list.filter((r) => r.kind === k);
+        return g.length ? `<div class="res-group"><h3>${label}</h3>${resourceList(g, false)}</div>` : "";
+      }).join("");
     }
 
-    // 講義附件
-    const filesBox = document.querySelector("#files");
-    if (filesBox && item.files && item.files.length) {
-      filesBox.innerHTML = `<ul class="files">${item.files.map((f) => `<li><a href="${url(f.path)}" download>${esc(f.label)}</a></li>`).join("")}</ul>`;
-    } else if (filesBox) {
-      filesBox.innerHTML = `<p class="empty" style="padding:8px 0;text-align:left">本週沒有附件。</p>`;
-    }
+    // 範例程式檢視器
+    const demoBox = document.querySelector("#demo");
+    if (demoBox && item.demo) renderDemo(demoBox, item.demo);
 
-    // 程式碼頁：從 src 讀入原始碼並顯示（原始碼只維護一份）
-    const src = document.querySelector("#source");
-    if (src && item.src) {
-      try {
-        const code = await (await fetch(url(item.src), { cache: "no-cache" })).text();
-        const lang = item.src.split(".").pop();
-        src.innerHTML = `<div class="source-bar"><span>${esc(item.src)}</span><a href="${url(item.src)}" download>下載原始碼 ↓</a></div><pre><code class="language-${lang === "js" ? "javascript" : lang}">${esc(code)}</code></pre>`;
-      } catch (e) {
-        src.textContent = "原始碼讀取失敗：" + e.message;
-      }
-    }
-
-    // 上一篇／下一篇（同類型）
+    // 上下篇（同類型）
     const same = cat.items.filter((i) => i.type === item.type);
     const idx = same.findIndex((i) => i.id === item.id);
     const pager = document.querySelector("#pager");
@@ -154,12 +194,113 @@
       pager.className = "pager";
       const prev = same[idx - 1], next = same[idx + 1];
       pager.innerHTML =
-        (prev ? `<a class="prev" href="${url(prev.path)}"><small>← 上一篇${t.label}</small>${esc(prev.title)}</a>` : "") +
-        (next ? `<a class="next" href="${url(next.path)}"><small>下一篇${t.label} →</small>${esc(next.title)}</a>` : "");
+        (prev ? `<a class="prev" href="${url(prev.path)}"><small>上一篇${t.label}</small>${esc(prev.title)}</a>` : "") +
+        (next ? `<a class="next" href="${url(next.path)}"><small>下一篇${t.label}</small>${esc(next.title)}</a>` : "");
     }
   }
 
+  function renderDemo(box, demo) {
+    box.innerHTML = `
+      <div class="demo">
+        <ul class="demo-files">${demo.files.map((f, n) => `<li><button type="button" data-n="${n}">${esc(f.title)}<small>${esc(f.file)}</small></button></li>`).join("")}</ul>
+        <div class="demo-view">
+          <div class="demo-bar"><span class="name"></span>
+            <button type="button" data-mode="run">執行</button>
+            <button type="button" data-mode="src">原始碼</button>
+            <a class="open" target="_blank" rel="noopener">新分頁開啟</a></div>
+          <p class="demo-desc"></p>
+          <div class="demo-stage"></div>
+        </div>
+      </div>
+      ${demo.zip ? `<p class="demo-zip">整包下載：<a href="${url(demo.zip)}" download>${esc(demo.zip.split("/").pop())}</a></p>` : ""}`;
+    const stage = box.querySelector(".demo-stage");
+    const runBtn = box.querySelector('[data-mode="run"]');
+    const srcBtn = box.querySelector('[data-mode="src"]');
+    let cur = 0, mode = "run";
+
+    async function show() {
+      const f = demo.files[cur];
+      const path = url(`${demo.dir}/${f.file}`);
+      const canRun = f.run !== false && /\.html?$/.test(f.file);
+      if (!canRun) mode = "src";
+      box.querySelectorAll(".demo-files button").forEach((b) => b.setAttribute("aria-current", String(+b.dataset.n === cur)));
+      box.querySelector(".name").textContent = f.file;
+      box.querySelector(".open").href = path;
+      box.querySelector(".demo-desc").textContent = f.desc || "";
+      runBtn.hidden = !canRun;
+      runBtn.setAttribute("aria-pressed", String(mode === "run"));
+      srcBtn.setAttribute("aria-pressed", String(mode === "src"));
+      if (mode === "run") {
+        stage.innerHTML = `<iframe src="${path}" title="${esc(f.title)}" allow="geolocation" loading="lazy"></iframe>`;
+      } else {
+        stage.innerHTML = `<pre><code>讀取中…</code></pre>`;
+        try {
+          const r = await fetch(path, { cache: "no-cache" });
+          let text = await r.text();
+          if (text.length > 60000) text = text.slice(0, 60000) + "\n\n…（檔案太大，只顯示前 60,000 字；完整內容請按「新分頁開啟」）";
+          const ext = f.file.split(".").pop();
+          const lang = { html: "xml", htm: "xml", js: "javascript", css: "css", json: "json", geojson: "json", php: "php", md: "markdown" }[ext] || "plaintext";
+          stage.innerHTML = `<pre><code class="language-${lang}">${esc(text)}</code></pre>`;
+          if (window.hljs && text.length < 60000) window.hljs.highlightElement(stage.querySelector("code"));
+          addCopy(stage.querySelector("pre"));
+        } catch (e) { stage.innerHTML = `<p class="empty">讀取失敗：${esc(e.message)}</p>`; }
+      }
+    }
+    box.querySelectorAll(".demo-files button").forEach((b) => b.addEventListener("click", () => { cur = +b.dataset.n; mode = "run"; show(); }));
+    runBtn.addEventListener("click", () => { mode = "run"; show(); });
+    srcBtn.addEventListener("click", () => { mode = "src"; show(); });
+    show();
+  }
+
+  /* ---------- 課後練習：選擇題 ---------- */
+  function setupQuizzes() {
+    const quizzes = [...document.querySelectorAll(".quiz")];
+    if (!quizzes.length) return;
+    const score = document.createElement("div");
+    score.className = "quiz-score";
+    quizzes[0].before(score);
+    const update = () => {
+      const done = quizzes.filter((q) => q.classList.contains("done"));
+      const right = done.filter((q) => q.dataset.result === "right").length;
+      score.innerHTML = `已作答 <b>${done.length}</b> / ${quizzes.length} 題，答對 <b>${right}</b> 題`;
+    };
+    quizzes.forEach((q) => {
+      const answer = Number(q.dataset.answer);
+      const opts = [...q.querySelectorAll("ol.opts li")];
+      opts.forEach((li) => { li.innerHTML = `<button type="button">${li.innerHTML}</button>`; });
+      const explain = q.querySelector(".explain");
+      const btns = opts.map((li) => li.querySelector("button"));
+      btns.forEach((b, n) => b.addEventListener("click", () => {
+        const ok = n + 1 === answer;
+        btns.forEach((x) => (x.disabled = true));
+        b.classList.add(ok ? "right" : "wrong");
+        btns[answer - 1].classList.add("right");
+        q.classList.add("done");
+        q.dataset.result = ok ? "right" : "wrong";
+        if (explain) explain.innerHTML = `<span class="verdict" style="color:var(--${ok ? "ok" : "bad"})">${ok ? "答對了。" : `答案是 (${"ABCDEFG"[answer - 1]})。`}</span>${explain.dataset.text}<button type="button" class="retry">重答</button>`;
+        explain?.querySelector(".retry").addEventListener("click", () => {
+          btns.forEach((x) => { x.disabled = false; x.classList.remove("right", "wrong"); });
+          q.classList.remove("done"); delete q.dataset.result; update();
+        });
+        update();
+      }));
+      if (explain) explain.dataset.text = explain.innerHTML;
+    });
+    update();
+  }
+
   /* ---------- 目錄、複製按鈕、語法高亮 ---------- */
+  function addCopy(pre) {
+    if (!pre || pre.querySelector(".copy-btn")) return;
+    const btn = document.createElement("button");
+    btn.className = "copy-btn"; btn.type = "button"; btn.textContent = "複製";
+    btn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(pre.querySelector("code")?.innerText ?? pre.innerText); btn.textContent = "已複製"; }
+      catch { btn.textContent = "無法複製"; }
+      setTimeout(() => (btn.textContent = "複製"), 1500);
+    });
+    pre.append(btn);
+  }
   function enhance() {
     const toc = document.querySelector("#toc");
     const hs = [...document.querySelectorAll("article h2")];
@@ -169,30 +310,25 @@
       toc.innerHTML = `<h4>本頁目錄</h4><ol>${hs.map((h) => `<li><a href="#${h.id}">${esc(h.textContent)}</a></li>`).join("")}</ol>`;
     }
     document.querySelectorAll("article pre").forEach((pre) => {
-      if (pre.querySelector(".copy-btn")) return;
-      const btn = document.createElement("button");
-      btn.className = "copy-btn"; btn.type = "button"; btn.textContent = "複製";
-      btn.addEventListener("click", async () => {
-        try { await navigator.clipboard.writeText(pre.querySelector("code")?.innerText ?? pre.innerText); btn.textContent = "已複製"; }
-        catch { btn.textContent = "無法複製"; }
-        setTimeout(() => (btn.textContent = "複製"), 1500);
-      });
-      pre.append(btn);
+      if (window.hljs && pre.querySelector("code")) window.hljs.highlightElement(pre.querySelector("code"));
+      addCopy(pre);
     });
-    if (window.hljs) document.querySelectorAll("pre code").forEach((el) => window.hljs.highlightElement(el));
+    setupQuizzes();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    renderChrome();
+    const page = document.body.classList.contains("home") ? "home" : document.body.classList.contains("resources") ? "resources" : "content";
+    renderChrome(page);
     try {
       const cat = await loadCatalog();
-      if (document.body.classList.contains("home")) renderHome(cat);
+      if (page === "home") renderHome(cat);
+      else if (page === "resources") renderResources(cat);
       else await renderPage(cat);
     } catch (e) {
       console.error(e);
       const warn = document.createElement("div");
       warn.className = "catalog-warning";
-      warn.textContent = "讀取 catalog.json 失敗。本機預覽請用 python3 -m http.server，不要直接雙擊開檔。";
+      warn.textContent = "讀不到 data/catalog.json。本機預覽請在專案根目錄執行 python3 -m http.server 8000。";
       document.querySelector(".site-header").after(warn);
     }
     enhance();

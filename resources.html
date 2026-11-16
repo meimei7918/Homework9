@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>資源總表 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/site.js" data-root="." defer></script>
+</head>
+<body class="resources" data-type="resource">
+  <div class="page wide">
+    <article>
+      <header class="page-head">
+        <h1>資源總表</h1>
+        <p class="summary">所有講義筆記裡的外部連結集中在這裡：老師講義中提到的網站、可以動手練習的工具與遊戲、延伸閱讀的文件。</p>
+        <div class="controls">
+          <input class="search" type="search" placeholder="搜尋資源名稱或網址" aria-label="搜尋資源">
+          <div class="chips" role="group" aria-label="依用途篩選">
+            <button class="chip" type="button" data-filter="all">全部</button>
+            <button class="chip" type="button" data-filter="mentioned">講義中提到的</button>
+            <button class="chip" type="button" data-filter="practice">練習用</button>
+            <button class="chip" type="button" data-filter="reference">延伸參考</button>
+          </div>
+        </div>
+      </header>
+      <div id="resource-list"></div>
+    </article>
+  </div>
+</body>
+</html>

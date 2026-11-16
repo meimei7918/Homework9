@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <script> //put your JavaScript here              
+    </script>
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="t1"></div>
+    <select name="tselect" id="tselect" size="4" >
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+    </select>  
+    <script>  //put your JavaScript here  
+      let selectElement = document.querySelector("#tselect");
+      let nameOfgrade=null;
+      let result = document.querySelector("#t1");
+
+      selectElement.addEventListener("change", (event) => {                    
+        switch ((event.target.value)) {  //Number
+          case 1:
+            nameOfgrade = "freshman";
+            break;
+          case 2:
+            nameOfgrade = "sophomore";
+            break;
+          case 3:
+            nameOfgrade = "junior";
+            break;
+          case 4:
+            nameOfgrade = "senior";
+            break;
+          default:
+            nameOfgrade = "graduate";      
+        }
+        document.getElementById("t1").innerHTML = `You are a ${nameOfgrade} student`;
+        // result.textContent= `You are a ${nameOfgrade} student`;
+      });
+    </script>
+  </body>
+</html>
+
+

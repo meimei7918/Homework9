@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W04 課後練習：資料模型、座標系統與圖磚 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w04-practice-gis-data">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">1. 想分析「樹冠層的高度」，應該用哪一種資料？</p>
+        <ol class="opts"><li>DEM</li><li>DSM</li><li>Shapefile 的 .shx</li><li>WMTS 圖磚</li></ol>
+        <p class="explain">DSM 包含植物與建物的表面高度；DEM 是去掉這些的裸露地表。兩者相減就能得到樹或建物的高度。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">2. 關於向量資料，下列何者正確？</p>
+        <ol class="opts"><li>由像素陣列組成</li><li>最適合表示連續變化的高程</li><li>只存關心的點，比網格省空間，但假設邊界是硬的</li><li>精度取決於網格大小</li></ol>
+        <p class="explain">向量用座標表示點線面，只存需要的位置所以省空間；缺點是邊界是清楚的線，不適合漸變的現象。像素、網格大小是網格資料的特性。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">3. Shapefile 中存放「屬性表」的是哪個檔？</p>
+        <ol class="opts"><li>.dbf</li><li>.shp</li><li>.shx</li><li>.geojson</li></ol>
+        <p class="explain">.shp 是幾何、.shx 是幾何索引、.dbf 是屬性。少了 .dbf 只看得到形狀，沒有欄位資料。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">4. 某份政府資料的座標是 <code>X = 304470, Y = 2767813</code>，最可能是哪個座標系統？</p>
+        <ol class="opts"><li>EPSG:4326 WGS84</li><li>EPSG:3857 Web Mercator</li><li>EPSG:3826 TWD97 TM2</li><li>無法判斷</li></ol>
+        <p class="explain">X 6 位數、Y 7 位數、單位公尺，是 TWD97（或 TWD67）TM2。政府 2000 年後的資料主要是 TWD97。Web Mercator 的 X 在臺灣是 8 位數（約 13,500,000）。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">5. 哪個 OGC 服務回傳的是「點、線、面圖徵本身」而不是圖片？</p>
+        <ol class="opts"><li>WMS</li><li>WMTS</li><li>XYZ</li><li>WFS</li></ol>
+        <p class="explain">WFS（Web Feature Service）回傳向量圖徵與屬性。WMS 回傳畫好的地圖圖片，WMTS 回傳預先切好的圖磚。XYZ 是圖磚網址規則，不是 OGC 標準。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">6. 縮放層級 z = 3 時，整個世界共有幾張圖磚？</p>
+        <ol class="opts"><li>9</li><li>16</li><li>64</li><li>256</li></ol>
+        <p class="explain">每邊 2<sup>z</sup> = 8 張，總數 8 × 8 = 64，也就是 4<sup>3</sup>。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">7. XYZ 和 TMS 兩種圖磚規則的差別是？</p>
+        <ol class="opts"><li>y 軸方向相反</li><li>x 軸方向相反</li><li>TMS 的圖磚是 512 像素</li><li>XYZ 不能用在 OpenLayers</li></ol>
+        <p class="explain">兩者只差在 y 從上往下數（XYZ）或從下往上數（TMS）。換算：TMS 的 y = 2<sup>z</sup> − 1 − XYZ 的 y。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">8. OpenStreetMap 的三種基本元素是？</p>
+        <ol class="opts"><li>point、line、polygon</li><li>node、way、relation</li><li>feature、layer、map</li><li>key、value、tag</li></ol>
+        <p class="explain">OSM 用 node（點）、way（線或封閉成面）、relation（元素間的關係）。屬性則用 key=value 標籤。</p>
+      </div>
+
+      <h2>實作題</h2>
+
+      <div class="task">
+        <h3>1. 手算圖磚編號<span class="level">圖磚</span></h3>
+        <p>台北 101 位於經度 121.5645°、緯度 25.0340°。算出它在 z = 10 時落在哪一張 XYZ 圖磚（x、y），以及對應的 TMS y 值。再用 OSM 圖磚網址打開那張圖，確認 101 在圖裡。</p>
+        <details class="hint"><summary>提示</summary>
+<p>令 n = 2<sup>z</sup>：</p>
+<pre><code class="language-plaintext">x = floor( (經度 + 180) / 360 × n )
+y = floor( (1 − ln(tan(緯度) + 1 / cos(緯度)) / π) / 2 × n )   ← 緯度要先換成弧度</code></pre>
+<p>可以在瀏覽器 Console 用 <code>Math.floor</code>、<code>Math.log</code>、<code>Math.tan</code>、<code>Math.cos</code>、<code>Math.PI</code> 計算。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const lon = 121.5645, lat = 25.0340, z = 10, n = 2 ** z;   // n = 1024
+const r = lat * Math.PI / 180;
+const x = Math.floor((lon + 180) / 360 * n);                                      // 857
+const y = Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); // 438
+const tmsY = n - 1 - y;                                                            // 585</code></pre>
+<p>XYZ：x = 857、y = 438；TMS：y = 585。圖磚網址：<a href="https://tile.openstreetmap.org/10/857/438.png" target="_blank" rel="noopener">https://tile.openstreetmap.org/10/857/438.png</a>，圖中可以看到臺北盆地。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 用 Overpass turbo 抓臺大附近的咖啡店<span class="level">OSM</span></h3>
+        <p>在 Overpass turbo 把地圖移到臺大公館一帶，查詢所有 <code>amenity=cafe</code> 的點，匯出成 GeoJSON，並在 geojson.io 打開確認。</p>
+        <details class="hint"><summary>提示</summary><p>最簡單的方法是按 Wizard，輸入 <code>amenity=cafe</code>。查詢語法裡的 <code>{{bbox}}</code> 代表目前地圖畫面的範圍。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-plaintext">[out:json][timeout:25];
+(
+  node["amenity"="cafe"]({{bbox}});
+  way["amenity"="cafe"]({{bbox}});
+);
+out body;
+&gt;;
+out skel qt;</code></pre>
+<p>按 Run 之後，Export → Data → GeoJSON 下載。有些咖啡店在 OSM 上是畫成建物輪廓（way），所以查詢同時包含 node 和 way。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 在 QGIS 把 TWD97 的 CSV 轉成網頁用的 GeoJSON<span class="level">QGIS、座標系統</span></h3>
+        <p>把下面三行存成 <code>places.csv</code>，在 QGIS 以 TWD97（EPSG:3826）加入，再匯出成 EPSG:4326 的 GeoJSON。最後用文字編輯器打開，確認座標變成經緯度。</p>
+<pre><code class="language-plaintext">name,x,y
+國立臺灣大學,304470.2,2767813.3
+台北101,306965.5,2769662.2
+臺北車站,302166.2,2771171.6</code></pre>
+        <details class="hint"><summary>提示</summary><p>加入 CSV 時 X field 選 x、Y field 選 y，Geometry CRS 要選 EPSG:3826，不是預設的 4326。匯出時在 Save Features As 的 CRS 改成 EPSG:4326。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<ol>
+  <li>Layer → Add Layer → Add Delimited Text Layer，選 places.csv；Geometry definition 選 Point coordinates，X field = x、Y field = y，Geometry CRS = EPSG:3826 - TWD97 / TM2 zone 121 → Add。三個點應該出現在臺北市區。</li>
+  <li>在圖層上按右鍵 → Export → Save Features As；Format = GeoJSON、CRS = EPSG:4326 - WGS 84 → OK。</li>
+  <li>打開輸出檔，臺大的座標應約為 <code>[121.5397, 25.0174]</code>（經度在前）。如果加入後點不在臺灣、或整個圖層找不到，多半是加入時把 CRS 留在預設的 EPSG:4326，QGIS 把 304470 當成「經度」而無法正確定位。</li>
+</ol></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

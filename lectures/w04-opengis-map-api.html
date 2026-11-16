@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>OSM、OGC 標準、圖磚與 Map API · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w04-lecture-opengis-map-api">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說明 OSM 的三種幾何元素與 key=value 標籤，並用 Overpass turbo 下載資料</li>
+        <li>能分辨 WMS、WFS、WMTS 回傳的東西</li>
+        <li>能解釋圖磚的 z / x / y、影像金字塔，以及 XYZ 和 TMS 的差別</li>
+        <li>能依需求選擇地圖 API，並知道 Turf.js 與 openrouteservice 能做什麼</li>
+      </ul>
+
+      <h2>OpenStreetMap</h2>
+      <p><dfn class="term">OpenStreetMap<span>OSM</span></dfn> 是 2004 年成立、由志工共同編修的開放地理資料庫，屬於<dfn class="term">自願式地理資訊<span>VGI</span></dfn>。</p>
+      <ul>
+        <li>圖徵由三種幾何元素組成：<strong>node</strong>（點）、<strong>way</strong>（線或面）、<strong>relation</strong>（元素之間的關係，選用）</li>
+        <li>屬性用 <code>key=value</code> 的標籤表示，例如 <code>building=yes</code>、<code>amenity=school</code></li>
+        <li>每一次協作編輯都有紀錄</li>
+      </ul>
+      <h3>取得 OSM 資料</h3>
+      <ul>
+        <li><strong>Overpass turbo</strong>：網頁版的 OSM 資料探勘工具。設定查詢標籤（例如 <code>building=*</code>）→ 執行 → Export 成 GeoJSON</li>
+        <li><strong>Geofabrik</strong>：依國家、區域下載整份 OSM 資料庫</li>
+        <li>標籤的意思查 OSM Wiki 的 Key descriptions</li>
+      </ul>
+      <p>海德堡大學的 HeiGIT 也以 OSM 為基礎做研究與工具，openrouteservice 就是他們開發的。</p>
+
+      <h2>OGC 與 OpenGIS 標準</h2>
+      <p><dfn class="term">開放地理空間協會<span>OGC</span></dfn> 成立於 1994 年，由五百多個企業、政府、研究機構與大學組成，目標是讓地理資訊與服務 FAIR：可被找到、可存取、可互通、可重複使用。</p>
+      <p>為什麼重要？資料來源有商用、開源各種格式，只要大家都照 OGC 的標準提供服務，任何用戶端都能透過網路取用。三個最常見的服務標準：</p>
+      <table>
+        <thead><tr><th>標準</th><th>回傳什麼</th><th>發布</th></tr></thead>
+        <tbody>
+          <tr><td><dfn class="term">WMS<span>Web Map Service</span></dfn></td><td>已經畫好、有地理參考的<strong>地圖圖片</strong>（JPEG、PNG）</td><td>2006</td></tr>
+          <tr><td><dfn class="term">WFS<span>Web Feature Service</span></dfn></td><td><strong>向量圖徵</strong>本身（點、線、面＋屬性）</td><td>2005</td></tr>
+          <tr><td><dfn class="term">WMTS<span>Web Map Tile Service</span></dfn></td><td>預先切好的<strong>圖磚</strong>，以固定比例尺排成金字塔</td><td>2010</td></tr>
+        </tbody>
+      </table>
+      <p>WMTS 是為了大量使用、高擴充性而設計：用戶端需要多少範圍就要多少張圖磚。</p>
+
+      <h2>圖磚</h2>
+      <h3>XYZ 與 TMS</h3>
+      <p><strong>XYZ</strong> 是 Google Maps 和 OSM 採用的規則，網址長得像 <code>.../{z}/{x}/{y}.png</code>：z 是縮放層級，x、y 是圖磚編號。</p>
+      <pre><code class="language-plaintext">OSM：        https://tile.openstreetmap.org/{z}/{x}/{y}.png
+Google 道路： https://mt0.google.com/vt/lyrs=m&amp;x={x}&amp;y={y}&amp;z={z}</code></pre>
+      <p><strong>TMS</strong>（Tile Map Service）是 OSGeo 制定的規格，和 XYZ 唯一的差別是 <strong>y 軸方向相反</strong>：XYZ 的 y 從上往下數，TMS 從下往上數。</p>
+      <h3>影像金字塔</h3>
+      <ul>
+        <li>每張圖磚 256 × 256 像素</li>
+        <li>縮放層級 0 到 23；z = 0 時整個世界只有 1 張圖磚</li>
+        <li>每放大一級，邊長變 2 倍、張數變 4 倍：z = 1 是 2 × 2 = 4 張，編號 (0,0)、(1,0)、(0,1)、(1,1)</li>
+      </ul>
+      <div class="callout key">
+        <p>第 z 層一邊有 2<sup>z</sup> 張圖磚，總共 4<sup>z</sup> 張。x 從左（經度 −180°）往右數，y 從上（北）往下數。</p>
+      </div>
+
+      <h3>向量圖磚</h3>
+      <p>向量圖磚和網格圖磚一樣分層切塊，但每塊裝的是向量資料（GeoJSON、TopoJSON、Mapbox Vector Tile），所以<strong>樣式可以在用戶端調整</strong>。Google 的 Styling Wizard 就是在調向量地圖的樣式；QGIS 可用 Vector Tiles Reader 外掛讀取。</p>
+
+      <h3>在 QGIS 加入 WMTS</h3>
+      <p>Layer → Add Layer → Add WMS/WMTS Layer，新增連線，網址填國土測繪中心的 <code>https://maps.nlsc.gov.tw/S_Maps/wmts</code>，就能選臺灣通用電子地圖等圖層。</p>
+
+      <h2>Map API</h2>
+      <p><dfn class="term">地圖應用程式介面<span>Map API</span></dfn> 讓開發者把互動地圖、地理資料與定位功能嵌進網站或 App。講義把它分成三類：</p>
+      <h3>繪圖與視覺化</h3>
+      <table>
+        <thead><tr><th>API</th><th>特色</th><th>費用</th></tr></thead>
+        <tbody>
+          <tr><td>OpenLayers</td><td>完全免費開源，功能最完整（本課使用）</td><td>免費</td></tr>
+          <tr><td>Leaflet</td><td>輕量、外掛多、上手快</td><td>免費</td></tr>
+          <tr><td>MapLibre GL JS</td><td>用 WebGL 渲染向量圖磚；2020 年 12 月從 Mapbox 分支</td><td>免費</td></tr>
+          <tr><td>Mapbox GL JS</td><td>向量圖磚與樣式</td><td>需 token，依用量計費</td></tr>
+          <tr><td>Google Maps JavaScript API</td><td>Google 的圖資與服務</td><td>需 token，依用量計費</td></tr>
+          <tr><td>ArcGIS Maps SDK for JavaScript</td><td>串 ArcGIS 生態系</td><td>需 token，依用量計費</td></tr>
+        </tbody>
+      </table>
+      <h3>空間分析與功能</h3>
+      <ul>
+        <li><strong>Turf.js</strong>：在瀏覽器做 GIS 運算與空間分析。引入 js 後直接呼叫，例如 <code>turf.buffer(point, 500, {units: "meters"})</code> 做環域</li>
+        <li><strong>路徑規劃</strong>：openrouteservice、Google Routes API</li>
+        <li><strong>地理編碼</strong>（地址轉座標）：Nominatim、Google Geocoding API、Mapbox geocoding</li>
+      </ul>
+      <h3>openrouteservice</h3>
+      <p>由海德堡地理資訊技術研究所開發，以 OSM 為基礎的開源服務，提供路徑規劃（Directions）、<dfn class="term">等時圈<span>Isochrones</span></dfn>（例如走路 10 分鐘能到的範圍）、高程等 API。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>OSM 是志工共編的開放資料，用 Overpass turbo 下載。OGC 標準讓不同來源互通：WMS 給圖片、WFS 給圖徵、WMTS 給圖磚。圖磚以 z/x/y 編號，每層張數乘 4，TMS 的 y 軸和 XYZ 相反。地圖 API 選免費的 OpenLayers 或 Leaflet 就夠用，分析交給 Turf.js。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

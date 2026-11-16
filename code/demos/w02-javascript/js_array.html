@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <script> //put your JavaScript here
+      let tArrayS1=["1","12","11","110"];  //add "111"
+      let tArrayn1=[1,12,11,110];
+    </script>
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="para1"></div>
+    <div id="para2"></div>
+    <div id="para3"></div>
+    <script>  //put your JavaScript here
+      let tArray=[];             //empty array
+      tArray=['a','b','c'];   //tArray=["a","b","c"];
+      let tArray2= [ 
+          'e', 'f', 'g'      
+      ];
+      tArray2[3]='i';
+      tArray2.push("k"); 
+      //tArray2.pop();  // remove the last element
+      tArrayS1.sort();
+      document.getElementById("para1").innerHTML ="tArray2.length: " + tArray2.length;
+      document.getElementById("para2").innerHTML ="tArrayS1: " +tArrayS1;     
+      tArrayS1.reverse();
+      document.getElementById("para3").innerHTML ="tArrayS1's reverse: " +tArrayS1;
+      console.log("tArrayn1:",tArrayn1);
+      console.log("tArrayn1_sort:",tArrayn1.sort());
+      console.log("tArrayn1_sort_fn:",tArrayn1.sort(
+        function (a, b) 
+        { 
+          console.log(typeof(a));
+          return a - b;
+        }));
+    </script>
+  </body>
+</html> 
+
+

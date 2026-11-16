@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>OpenLayers 框架範例：Bootstrap 介面＋圖層控制＋繪圖 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w06-code-framework">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>一個有完整介面的 WebGIS 骨架：上方導覽列、左側可收合的圖層面板（jQuery UI Accordion）、右側地圖。底圖可以在 OSM、Google、臺灣通用電子地圖之間單選，疊加圖層可以勾選捷運站、捷運路線、縣市界。期末專題可以從這個骨架開始改。</p>
+      <div class="callout tip">
+        <p>內嵌框比較窄，建議按「新分頁開啟」看完整介面。縣市界檔案約 14 MB，第一次勾選要等幾秒。</p>
+      </div>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>index.html：載入順序很重要</h3>
+      <p>jQuery、jQuery UI、Bootstrap、OpenLayers 在 head 載入；map.js 和 main.js 放在 body 最後、地圖 div 之後，因為 map.js 一執行就要把地圖掛到 <code>#map</code> 上。</p>
+      <h3>map.js：用一個物件管理所有圖層</h3>
+      <p><code>layers</code> 物件的每一筆都有 <code>title</code>、<code>type</code>（base 或 overlay）、<code>layer</code>。<code>initLayers()</code> 跑迴圈，base 產生單選鈕、overlay 產生勾選框，並把圖層加進地圖；<code>setLayer(key)</code> 讓選中的底圖可見、其他隱藏。樣式寫在 <code>styles</code> 物件，捷運站是黑色圓點，路線與縣市界各有線色與填色。</p>
+      <p>檔案開頭也建立了 <code>ol.Geolocation</code>，位置改變時把座標從 EPSG:3857 轉回 EPSG:4326 記下來。</p>
+      <h3>main.js：讓地圖跟著版面變大小</h3>
+      <p>側邊欄開關或視窗大小改變時，<code>updateSize()</code> 重算容器高度、刷新 Accordion，並呼叫 <code>map.updateSize()</code>。沒有這一步，地圖會以為自己還是原本的大小，出現空白或變形。</p>
+      <h3>draw.js：寫好了但沒有接上</h3>
+      <p>draw.js 實作了繪製（Draw）、編輯（Select＋Modify）、匯出 GeoJSON 下載，但 <strong>index.html 沒有載入它</strong>，介面上也沒有對應的按鈕（<code>.btn-draw</code>、<code>#btn-edit</code>、<code>#btn-json</code>）。這正好是一個好練習，見本週課後練習的實作題 3。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <ul>
+        <li>index.html 的 Bootstrap 3 CSS 與 JS 從 <code>http://maxcdn.bootstrapcdn.com</code> 改為 <code>https://</code>，否則 HTTPS 網站會擋下。</li>
+        <li>map.js 的國土測繪中心 WMTS 網址從 <code>http://</code> 改為 <code>https://</code>。</li>
+      </ul>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>在 <code>layers</code> 物件加一個國土測繪中心正射影像（PHOTO2）底圖，確認選單自動出現</li>
+        <li>把捷運站依 <code>stype</code> 屬性上色，地下車站和高架車站用不同顏色（提示：style 可以是一個函式，依 <code>feature.get("stype")</code> 回傳不同 Style）</li>
+        <li>參考 W05 的 map_popup.html，讓點擊捷運站時彈出站名</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

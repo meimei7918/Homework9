@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>OpenLayers 進階：框架、樣式、Popup、定位、座標轉換與繪圖 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w06-lecture-openlayers-framework">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說出 WebGIS 專案裡 index.html、map.js、main.js 的分工</li>
+        <li>能用 <code>ol.style.Style</code> 為點、線、面設定樣式</li>
+        <li>能用 Overlay 做出點擊圖徵後彈出資訊的 Popup，並用 Geolocation 取得使用者位置</li>
+        <li>能用 proj4 讀入 TWD97 資料，並實作繪製、編輯、刪除圖徵</li>
+      </ul>
+
+      <h2>用框架搭 WebGIS 介面</h2>
+      <p>做一個完整的 WebGIS 網站，流程是：</p>
+      <ol>
+        <li>用 Bootstrap 框架做響應式版面</li>
+        <li>設計使用者介面（導覽列、側邊欄、圖層清單）</li>
+        <li>把程式分成三個檔案</li>
+      </ol>
+      <table>
+        <thead><tr><th>檔案</th><th>負責</th></tr></thead>
+        <tbody>
+          <tr><td><code>index.html</code></td><td>初始介面，<strong>引入所有</strong> JS 與 CSS</td></tr>
+          <tr><td><code>map.js</code></td><td>建立地圖、動態加入圖層、樣式</td></tr>
+          <tr><td><code>main.js</code></td><td>介面互動：面板開關、表格、頁面控制</td></tr>
+        </tbody>
+      </table>
+      <p>側邊欄用 jQuery UI 的 <dfn class="term">手風琴<span>Accordion</span></dfn> 元件，一次只展開一個區塊。</p>
+      <div class="callout warn">
+        <p>地圖物件要在 document ready <strong>之前</strong>就建立好，因為 ready 裡面的程式（例如切換底圖）會用到它。範例把 map.js 放在 <code>&lt;div id="map"&gt;</code> 之後載入，就是為了這件事。</p>
+      </div>
+
+      <h2>動態加入圖層</h2>
+      <p>範例把所有圖層寫在一個 <code>layers</code> 物件裡，每個圖層有標題、類型（<code>base</code> 底圖或 <code>overlay</code> 疊加）與 OpenLayers 圖層本身。<code>initLayers()</code> 跑一次迴圈：底圖產生單選鈕，疊加圖層產生勾選框，同時把圖層加進地圖。</p>
+      <pre><code class="language-javascript">let layers = {
+  OSM:   { title: "OpenStreetMap", type: "base",    layer: new ol.layer.Tile({ source: new ol.source.OSM() }) },
+  metro: { title: "捷運站",         type: "overlay", layer: new ol.layer.Vector({
+            source: new ol.source.Vector({ url: "./data/metro.geojson", format: new ol.format.GeoJSON() }) }) }
+};</code></pre>
+      <p>好處是要加新圖層只要在 <code>layers</code> 裡多寫一筆，選單會自動長出來。</p>
+
+      <h2>樣式</h2>
+      <p>用 <code>new ol.style.Style({...})</code> 設定樣式，點、線、面用的屬性不同：</p>
+      <table>
+        <thead><tr><th>幾何</th><th>用什麼</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td>點</td><td><code>image</code>：<code>ol.style.Circle</code> 或 <code>ol.style.Icon</code></td><td>半徑 7 的黑點加紅框；或用圖示網址</td></tr>
+          <tr><td>線</td><td><code>stroke</code>：<code>ol.style.Stroke</code></td><td>顏色、寬度、<code>lineDash: [4, 8]</code> 虛線</td></tr>
+          <tr><td>面</td><td><code>stroke</code> ＋ <code>fill</code>：<code>ol.style.Fill</code></td><td>半透明藍色填色 <code>rgba(0,0,255,0.3)</code></td></tr>
+        </tbody>
+      </table>
+      <pre><code class="language-javascript">new ol.style.Style({
+  image: new ol.style.Circle({
+    radius: 7,
+    fill: new ol.style.Fill({ color: "black" }),
+    stroke: new ol.style.Stroke({ color: [255, 0, 0], width: 2 })
+  })
+});</code></pre>
+      <p>顏色可以寫字串、<code>rgba()</code>，或 <code>[R, G, B]</code> 陣列。</p>
+
+      <h2>Overlay 與 Popup</h2>
+      <p><dfn class="term">Overlay<span>ol.Overlay</span></dfn> 是把一個 HTML 元素「釘」在地圖上某個座標，地圖移動時跟著動。做法：</p>
+      <ol>
+        <li>宣告 <code>new ol.Overlay({ element: ... })</code></li>
+        <li>設定位置 <code>overlay.setPosition(座標)</code></li>
+        <li><code>map.addOverlay(overlay)</code></li>
+      </ol>
+      <p>做 Popup 就是在點擊事件裡找出被點到的圖徵，再把它的屬性塞進 Overlay：</p>
+      <pre><code class="language-javascript">map.on("click", function (evt) {
+  const feature = map.forEachFeatureAtPixel(evt.pixel, (f) =&gt; f);
+  if (feature) {
+    popupEl.innerHTML = feature.get("name");
+    popup.setPosition(evt.coordinate);
+  } else {
+    popup.setPosition(undefined);   // 點到空白處就關閉
+  }
+});</code></pre>
+
+      <h2>定位</h2>
+      <p>取得裝置位置可以做定位服務，例如災害通知。網站要經過使用者同意才能取得位置。OpenLayers 用 <code>ol.Geolocation</code>：</p>
+      <pre><code class="language-javascript">const geolocation = new ol.Geolocation({
+  tracking: true,
+  projection: map.getView().getProjection()
+});
+geolocation.on("change:position", function () {
+  const pos = geolocation.getPosition();   // EPSG:3857
+  map.getView().setCenter(pos);
+});</code></pre>
+      <div class="callout tip">
+        <p>瀏覽器只在 HTTPS（或 localhost）下允許定位，GitHub Pages 是 HTTPS，所以可以用。</p>
+      </div>
+
+      <h2>不同座標系統的資料</h2>
+      <p>OpenLayers 以 EPSG:3857 顯示，但能直接讀 EPSG:4326 的 GeoJSON（它會自動轉）。如果資料是 TWD97（EPSG:3826），OpenLayers 不認識，就要：</p>
+      <ol>
+        <li>在 index.html 引入 <code>proj4.js</code></li>
+        <li>定義座標系統：<code>proj4.defs("EPSG:3826", "+proj=tmerc +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=m +no_defs")</code></li>
+        <li>註冊到 OpenLayers：<code>ol.proj.proj4.register(proj4)</code></li>
+        <li>讀 GeoJSON 時指定來源座標：<code>new ol.format.GeoJSON({ dataProjection: "EPSG:3826", featureProjection: "EPSG:3857" })</code>；有些情況要對每個圖徵手動轉換</li>
+      </ol>
+
+      <h2>讀入 GeoJSON</h2>
+      <p>用 <code>ol.source.Vector</code> 加上 <code>url</code> 與 <code>format: new ol.format.GeoJSON()</code>，就能從伺服器載入 GeoJSON。注意瀏覽器的同源限制：從別的網域讀檔，對方伺服器要允許 CORS，否則要放在自己的網站或透過 proxy。</p>
+
+      <h2>繪製、編輯、刪除圖徵</h2>
+      <h3>繪製</h3>
+      <ol>
+        <li>建立暫存圖層：<code>ol.layer.Vector</code> 加空的 <code>ol.source.Vector</code>（可設樣式）</li>
+        <li><code>map.addLayer()</code> 把它加進地圖</li>
+        <li>建立 <code>ol.interaction.Draw</code>，指定 source 與 type（Point、LineString、Polygon）</li>
+        <li><code>map.addInteraction()</code></li>
+      </ol>
+      <h3>編輯</h3>
+      <ol start="5">
+        <li>建立 <code>ol.interaction.Select</code>（選取）</li>
+        <li>建立 <code>ol.interaction.Modify</code>（修改節點）</li>
+        <li>兩個都用 <code>map.addInteraction()</code> 加入</li>
+      </ol>
+      <h3>刪除</h3>
+      <p>先用 Select 選到圖徵，再用 <code>document.addEventListener("keydown", ...)</code> 監聽鍵盤，按下 Delete 時從 source 移除選到的圖徵：</p>
+      <pre><code class="language-javascript">document.addEventListener("keydown", function (e) {
+  if (e.key === "Delete") {
+    select.getFeatures().forEach((f) =&gt; drawSource.removeFeature(f));
+    select.getFeatures().clear();
+  }
+});</code></pre>
+      <p>講義用的是舊式的 <code>keyCode</code>（Delete 是 46），現代寫法用 <code>e.key</code> 比較好讀。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>WebGIS 網站分成 index.html（介面）、map.js（地圖與圖層）、main.js（互動）。樣式用 Style 的 image / stroke / fill。Popup＝點擊事件找圖徵＋Overlay。TWD97 資料要用 proj4 定義並註冊。繪圖用 Draw，編輯用 Select＋Modify，刪除用 Select＋鍵盤事件。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

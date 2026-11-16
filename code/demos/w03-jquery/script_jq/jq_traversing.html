@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>  
+  </head>
+  <body>
+    <script>   
+      $(function(){                    //$(document).ready(function(){ });        
+        //$("option").parent().css({"color": "red", "border": "2px solid red"});
+        //$("option").parents().css({"color": "red", "border": "2px solid red"});  //html 
+        //$("option").parents('form').css({"color": "red", "border": "2px solid red"});    //specific element
+        $("option").parentsUntil('form').css({"color": "red", "border": "2px solid red"});   //between a <option> and a <form> element
+      });
+    </script>    
+    <form action="/processing.php" method="post">
+      Name:
+      <input type="text" name="fullname" value="" /><br/>
+      Student ID:
+      <input type="text" name="sid" value="student ID" /><br/><br/>
+      Password:
+      <input type="password" name="password" value="" /><br/><br/>
+      Gender:<br/>
+      <input type="radio" name="gender" value="male" checked /> Male<br/>
+      <input type="radio" name="gender" value="female" /> Female<br/><br/>
+      Grade:<br/>
+      <select name="grade" size="3" multiple>
+        <option value="freshman">freshman</option>
+        <option value="sophomore">sophomore</option>
+        <option value="junior">junior</option>
+        <option value="senior">senior</option>
+      </select><br/><br/>
+      Subject:<br/>
+      <input type="checkbox" name="subject1" value="WebGIS" />WebGIS<br>
+      <input type="checkbox" name="sebject2" value="Statistics" /> Statistics<br/><br/>      
+      Comments:<br/>
+      <textarea name="opinion" rows="5" cols="30">Please write down your comments here.
+      </textarea>
+      <br><br>
+      <input type="submit" value="Submit" /><input type="reset" value="reset" />
+      <div id="block1">block1</div>
+    </form> 
+    <div id="block2">
+      <pre>
+      Never underestimate your <em>power</em> to change yourself!
+      ~~~
+      <sup>I</sup> feel <ins>strongly</ins> that I can make it      
+      </pre>
+    </div>   
+  </body>
+</html>
+
+

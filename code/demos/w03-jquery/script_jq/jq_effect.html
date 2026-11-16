@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>    
+  </head>
+  <body>
+    <script>       
+      $(function(){                    //$(document).ready(function(){ });
+        $("#b1").click(function(){
+          $("#div1").hide(1000);      // 1, "fast", "slow" , hide(speed,callback)
+        });
+        $("#b2").click(function(){
+          $("#div1").show(100); 
+        });
+        $("#b3").click(function(){
+          $("#div2").toggle(); 
+        });
+        $("#div3").css({"color":"red","background-color":"blue"});
+        $("#para1").click(function(){
+          $("#div3").slideToggle(); 
+        });
+      });
+    </script>
+    <button id="b1">Hide</button>
+    <button id="b2">Show</button>
+    <button id="b3">toggle</button>
+    <div id="div1">para1</div>
+    <div id="div2">toggle effect~show time~</div>
+    <p id="para1">click me to show sliding effect</p>
+    <div id="div3">sliding effect</div>    
+  </body>
+</html>
+
+

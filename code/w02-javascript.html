@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>JavaScript 範例：從變數到 JSON · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w02-code-javascript">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>對應 JavaScript 講義的 12 個示範檔，從放程式碼的位置、變數、型別，到流程控制、函式、事件和 JSON。多數範例把結果印在 Console，所以執行時請按 F12（Mac：Option + Command + I）打開開發者工具。</p>
+      <div class="callout tip">
+        <p>內嵌的執行框也有自己的 Console。在 DevTools 的 Console 上方下拉選單把 top 切到這個 iframe，或直接按「新分頁開啟」比較好觀察。</p>
+      </div>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>js_start.html：let 的區塊範圍</h3>
+      <pre><code class="language-javascript">let x = 10;
+{
+  let x = 0;      // 這是另一個 x，只活在大括號裡
+  console.log(x); // 0
+}
+x = 20;           // 改的是外面的 x</code></pre>
+      <p>同一段範例也示範了 <code>let a, b = null;</code>：a 是 undefined、b 是 null，<code>typeof</code> 分別是 "undefined" 和 "object"。</p>
+      <h3>js_switch_select.html：為什麼永遠顯示 graduate？</h3>
+      <p>這個範例用 <code>addEventListener("change", ...)</code> 監聽選單，再用 <code>switch</code> 依選到的值決定年級。實際執行會發現不管選哪個，都顯示 graduate。原因是：</p>
+      <pre><code class="language-javascript">switch (event.target.value) {  // value 是字串 "1"
+  case 1:                       // 比的是數字 1，"1" === 1 為 false
+    ...</code></pre>
+      <p><code>switch</code> 用的是嚴格比較 <code>===</code>，表單的值永遠是字串。程式裡的註解「//Number」就是提示：改成 <code>switch (Number(event.target.value))</code>，或把 case 寫成 <code>case "1":</code> 就會正常。</p>
+      <h3>js_json.html：存取巢狀資料</h3>
+      <p>物件用 <code>.key</code> 或 <code>["key"]</code>，陣列用 <code>[索引]</code>，兩者可以接著寫，例如 <code>data.features[0].properties.name</code>。這就是之後讀 GeoJSON 的方式。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <ul>
+        <li>12 個 HTML 原本都有 <code>&lt;script src="/script/demo.js"&gt;</code>，這支外部檔不在範例包裡，在網站上會出現 404 錯誤，所以改成註解（檔案內有標記「網站版修改」）。其他程式碼沒有更動。</li>
+      </ul>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>在 js_array.html 用 <code>splice</code> 刪掉陣列中間的兩個元素，並印出刪掉的是什麼（splice 的回傳值）</li>
+        <li>把 js_function.html 的函式全部改寫成箭頭函式</li>
+        <li>修改 demo.json 加一筆資料，讓 js_json.html 把所有名字列在網頁上，而不是只印在 Console</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

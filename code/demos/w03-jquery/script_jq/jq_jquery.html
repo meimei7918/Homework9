@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <!--<script src="jquery.min.js"></script>-->      <!--Way 1-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>                                         <!--Way 2-->     
+  </head>
+  <body>
+    <div id="para1">1</div>
+    <script> 
+      $(function(){         //$(document).ready(function(){ }); abbreviate (document).ready
+        $("#para1").hide();  
+        //jQuery("#para1").hide();        
+      });      
+    </script>    
+  </body>
+</html>
+
+

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>CSS 範例：inline / 外部樣式、盒模型、定位、RWD · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w01-code-css">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>對應 CSS 講義的每一個示範檔。建議順序：style.html（inline 樣式）→ idclassStyle.html（id 與 class）→ mp.html（盒模型）→ position.html（定位）→ rwd.html（Bootstrap 格線），最後做 practice.html 這個課堂練習。</p>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>mp.html：看盒模型最快的方法</h3>
+      <p>執行後在元素上按右鍵 →「檢查」，Styles 面板最下方會畫出 margin（橘）、border、padding（綠）、內容（藍）四層，改數字就能即時看到變化。</p>
+      <h3>position.html：捲動才看得出差別</h3>
+      <p>sticky 與 fixed 在頁面不捲動時看起來一樣。把視窗縮小到需要捲動，觀察 sticky 是「捲到某個位置才黏住」，fixed 則從頭到尾固定在視窗上。</p>
+      <h3>rwd.html：拖拉視窗寬度</h3>
+      <p>用「新分頁開啟」後縮放瀏覽器寬度，或開 DevTools 的裝置模式，看欄位在斷點前後怎麼從並排變成上下排。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <ul>
+        <li>無，這包範例沒有修改任何檔案。</li>
+      </ul>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>把 practice.html 的 inline style 全部搬到一個外部 .css 檔（講義的課堂練習）</li>
+        <li>在 position.html 加一個 <code>z-index</code> 更大的元素，讓它蓋在原本的 fixed 元素上面</li>
+        <li>把 rwd.html 的三欄改成「手機一欄、平板兩欄、電腦三欄」</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>     
+  </head>
+  <body>
+    <script>       
+      $(function(){                    //$(document).ready(function(){ });        
+        $("#b1").click(function(){
+          $("#para1").animate({        //params
+              left:'250px',
+              height:'300px',
+              width:'300px'
+          },5000);             //speed
+        });
+       
+        $("#b2").click(function(){
+            $("#para1").stop();
+        });
+      });
+    </script>
+    <button id="b1">press me</button>    
+    <div id="para1" style="background:#ffbf21;height:50px;width:50px;position:absolute;">para1</div>    
+    <button id="b2" >press me for testing stop</button>    
+  </body>
+</html>
+
+

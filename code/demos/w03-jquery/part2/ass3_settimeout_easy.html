@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"    
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    </script> <!--Way 2-->    
+  </head>
+  <body>
+    <script> <!--put your JavaScript here-->
+      $(function(){                    //$(document).ready(function(){ });
+        var i=0;
+        var j=0;
+        $("#b1").click(function(){
+          setTimeout(function(){            
+            i++;
+            $("#para1").text(i);            
+          }, 2000);  //waiting for 2 secs            
+        }); 
+        $("#b2").click(function(){
+          setInterval(function(){            
+            j++;
+            $("#para2").text(j);            
+          }, 2000);  //waiting for 2 secs            
+        });
+      });
+    </script>
+    <button id="b1">press me(setTimeout)</button>    
+    <div id="para1" style="background:#ffbf21;height:50px;width:50px;">para1</div>    
+    <button id="b2">press me(setInterval)</button>
+    <div id="para2" style="background:yellow;height:50px;width:50px;">para2</div> 
+  </body>
+</html>
+
+

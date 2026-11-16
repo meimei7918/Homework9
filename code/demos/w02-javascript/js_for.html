@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="t1">a</div>
+    <div id="t2">b</div>
+    <div id="t3">c</div>
+    <script>  //put your JavaScript here
+      let total=0;    // let total="" ; Different!!!
+      let idName=['t1','t2','t3']
+      for (let i = 1; i <= 100; i++) {
+          total += i ;  //total = total+i;
+      }
+      document.getElementById("t1").innerHTML =
+      total+document.getElementById("t2").innerHTML+document.getElementById("t3").innerHTML;      
+    </script>
+  </body>
+</html>
+
+

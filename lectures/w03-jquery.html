@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>jQuery：選取、事件、特效、DOM 操作與 AJAX · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w03-lecture-jquery">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能引入 jQuery 並用 <code>$(selector).action()</code> 選取與操作元素</li>
+        <li>能分辨 text / html / val / attr 的取值與設值，以及 append / prepend / after / before</li>
+        <li>能用 DOM 走訪方法從一個元素找到它的父、子、兄弟元素</li>
+        <li>能說明 GET 與 POST 的差別，並用 AJAX 在不重新整理頁面的情況下載入資料</li>
+      </ul>
+
+      <h2>jQuery 是什麼、怎麼引入</h2>
+      <p>jQuery 是一個 JavaScript 函式庫，把「找元素、改內容、處理事件、做動畫、AJAX」包成簡短又跨瀏覽器的寫法。引入有兩種方式：</p>
+      <ul>
+        <li>下載 jQuery 檔案放在專案裡，當本機檔引入</li>
+        <li>從 <dfn class="term">CDN<span>Content Delivery Network</span></dfn> 引入。CDN 是分散在各地的一群伺服器，使用者會從較近的節點下載</li>
+      </ul>
+      <p>找網址的方式：jquery.com → Download → releases.jquery.com → 選版本的 minified。</p>
+
+      <h2>基本語法與 document ready</h2>
+      <pre><code class="language-javascript">$("p").hide();        // 隱藏所有 &lt;p&gt;
+$(".test").hide();    // 隱藏所有 class="test"
+$("#test").hide();    // 隱藏 id="test"</code></pre>
+      <p><code>$</code> 就是 <code>jQuery</code> 這個函式，<code>$("p")</code> 等於 <code>jQuery("p")</code>。</p>
+      <pre><code class="language-javascript">$(function () {
+  // 文件載入完成後才執行，等同 $(document).ready(function () { ... });
+});</code></pre>
+      <div class="callout warn">
+        <p>沒有包在 document ready 裡、又寫在元素之前的程式會找不到元素，所以「沒反應」。範例 jq_jquery2.html 就是這個反例。</p>
+      </div>
+
+      <h2>選擇器與事件</h2>
+      <p>jQuery 選擇器建立在 CSS 選擇器上，另外加了自己的語法，例如 <code>:first</code>、<code>:even</code>、<code>[href$='.pdf']</code>。</p>
+      <p>常用事件：滑鼠的 click、dblclick、mouseenter、mouseleave；鍵盤的 keypress、keydown、keyup；表單的 submit、change、focus、blur；文件與視窗的 load、resize、scroll。</p>
+      <pre><code class="language-javascript">$("#btn").click(function () { ... });
+$("p").on({                         // on() 一次綁多個事件
+  mouseenter: function () { $(this).css("background", "lightgray"); },
+  mouseleave: function () { $(this).css("background", "white"); }
+});</code></pre>
+
+      <h2>特效</h2>
+      <table>
+        <thead><tr><th>類別</th><th>方法</th></tr></thead>
+        <tbody>
+          <tr><td>顯示隱藏</td><td><code>hide</code>、<code>show</code>、<code>toggle</code></td></tr>
+          <tr><td>滑動</td><td><code>slideDown</code>、<code>slideUp</code>、<code>slideToggle</code></td></tr>
+          <tr><td>淡入淡出</td><td><code>fadeIn</code>、<code>fadeOut</code>、<code>fadeToggle</code>、<code>fadeTo(速度, 透明度)</code></td></tr>
+          <tr><td>自訂動畫</td><td><code>animate({CSS 屬性}, 速度, callback)</code></td></tr>
+          <tr><td>停止</td><td><code>stop(stopAll, goToEnd)</code></td></tr>
+        </tbody>
+      </table>
+      <p>大多數特效可以帶「速度」和「完成後要做的事（callback）」兩個參數，例如 <code>$("#b1").hide(100)</code>。</p>
+
+      <h2>DOM 操作（講義標註重要）</h2>
+      <h3>取值與設值</h3>
+      <table>
+        <thead><tr><th>方法</th><th>處理的東西</th></tr></thead>
+        <tbody>
+          <tr><td><code>text()</code></td><td>純文字內容</td></tr>
+          <tr><td><code>html()</code></td><td>內容，包含 HTML 標籤</td></tr>
+          <tr><td><code>val()</code></td><td>表單欄位的值</td></tr>
+          <tr><td><code>attr()</code></td><td>屬性值，例如 <code>attr("href")</code></td></tr>
+        </tbody>
+      </table>
+      <p>不帶參數是<strong>取值</strong>：<code>$("#name").val()</code>；帶參數是<strong>設值</strong>：<code>$("#name").val("Kuo")</code>。</p>
+      <h3>新增、刪除、清空</h3>
+      <ul>
+        <li><code>append</code> / <code>prepend</code>：加在選取元素<strong>裡面</strong>的最後 / 最前</li>
+        <li><code>after</code> / <code>before</code>：加在選取元素<strong>外面</strong>的後面 / 前面</li>
+        <li><code>remove()</code>：連同自己和子元素一起刪掉</li>
+        <li><code>empty()</code>：只清空子元素，自己留著</li>
+      </ul>
+      <h3>class 與 CSS</h3>
+      <p><code>addClass</code>、<code>removeClass</code>、<code>toggleClass</code> 切換 class；<code>css("color")</code> 取樣式、<code>css("color", "red")</code> 設樣式。</p>
+
+      <h2>DOM 走訪</h2>
+      <p>從目前元素出發，在 DOM 樹上往上、往下、往旁邊找元素：</p>
+      <table>
+        <thead><tr><th>方向</th><th>方法</th></tr></thead>
+        <tbody>
+          <tr><td>往上（祖先）</td><td><code>parent()</code>、<code>parents()</code>、<code>parentsUntil()</code></td></tr>
+          <tr><td>往下（子孫）</td><td><code>children()</code>（只找下一層）、<code>find()</code>（所有層）</td></tr>
+          <tr><td>同層（兄弟）</td><td><code>siblings()</code>、<code>next()</code>、<code>nextAll()</code>、<code>nextUntil()</code>、<code>prev()</code> 系列</td></tr>
+          <tr><td>篩選</td><td><code>first()</code>、<code>last()</code>、<code>eq(索引，從 0 起)</code>、<code>filter()</code>、<code>not()</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>日期與計時器</h2>
+      <p><code>Date</code> 物件處理日期時間。計時器：</p>
+      <pre><code class="language-javascript">const t = setTimeout(fn, 1000);   // 1 秒後執行一次
+const r = setInterval(fn, 1000);  // 每 1 秒執行一次
+clearTimeout(t);                  // 取消
+clearInterval(r);                 // 停止重複</code></pre>
+      <p>1000 毫秒 = 1 秒。</p>
+
+      <h2>jQuery UI 與圖表</h2>
+      <p>jQuery UI 是建立在 jQuery 上的介面元件集，例如 Datepicker、Autocomplete、Slider、Dialog、Progressbar，第六週的側邊欄還會用到 Accordion。</p>
+      <p>資料要做成圖表時，講義介紹四個函式庫：Highcharts、D3.js、Chart.js、Google Charts，範例包都有對應的 demo。</p>
+
+      <h2>HTTP 方法與 AJAX</h2>
+      <p>HTTP 是用戶端與伺服器之間「請求－回應」的協定。最常用的兩個方法：</p>
+      <table>
+        <thead><tr><th></th><th>GET</th><th>POST</th></tr></thead>
+        <tbody>
+          <tr><td>用途</td><td>向伺服器要資料</td><td>送資料給伺服器，新增或更新資源</td></tr>
+          <tr><td>資料放哪</td><td>網址後面的查詢字串（<code>?a=1&amp;b=2</code>）</td><td>請求的 body</td></tr>
+        </tbody>
+      </table>
+      <p>其他還有 PUT、HEAD、DELETE、PATCH、OPTIONS 等。</p>
+      <p><dfn class="term">AJAX<span>Asynchronous JavaScript and XML</span></dfn> 是在背景向伺服器要資料、拿到後只更新頁面的一部分，不用整頁重新載入。</p>
+      <pre><code class="language-javascript">$.ajax({
+  url: "ajax001.php?demo=1&amp;b=2",
+  type: "GET",
+  success: function (data) { console.log(data); },
+  error: function () { console.log("ajax error"); }
+});</code></pre>
+      <div class="callout tip">
+        <p>AJAX 範例需要 PHP 伺服器回應，第七週學 PHP 後就能自己寫 <code>ajax001.php</code> 這一端。</p>
+      </div>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>jQuery 的一切都是 <code>$(選擇器).動作()</code>，程式包在 document ready 裡。取值不帶參數、設值帶參數；append 加在裡面、after 加在外面。走訪讓你從一個元素找到相關元素。AJAX 讓網頁不重新整理就能和伺服器交換資料。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

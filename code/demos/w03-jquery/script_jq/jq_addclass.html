@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>   
+    <style>
+    .style1 {
+        font-weight: bold;
+        font-size: 20;
+        color:red;
+    }
+    .style2 {
+        color: green;
+    }
+    </style>
+  </head>
+  <body>
+    <script>   
+      $(function(){                    //$(document).ready(function(){ });
+        $("button").click(function(){
+            $("#para1, #para2").addClass("style1");
+            $("input, ul").toggleClass("style2");
+        });
+      });
+    </script>
+    <button id="b1">press me</button>       
+    <div id="para1">para1</div> <br/>
+    <div id="para2">para2</div> <br/>      
+    input:<input type="text" id="text1" name="tp1" value="defaultValue" />abc
+    <ul style="list-style-type:square" id="ul1">list
+      <li>Dept. of Geography</li>
+      <li>Dept. of Bioenvironmental Systems Engineering</li>
+      <li>Dept. of Public Health</li>
+    </ul>
+  </body>
+</html>
+
+

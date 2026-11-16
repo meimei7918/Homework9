@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>GIS 資料模型：網格、向量與臺灣常用座標系統 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w04-lecture-gis-data-model">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說明網格與向量資料的結構、優缺點與典型例子</li>
+        <li>能分辨 DTM、DEM、DSM</li>
+        <li>能從數字的位數判斷座標是 WGS84、TWD97 還是 Web Mercator，並說出對應的 EPSG 代碼</li>
+        <li>能在 QGIS 加入 Shapefile 與 CSV、建立新圖層，並轉存成 GeoJSON</li>
+      </ul>
+
+      <h2>從 GIS 設計看資料模型</h2>
+      <p>GIS 系統的生命週期是：需求調查 → 資料模型 → 系統分析 → 系統設計 → 系統實作 → 系統維護。資料模型在很前面就要決定，因為它決定了資料庫怎麼存、之後能做什麼分析。</p>
+      <p>WebGIS 依功能深淺可以分三級：</p>
+      <ul>
+        <li><strong>基本</strong>：提供資訊、辨識，例如查詢、套疊</li>
+        <li><strong>中階</strong>：操作與分析，例如 GIS 操作、空間分析、統計分析</li>
+        <li><strong>進階</strong>：策略、建議、知識分享</li>
+      </ul>
+
+      <h2>網格與向量</h2>
+      <p>空間資料傳統上分成兩大類，兩者互轉（向量轉網格叫網格化，網格轉向量叫向量化）一直是麻煩的問題。</p>
+      <table>
+        <thead><tr><th></th><th><dfn class="term">網格<span>raster</span></dfn></th><th><dfn class="term">向量<span>vector</span></dfn></th></tr></thead>
+        <tbody>
+          <tr><td>結構</td><td>由像素（pixel）排成的陣列，用行列編號定位，每格存一個值</td><td>點是一組座標；線是一串線段；面由邊界線圍成</td></tr>
+          <tr><td>點、線、面怎麼表示</td><td>一格、一串相鄰格、一群相連格</td><td>座標、座標序列、封閉邊界</td></tr>
+          <tr><td>種類</td><td>連續（例如高程）、離散（例如土地利用分類）</td><td>點、線、面</td></tr>
+          <tr><td>優點</td><td>結構簡單，適合連續變化的現象</td><td>只存關心的點，省空間</td></tr>
+          <tr><td>缺點</td><td>檔案大，精度受網格大小限制</td><td>假設邊界是硬的，和現實常常不符（例如土壤、植被漸變）</td></tr>
+          <tr><td>常見格式</td><td>GeoTIFF、grd、ASCII Grid</td><td>Shapefile、GeoJSON、KML</td></tr>
+        </tbody>
+      </table>
+
+      <h2>數值地形模型</h2>
+      <ul>
+        <li><dfn class="term">數值地形模型<span>DTM</span></dfn>：統稱，包含下面兩種</li>
+        <li><dfn class="term">數值高程模型<span>DEM</span></dfn>：裸露地表，<strong>不含</strong>植物、建物</li>
+        <li><dfn class="term">數值地表模型<span>DSM</span></dfn>：<strong>包含</strong>植物、建物的表面</li>
+      </ul>
+      <p>內政部的 20 公尺網格 DTM 是規則網格，用 <code>.hdr</code>（標頭，說明範圍與網格大小）加 <code>.grd</code>（資料）兩個檔案；講義也示範了 30 公尺 DEM。</p>
+
+      <h2>Shapefile</h2>
+      <p>ESRI Shapefile 是<strong>二進位</strong>格式，不是文字檔；一個圖層只能有一種幾何類型（點、線或面）。它其實是一組同名檔案：</p>
+      <ul>
+        <li><code>.shp</code>：幾何</li>
+        <li><code>.shx</code>：幾何的索引</li>
+        <li><code>.dbf</code>：屬性表</li>
+      </ul>
+      <div class="callout warn">
+        <p>傳 Shapefile 給別人時要整組一起傳（通常還有 <code>.prj</code> 記錄座標系統），只給 <code>.shp</code> 對方打不開屬性。</p>
+      </div>
+
+      <h2>臺灣常用座標系統</h2>
+      <p>1980–2000 年間政府測製的地圖主要用 TWD67，2000 年後逐步改用 TWD97。不同座標系統的資料要先轉成同一個，才能正確套疊。</p>
+      <table>
+        <thead><tr><th></th><th>WGS84</th><th>TWD97 TM2</th><th>TWD67 TM2</th><th>Web Mercator</th></tr></thead>
+        <tbody>
+          <tr><td>EPSG</td><td><code>4326</code></td><td><code>3826</code></td><td><code>3828</code></td><td><code>3857</code></td></tr>
+          <tr><td>橢球體</td><td>WGS84</td><td>GRS80</td><td>GRS 1967</td><td>WGS84</td></tr>
+          <tr><td>投影</td><td>無</td><td>橫麥卡托（中央經線 121°）</td><td>橫麥卡托（121°）</td><td>球面麥卡托</td></tr>
+          <tr><td>座標類型</td><td>球面（地理）座標</td><td>平面</td><td>平面</td><td>平面</td></tr>
+          <tr><td>單位</td><td>度</td><td>公尺</td><td>公尺</td><td>公尺</td></tr>
+          <tr><td>位數</td><td>緯度 2 位、經度 3 位</td><td>X 6 位、Y 7 位</td><td>X 6 位、Y 7 位</td><td>X 8 位、Y 7 位</td></tr>
+          <tr><td>用途</td><td>GPS、GeoJSON</td><td>目前政府資料主要使用</td><td>舊圖資、地籍</td><td>網路地圖圖磚（Google、OSM）</td></tr>
+        </tbody>
+      </table>
+      <div class="callout key">
+        <p>看數字就能猜座標系統：<code>121.5, 25.0</code> 是 WGS84；<code>302000, 2768000</code> 是 TWD97；<code>13527000, 2880000</code> 是 Web Mercator。TWD97 與 TWD67 位數一樣，但同一點約差 800 公尺東西、200 公尺南北。</p>
+      </div>
+
+      <h2>在 QGIS 處理向量資料</h2>
+      <h3>加入既有的向量檔</h3>
+      <p>Layer → Add Layer → Add Vector Layer，選 <code>.shp</code>（或 All files）。講義範例是臺北市路邊停車格位。加入後可以開屬性表檢視或修改。</p>
+      <h3>加入 CSV</h3>
+      <p>Layer → Add Layer → Add Delimited Text Layer，指定哪一欄是 X（經度）、哪一欄是 Y（緯度），以及座標系統。</p>
+      <h3>自己建立資料</h3>
+      <p>Layer → Create Layer → New Shapefile Layer，設定幾何類型與欄位 → 開啟編輯（Toggle editing）→ 新增多邊形圖徵，例如描出一棟建物。</p>
+      <h3>轉成 GeoJSON 或其他座標系統</h3>
+      <p>在圖層上按右鍵 Export → Save Features As，格式選 GeoJSON，座標系統可以順便改（網頁用通常選 EPSG:4326）。</p>
+      <div class="callout warn">
+        <p>同一個 GeoJSON 裡同時有點和面時，在 QGIS 匯入要指定要載入哪一種幾何類型。</p>
+      </div>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>網格用格子存值，適合連續現象；向量用座標存點線面，省空間但邊界是硬的。Shapefile 是一組檔案，GeoJSON 是單一文字檔。臺灣資料多半是 TWD97（EPSG:3826），網頁地圖顯示用 Web Mercator（EPSG:3857），交換資料用 WGS84（EPSG:4326）。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

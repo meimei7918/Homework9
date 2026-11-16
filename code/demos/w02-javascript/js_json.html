@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>    
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="para1"></div>
+    <div id="para2"></div>    
+    <script>  //put your JavaScript here
+      let json1='{"Dept":"Geography","University":"NTU","Grade":"first","name":"Amy"}';
+      let json2='{"students": ' +
+                   '[ {"Dept.":"Geography", "University":"NTU","Grade":"first","name":"Amy"},' +
+                     '{"Dept.":"Geography", "University":"NTU","Grade":"junior","name":"Andy"},'+
+                     '{"Dept.":"Geography", "University":"NTU","Grade":"senior","name":"Leo"}]}';/**/
+      
+      let jsonObj1 = JSON.parse(json1);
+      let jsonObj2 = JSON.parse(json2);
+      document.getElementById("para1").innerHTML =jsonObj1.name;
+      document.getElementById("para2").innerHTML =jsonObj2.students[2].name;      
+    </script>
+  </body>
+</html>
+
+

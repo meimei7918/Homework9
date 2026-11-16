@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <script> //put your JavaScript here          
+    </script>
+    <!-- [網站版修改] 原本載入 /script/demo.js，此檔不在範例包中，已停用 -->  <!--put your JavaScript here-->        
+  </head>
+  <body>
+    <div id="t1"></div>
+    <div id="t2"></div>
+    <div id="t3"></div>
+    <script>  
+      let total=0;    
+      total= sumFunction(100,200);
+
+      let gradeFunction=function (a) {
+          return Math.round(Math.sqrt(a)*10);             // return
+      }
+
+      let gradeFinal=gradeFunction(80);
+      function sumFunction(a, b) {
+          return a + b;               // return
+      }
+      document.getElementById("t1").innerHTML =total;
+      document.getElementById("t2").innerHTML =gradeFinal;        
+    </script>
+  </body>
+</html>
+
+

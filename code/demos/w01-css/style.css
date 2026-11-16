@@ -1,0 +1,18 @@
+@import "bar.css";
+@import "sidemenu.css";
+@import "table.css";
+@import "gallery.css";
+
+body{
+  background-color: pink;
+  width:80%;
+  margin: 0px auto;
+  font-size:18px;
+}
+
+body #wrap #header #title {
+  font-size: 32px;
+}
+body #wrap #header #subtitle {
+  font-size: 16px;
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>jQuery 範例：選擇器、事件、特效、走訪、圖表、小專案 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w03-code-jquery">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>範例分三組，建議照這個順序看：</p>
+      <ol>
+        <li><strong>script_jq/</strong>：講義逐頁的示範，從引入 jQuery、選擇器、事件、特效、取值設值、新增刪除、DOM 走訪到 AJAX</li>
+        <li><strong>part2/</strong>：計時器、jQuery UI 元件（日期、自動完成、滑桿），以及四種圖表函式庫</li>
+        <li><strong>example/</strong>：一個逐版改進的小專案（表格＋按鈕＋對話框），四個版本可以對照看程式怎麼長大</li>
+      </ol>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>jq_jquery.html 與 jq_jquery2.html：對照組</h3>
+      <p>兩份程式幾乎一樣，差別在第二份沒有包在 <code>$(function(){ ... })</code> 裡，又寫在元素之前，執行時元素還沒產生，所以沒有反應。先跑第二份看它失敗，再對照第一份。</p>
+      <h3>jq_get.html：text() 與 html()</h3>
+      <p>同一個元素，<code>text()</code> 拿到純文字，<code>html()</code> 拿到含標籤的字串。要把使用者輸入的文字放進頁面時用 <code>text()</code> 比較安全，因為它不會把輸入當成 HTML 執行。</p>
+      <h3>example/：小專案怎麼一步步加功能</h3>
+      <p>readme.md 記錄了每一版的變更：v1 建立表格、按鈕與對話框 → v2 新增資料 → v3 格式化時間、清空資料 → v4 插入排序讓新資料在最前、計算合計。點不同版本後切到「原始碼」，比較前後差異，是練習讀程式的好材料。</p>
+      <h3>AJAX 範例</h3>
+      <p>jq_ajax1.html、jq_ajax2.html 會向老師的 PHP 伺服器發請求。打開 Console 看結果；如果伺服器沒有回應或不允許跨網域，會印出「ajax error」。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <ul>
+        <li>part2 中兩個檔名有空格或中文的檔案改名，避免網址出錯：「ass3_Google Charts.html」改為 ass3_GoogleCharts.html，「ass3_settimeout2 - 複製.html」改為 ass3_settimeout2-copy.html。檔案內容沒有更動。</li>
+        <li>jq_traversing.html、jq_traversing_children.html 的表單會送到 <code>/processing.php</code>，這支檔案不存在，按送出會出現 404，屬正常現象。</li>
+      </ul>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>在 jq_append.html 加一個輸入框，按按鈕時把輸入的文字 append 成新的清單項目</li>
+        <li>把 ass3_Chart.js.html 的圓餅圖改成長條圖（Chart.js 的 type 改成 bar）</li>
+        <li>幫 example/version-004.html 加一個「刪除這一列」的按鈕（提示：<code>$(this).closest("tr").remove()</code>）</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

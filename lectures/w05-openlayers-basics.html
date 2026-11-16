@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>OpenLayers 入門：Map、Layer、Source、View 與控制項 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w05-lecture-openlayers-basics">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說明 WebGIS 的定義與優點</li>
+        <li>能用 CDN 引入 OpenLayers，寫出 Map、Layer、Source、View 組成的最小地圖</li>
+        <li>能接上 OSM、Google 與國土測繪中心 WMTS 底圖並切換</li>
+        <li>能加入控制項，並用 View 限制縮放與範圍</li>
+      </ul>
+
+      <h2>再談 WebGIS</h2>
+      <p>WebGIS 是至少包含一個伺服器與一個用戶端的資訊系統：伺服器是 GIS 伺服器，用戶端是瀏覽器或手機 App。簡單說，<strong>任何用網路技術讓伺服器和用戶端溝通的 GIS</strong> 都算 WebGIS。</p>
+      <p>優點：觸及全球、使用者多、跨平台、平均每位使用者的成本低、容易使用、統一更新、應用多元。</p>
+
+      <h2>OpenLayers 與版本問題</h2>
+      <p><dfn class="term">OpenLayers<span>ol</span></dfn> 是開源的 JavaScript 地圖函式庫，可以顯示來自任何來源的圖磚、向量資料與標記。目前版本 10.x，官網有兩百多個範例（動畫、繪圖、群聚、選取、Popup、圖層捲簾、熱區圖、標籤等）。</p>
+      <div class="callout warn">
+        <p>官網範例是用 ES6 的 <code>import</code> 寫的，需要打包工具（npm）編譯；直接貼到 HTML 會出現「不支援 import」的錯誤。課堂做法是用 CDN 引入完整版 <code>ol.js</code>，以 <code>ol.Map</code>、<code>ol.layer.Tile</code> 這種「全域 ol 物件」的寫法；老師也建議參考 v4.6.5 的範例原始碼，因為那一版不需要編譯。</p>
+      </div>
+      <p>OpenLayers 支援的資料格式：GeoJSON、KML、GML、<dfn class="term">WKT<span>Well-Known Text</span></dfn>（例如 <code>POINT(121.5 25.0)</code>）、GeoRSS、GPX 等。</p>
+
+      <h2>建立地圖需要三樣東西</h2>
+      <ol>
+        <li><strong>引入 OpenLayers 的 JS 與 CSS</strong>（CDN 或下載到本機）</li>
+        <li><strong>一個地圖容器</strong>：<code>&lt;div id="map"&gt;&lt;/div&gt;</code>，要給它高度</li>
+        <li><strong>建立地圖的 JavaScript</strong></li>
+      </ol>
+      <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"&gt;&lt;/script&gt;
+
+&lt;div id="map" style="height: 400px"&gt;&lt;/div&gt;
+&lt;script&gt;
+  const map = new ol.Map({
+    target: "map",                                 // 掛到哪個 div
+    layers: [
+      new ol.layer.Tile({ source: new ol.source.OSM() })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([121.54, 25.02]), // 經度, 緯度 → EPSG:3857
+      zoom: 12
+    })
+  });
+&lt;/script&gt;</code></pre>
+
+      <h2>四個核心物件</h2>
+      <table>
+        <thead><tr><th>物件</th><th>是什麼</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td><code>ol.Map</code></td><td>地圖本身，用 <code>target</code> 綁定 div</td><td><code>map.addLayer()</code>、<code>map.on("click")</code></td></tr>
+          <tr><td>Layer</td><td>圖層，分 Image、Tile、Vector 三種</td><td><code>ol.layer.Tile</code>、<code>ol.layer.Vector</code></td></tr>
+          <tr><td>Source</td><td>圖層的資料來源，每個圖層都要有一個</td><td><code>ol.source.OSM</code>、<code>ol.source.XYZ</code>、<code>ol.source.WMTS</code>、<code>ol.source.Vector</code></td></tr>
+          <tr><td><code>ol.View</code></td><td>觀看方式：中心點、縮放（或解析度）、旋轉</td><td><code>center</code>、<code>zoom</code>、<code>minZoom</code>、<code>extent</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout key">
+        <p>OpenLayers 預設以 EPSG:3857 顯示，所以經緯度要先轉換：<code>ol.proj.transform([lng, lat], "EPSG:4326", "EPSG:3857")</code> 或簡寫 <code>ol.proj.fromLonLat([lng, lat])</code>。順序都是<strong>經度在前</strong>。</p>
+      </div>
+
+      <h2>底圖</h2>
+      <h3>XYZ 圖磚（Google、OSM）</h3>
+      <pre><code class="language-javascript">new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt{0-3}.google.com/vt/lyrs=m&amp;x={x}&amp;y={y}&amp;z={z}"
+  })
+});</code></pre>
+      <p><code>mt{0-3}</code> 讓請求分散到 mt0 到 mt3 四台伺服器。<code>lyrs</code> 決定 Google 圖層種類：</p>
+      <table>
+        <thead><tr><th>lyrs</th><th>圖層</th><th>lyrs</th><th>圖層</th></tr></thead>
+        <tbody>
+          <tr><td><code>m</code></td><td>標準道路圖</td><td><code>s</code></td><td>只有衛星影像</td></tr>
+          <tr><td><code>h</code></td><td>只有道路</td><td><code>t</code></td><td>只有地形</td></tr>
+          <tr><td><code>p</code></td><td>地形＋道路</td><td><code>y</code></td><td>衛星＋道路（混合）</td></tr>
+          <tr><td><code>r</code></td><td>改版道路圖</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        <p>直接用 Google 圖磚網址不符合 Google 的服務條款，課堂練習可以，正式上線的專題建議改用 OSM 或國土測繪中心圖磚。</p>
+      </div>
+      <h3>國土測繪中心 WMTS</h3>
+      <p>用 <code>ol.source.WMTS</code> 時要自己定義圖磚格網：以 EPSG:3857 的範圍為基準，算出每一層的解析度（<code>resolutions</code>）與層級編號（<code>matrixIds</code>），再填入圖層名稱，例如 <code>EMAP</code>（臺灣通用電子地圖）、<code>PHOTO2</code>（正射影像）。範例包的 map_Basemap.html 有完整寫法。</p>
+      <p>多個底圖時，把它們都加進地圖，再用 <code>layer.setVisible(true / false)</code> 控制只顯示其中一個。</p>
+
+      <h2>控制項</h2>
+      <p>控制項是浮在地圖上的介面元件：</p>
+      <ul>
+        <li><code>ol.control.Zoom</code>：放大縮小按鈕</li>
+        <li><code>ol.control.ZoomSlider</code>：縮放滑桿</li>
+        <li><code>ol.control.ScaleLine</code>：比例尺</li>
+        <li><code>ol.control.MousePosition</code>：滑鼠位置座標，可以設 <code>projection: "EPSG:4326"</code> 顯示經緯度</li>
+        <li><code>ol.control.OverviewMap</code>：鷹眼圖</li>
+      </ul>
+      <pre><code class="language-javascript">const map = new ol.Map({
+  target: "map",
+  controls: [new ol.control.Zoom(), new ol.control.ScaleLine()],
+  layers: [...],
+  view: ...
+});</code></pre>
+
+      <h2>用 View 固定範圍</h2>
+      <p>不希望使用者把地圖拖到太遠或縮得太小，可以在 View 設：</p>
+      <pre><code class="language-javascript">new ol.View({
+  center: ol.proj.fromLonLat([121, 23.7]),
+  zoom: 8,
+  minZoom: 7,
+  maxZoom: 14,
+  extent: ol.proj.transformExtent([119, 21.5, 123, 26], "EPSG:4326", "EPSG:3857")
+});</code></pre>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>OpenLayers 地圖＝Map 綁 div，加上 Layer（每個都有 Source）與 View。顯示座標是 EPSG:3857，經緯度要先轉。底圖可以是 XYZ 或 WMTS，多底圖用 setVisible 切換。控制項加在 controls，範圍限制寫在 View。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

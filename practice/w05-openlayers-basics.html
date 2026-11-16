@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W05 課後練習：OpenLayers 入門 · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w05-practice-openlayers-basics">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">1. 程式碼沒有任何錯誤訊息，但地圖一片空白。最可能的原因是？</p>
+        <ol class="opts"><li>沒有設定 controls</li><li>沒有寫 minZoom</li><li>地圖的 div 沒有設定高度</li><li>沒有引入 jQuery</li></ol>
+        <p class="explain">div 預設高度是 0，地圖畫在 0 像素高的容器裡就看不到，也不會報錯。要用 CSS 給 <code>#map</code> 高度。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">2. 決定地圖「中心點與縮放層級」的是哪個物件？</p>
+        <ol class="opts"><li>ol.Map</li><li>ol.layer.Tile</li><li>ol.source.OSM</li><li>ol.View</li></ol>
+        <p class="explain">View 管觀看方式：center、zoom、rotation，以及 minZoom、extent 等限制。Map 負責把 View、Layer、Control 組在一起。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">3. 要把臺大（經度 121.5397、緯度 25.0174）設為中心，正確寫法是？</p>
+        <ol class="opts"><li><code>ol.proj.fromLonLat([121.5397, 25.0174])</code></li><li><code>ol.proj.fromLonLat([25.0174, 121.5397])</code></li><li><code>[121.5397, 25.0174]</code></li><li><code>ol.proj.transform([121.5397, 25.0174], "EPSG:3857", "EPSG:4326")</code></li></ol>
+        <p class="explain">fromLonLat 吃 [經度, 緯度]，轉成 EPSG:3857。直接給經緯度數字會被當成公尺，中心會跑到非洲外海；D 的轉換方向寫反了。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">4. 直接複製 OpenLayers 官網範例到 HTML，出現跟 import 有關的錯誤。原因是？</p>
+        <ol class="opts"><li>OpenLayers 需要付費</li><li>官網範例是 ES 模組寫法，需要 npm 打包工具編譯</li><li>瀏覽器不支援地圖</li><li>沒有連上網路</li></ol>
+        <p class="explain">官網範例用 <code>import Map from "ol/Map"</code>，要搭配打包工具。課堂改用 CDN 的 ol.js，以 <code>new ol.Map(...)</code> 的全域寫法，或參考不需編譯的 v4.6.5 範例。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">5. Google 圖磚網址中的 <code>lyrs=s</code> 代表？</p>
+        <ol class="opts"><li>標準道路圖</li><li>地形圖</li><li>只有衛星影像</li><li>衛星＋道路</li></ol>
+        <p class="explain">m 道路、p 地形＋道路、s 衛星、y 衛星＋道路（混合）、h 只有道路、t 只有地形。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">6. <code>ol.control.MousePosition</code> 預設顯示的座標單位是公尺，要改成經緯度該怎麼做？</p>
+        <ol class="opts"><li>把 View 改成 EPSG:4326</li><li>加上 ScaleLine</li><li>改用 ol.source.XYZ</li><li>在 MousePosition 設定 <code>projection: "EPSG:4326"</code></li></ol>
+        <p class="explain">MousePosition 的 projection 決定顯示用的座標系統，地圖本身仍維持 EPSG:3857。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">7. 地圖上同時加了三個底圖，要切換成只顯示其中一個，常用的方法是？</p>
+        <ol class="opts"><li>每次切換都重新建立整個 ol.Map</li><li>對每個底圖呼叫 <code>setVisible()</code>，只有選中的設 true</li><li>改變 View 的 zoom</li><li>刪掉 div 再加回來</li></ol>
+        <p class="explain">範例 map_Basemap.html 就是用迴圈對每個圖層 <code>setVisible(idx == i)</code>。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">8. 不想讓使用者把地圖拖離臺灣，應該在哪裡設定？</p>
+        <ol class="opts"><li>View 的 <code>extent</code></li><li>Layer 的 <code>opacity</code></li><li>Map 的 <code>target</code></li><li>Source 的 <code>url</code></li></ol>
+        <p class="explain">View 的 extent 限制中心點能移動的範圍（座標要用 EPSG:3857），搭配 minZoom 就不會縮到看見整個世界。</p>
+      </div>
+
+      <h2>實作題</h2>
+      <p>三題都從同一份 HTML 開始改，用 CDN 引入 OpenLayers：</p>
+<pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.11.0/ol.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/ol@v10.11.0/dist/ol.js"&gt;&lt;/script&gt;
+&lt;style&gt; html, body, #map { margin: 0; height: 100%; } &lt;/style&gt;
+&lt;div id="map"&gt;&lt;/div&gt;</code></pre>
+
+      <div class="task">
+        <h3>1. 以臺大為中心的地圖<span class="level">Map、View</span></h3>
+        <p>建立一張 OSM 底圖的地圖，中心在臺大（121.5397, 25.0174），縮放層級 15。</p>
+        <details class="hint"><summary>提示</summary><p>地圖要有 target、layers、view 三個設定。中心點記得轉成 EPSG:3857。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const map = new ol.Map({
+  target: "map",
+  layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+  view: new ol.View({
+    center: ol.proj.fromLonLat([121.5397, 25.0174]),
+    zoom: 15
+  })
+});</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 只能看臺灣的地圖<span class="level">View 限制</span></h3>
+        <p>把第 1 題改成：一開始顯示全臺（中心 121, 23.7、zoom 8），最小縮放 7、最大縮放 14，且不能拖出經度 119–123、緯度 21.5–26 的範圍。</p>
+        <details class="hint"><summary>提示</summary><p>extent 的格式是 [最小 x, 最小 y, 最大 x, 最大 y]，要從 EPSG:4326 轉成 EPSG:3857，用 <code>ol.proj.transformExtent</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const taiwan = ol.proj.transformExtent([119, 21.5, 123, 26], "EPSG:4326", "EPSG:3857");
+
+const map = new ol.Map({
+  target: "map",
+  layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+  view: new ol.View({
+    center: ol.proj.fromLonLat([121, 23.7]),
+    zoom: 8,
+    minZoom: 7,
+    maxZoom: 14,
+    extent: taiwan
+  })
+});</code></pre></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 比例尺與滑鼠經緯度<span class="level">Control</span></h3>
+        <p>在第 2 題的地圖加上縮放按鈕、比例尺，以及在右上角顯示滑鼠所在位置的經緯度（取到小數 5 位，格式像「121.53970, 25.01740」）。</p>
+        <details class="hint"><summary>提示</summary><p>MousePosition 有 <code>coordinateFormat</code> 參數，可以用 <code>ol.coordinate.createStringXY(5)</code>。controls 設定後會取代預設控制項，所以 Zoom 要自己加回來。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-javascript">const map = new ol.Map({
+  target: "map",
+  controls: [
+    new ol.control.Zoom(),
+    new ol.control.ScaleLine(),
+    new ol.control.MousePosition({
+      projection: "EPSG:4326",
+      coordinateFormat: ol.coordinate.createStringXY(5)
+    })
+  ],
+  layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+  view: new ol.View({ /* 同第 2 題 */ })
+});</code></pre>
+<p>MousePosition 預設就顯示在右上角（class 為 <code>ol-mouse-position</code>），要換位置可以用 CSS 調整。</p></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

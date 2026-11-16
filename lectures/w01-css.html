@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>CSS：樣式、盒模型、定位與 Bootstrap · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w01-lecture-css">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能用三種方式套用 CSS，並說明規則衝突時誰優先</li>
+        <li>能寫出選擇器搭配 id、class，並分辨 <code>a#btn1</code> 與 <code>a #btn1</code></li>
+        <li>能用 margin、padding、position 調整版面</li>
+        <li>能用 Bootstrap 的格線做出在手機與電腦都好看的版面</li>
+      </ul>
+
+      <h2>CSS 是什麼、怎麼套用</h2>
+      <p><dfn class="term">層疊樣式表<span>CSS</span></dfn> 描述 HTML 文件「長什麼樣子」，負責顏色、字型、版面。套用方式有三種：</p>
+      <table>
+        <thead><tr><th>方式</th><th>寫在哪</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td>行內樣式 inline</td><td>元素的 <code>style</code> 屬性</td><td><code>&lt;img style="width:600px;"&gt;</code></td></tr>
+          <tr><td>內部樣式表 internal</td><td><code>&lt;head&gt;</code> 裡的 <code>&lt;style&gt;</code></td><td><code>body {background-color: powderblue;}</code></td></tr>
+          <tr><td>外部樣式表 external</td><td>獨立的 <code>.css</code> 檔，用 <code>&lt;link&gt;</code> 引入</td><td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td></tr>
+        </tbody>
+      </table>
+      <p><code>&lt;link&gt;</code> 的 <code>rel</code> 是 relationship，說明這個外部檔案和本文件的關係。</p>
+
+      <h2>常用屬性與顏色</h2>
+      <p>行內樣式的寫法是 <code>style="屬性:值;"</code>。最常用的有 <code>background-color</code>、<code>color</code>、<code>font-family</code>、<code>font-size</code>、<code>text-align</code>。</p>
+      <p>顏色可以寫成名稱（<code>tomato</code>）、RGB、RGBA（多一個透明度）、HEX（<code>#ff6347</code>）、HSL、HSLA。配色時可以用講義推薦的配色工具。</p>
+
+      <h2>語法、id 與 class</h2>
+      <pre><code class="language-css">/* 選擇器 { 屬性: 值; } */
+h1 { color: navy; font-size: 32px; }
+#header { background: #eee; }     /* id：整頁唯一 */
+.note { color: gray; }             /* class：可以重複使用，一個元素可有多個 class */</code></pre>
+      <h3>選擇器的空格有意義</h3>
+      <ul>
+        <li><code>a#btn1</code>：id 是 btn1 的那個 <code>&lt;a&gt;</code>（同一個元素）</li>
+        <li><code>a #btn1</code>：在 <code>&lt;a&gt;</code> <strong>裡面</strong>、id 是 btn1 的元素（子孫）</li>
+      </ul>
+
+      <h2>盒模型：margin 與 padding</h2>
+      <p>每個元素都是一個盒子，由內到外是：內容 → <dfn class="term">內距<span>padding</span></dfn> → 邊框 → <dfn class="term">外距<span>margin</span></dfn>。margin 是邊框<strong>外</strong>的空間，padding 是邊框<strong>內</strong>的空間。</p>
+      <pre><code class="language-css">margin: 20px 150px 100px 80px;   /* 上 右 下 左，順時針 */</code></pre>
+
+      <h2>position 定位</h2>
+      <table>
+        <thead><tr><th>值</th><th>行為</th></tr></thead>
+        <tbody>
+          <tr><td><code>static</code>（預設）</td><td>照正常排版，top / left 等無效</td></tr>
+          <tr><td><code>relative</code></td><td>相對於自己原本的位置偏移，原位置仍保留</td></tr>
+          <tr><td><code>fixed</code></td><td>相對於視窗固定，捲動也不動</td></tr>
+          <tr><td><code>absolute</code></td><td>相對於最近一個「非 static」的祖先；沒有的話相對於 body</td></tr>
+          <tr><td><code>sticky</code></td><td>捲到指定位置前像 relative，之後像 fixed 黏住</td></tr>
+        </tbody>
+      </table>
+      <p>元素重疊時，用 <code>z-index</code> 決定誰在上面，數字大的在上，可以是負數。</p>
+      <div class="callout tip">
+        <p>最常見的組合是父元素 <code>relative</code>、子元素 <code>absolute</code>，讓子元素以父元素為基準定位。WebGIS 裡把按鈕疊在地圖上就是這樣做的。</p>
+      </div>
+
+      <h2>規則衝突時誰贏</h2>
+      <p>講義列出的優先順序（由高到低）：行內樣式 → 內部樣式表 → 匯入的樣式表 → 外部連結樣式表 → 瀏覽器預設。若權重相同，<strong>後寫的規則</strong>會蓋掉前面的。</p>
+      <div class="callout warn">
+        <p>嚴格來說，內部和外部樣式表的權重其實一樣，誰在 HTML 裡比較後面誰贏；真正決定勝負的是選擇器的<strong>權重</strong>（specificity）：id &gt; class &gt; 標籤。講義的課外閱讀 CSS Specificity 有完整說明。</p>
+      </div>
+
+      <h2>響應式設計與 Bootstrap</h2>
+      <p><dfn class="term">響應式網頁設計<span>RWD</span></dfn> 讓同一個網頁在手機、平板、電腦上都好看。<dfn class="term">Bootstrap<span>Bootstrap 5.3</span></dfn> 是最常用的 RWD 框架，用 CDN 引入 CSS 和 JS 即可：</p>
+      <pre><code class="language-html">&lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</code></pre>
+      <h3>格線系統</h3>
+      <p>一列最多分 12 欄，結構是 <code>.container</code> → <code>.row</code> → <code>.col</code>。</p>
+      <pre><code class="language-html">&lt;div class="container"&gt;
+  &lt;div class="row"&gt;
+    &lt;div class="col-md-4"&gt;左&lt;/div&gt;   &lt;!-- 中螢幕以上佔 4/12 --&gt;
+    &lt;div class="col-md-8"&gt;右&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      <p>講義依 W3Schools 整理的斷點：xs（手機，未滿 768px）、sm（平板，768px 以上）、md（小筆電，992px 以上）、lg（桌機，1200px 以上）。</p>
+      <div class="callout warn">
+        <p>上面的斷點是 Bootstrap 3 的數字。Bootstrap 5 的斷點是 sm 576、md 768、lg 992、xl 1200、xxl 1400px。課堂用 5.3 版時，以官方文件的數字為準。</p>
+      </div>
+      <p>Bootstrap 官網的範例集和元件頁可以直接複製來改。</p>
+
+      <h2>快速調樣式的技巧</h2>
+      <p>在 Chrome 開發者工具的檢查面板，可以直接修改元素的樣式並即時看到結果，調到滿意再抄回 CSS 檔。</p>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>CSS 有行內、內部、外部三種套用方式，正式專案用外部樣式表。版面靠盒模型（margin / padding）與 position；衝突看權重，同權重後者勝。要支援手機，用 Bootstrap 的 container / row / col 格線。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

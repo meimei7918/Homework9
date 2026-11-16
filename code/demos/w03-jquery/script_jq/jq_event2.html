@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jQuery Example</title>
+    <!--include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>    
+  </head>
+  <body>
+    <script>        
+      $(function(){                        //$(document).ready(function(){ });
+        $("div").on(
+          {
+            click: function(){
+                $(this).css("color","red").css("background-color","black");
+            },
+            dblclick: function(){
+                $(this).css("color","yellow");
+            },
+            /*mouseenter:function(){
+                alert("You entered block3!");
+            }*/
+          });
+        $("input").focus(function(){
+          $(this).css("background-color", "lightblue");
+        });
+        $("input").blur(function(){
+          $(this).css("background-color", "#ffffff");
+        });
+      });
+    </script>
+    Name:
+    <input type="text" name="fullname" value="" /><br/>
+    Student ID:
+    <input type="text" name="sid" value="student ID" /><br/><br/>
+    Password:
+    <input type="password" name="password" value="" /><br/><br/>    
+    <div id="block1">blockArea1</div>
+    <div id="block2">blockArea2</div>
+    <div id="block3">blockArea3</div>
+  </body>
+</html>
+
+

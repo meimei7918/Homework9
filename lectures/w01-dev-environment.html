@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>開發環境：VS Code、Git 與 Docker · WebGIS 學習站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js" data-root=".." defer></script>
+</head>
+<body data-id="w01-lecture-dev-environment">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說出 VS Code、Git、Docker 各自負責什麼</li>
+        <li>能在自己的電腦（macOS 或 Windows）裝好三個工具並確認版本</li>
+        <li>能用 <code>docker build</code> 與 <code>docker run</code> 把範例專案跑起來</li>
+      </ul>
+
+      <h2>三個工具的分工</h2>
+      <table>
+        <thead><tr><th>工具</th><th>是什麼</th><th>在這門課的用途</th></tr></thead>
+        <tbody>
+          <tr><td>Visual Studio Code</td><td>程式碼編輯器</td><td>寫 HTML、CSS、JavaScript、PHP</td></tr>
+          <tr><td>Git</td><td><dfn class="term">版本控制系統<span>version control</span></dfn></td><td>記錄每次修改、和組員協作、從遠端取得範例專案</td></tr>
+          <tr><td>Docker</td><td>用<dfn class="term">容器<span>container</span></dfn>建置、執行與管理應用程式的平台</td><td>不用在電腦上裝 PHP，就能跑起有 PHP 的網站</td></tr>
+        </tbody>
+      </table>
+      <p>工作方式是：在 VS Code 裡改程式碼 → 用 Git 管理版本 → 用 Docker 把程式放進容器執行 → 用瀏覽器看結果。</p>
+
+      <h2>安裝步驟</h2>
+      <h3>VS Code</h3>
+      <p>到官網下載對應作業系統的版本安裝即可。安裝後會常用到它內建的<strong>終端機</strong>（Terminal），後面的指令都在這裡打。</p>
+
+      <h3>Git</h3>
+      <p><strong>macOS</strong>：先裝套件管理工具 Homebrew（到 brew.sh 複製第一行指令貼進終端機、輸入密碼），確認 <code>brew --version</code> 有版本號後，再執行 <code>brew install git</code>，最後用 <code>git --version</code> 確認。</p>
+      <p><strong>Windows</strong>：到 git-scm.com 下載 Windows x64 安裝檔安裝。</p>
+      <p>兩個系統裝好後都要設定使用者名稱與 email，Git 會把它記在每一次提交上：</p>
+      <pre><code class="language-bash">git config --global user.name "你的名字"
+git config --global user.email "你的 email"
+git config --list   # 檢查設定</code></pre>
+
+      <h3>Docker</h3>
+      <p><strong>macOS</strong>：到 Docker 官網下載 Docker Desktop（Apple 晶片選 Apple Silicon 版），打開後可以跳過登入，確認 Docker 有在執行。</p>
+      <p><strong>Windows</strong>：要先裝 <dfn class="term">WSL<span>Windows Subsystem for Linux</span></dfn>，重新開機，再裝 Docker Desktop（AMD64 版）。安裝時勾選使用 WSL 2，裝完到 Settings → General 確認「WSL 2 based engine」有勾。</p>
+      <div class="callout warn">
+        <p>Windows 沒先裝 WSL 就裝 Docker，通常會啟動失敗。順序是：WSL → 重開機 → Docker Desktop。</p>
+      </div>
+
+      <h2>第一個專案：四個步驟</h2>
+      <ol>
+        <li>用 <code>git clone</code> 取得老師的範例專案</li>
+        <li>用 <code>docker build</code> 建立 <dfn class="term">映像檔<span>image</span></dfn></li>
+        <li>用 <code>docker run</code> 把映像檔跑成容器</li>
+        <li>修改程式後，重複第 2、3 步</li>
+      </ol>
+      <p>範例專案的結構：專案資料夾裡有一個 <code>image/</code>，放所有程式碼和 <code>Dockerfile</code>（環境需求）；程式碼在 <code>image/src/</code>，樣式在 <code>src/css/</code>。</p>
+
+      <h3>Dockerfile 在說什麼</h3>
+      <p>老師的 Dockerfile 做的事情可以用白話說：以官方的 PHP 8.2 命令列版本為基礎，在容器裡建立 <code>/app</code> 資料夾，把 <code>src/</code> 的內容複製進去，開放 80 port，容器啟動時執行 PHP 內建的網頁伺服器。</p>
+
+      <h3>build 與 run 的參數</h3>
+      <pre><code class="language-bash">docker build -t example image/
+docker run -i --rm --name example -p 21822:80 example</code></pre>
+      <table>
+        <thead><tr><th>參數</th><th>意思</th></tr></thead>
+        <tbody>
+          <tr><td><code>-t example</code></td><td>幫映像檔取名（tag）為 example；一個映像檔可以有多個 tag</td></tr>
+          <tr><td><code>image/</code></td><td>Dockerfile 所在的資料夾路徑</td></tr>
+          <tr><td><code>-i</code></td><td>互動模式</td></tr>
+          <tr><td><code>--rm</code></td><td>容器停止後自動刪除</td></tr>
+          <tr><td><code>--name example</code></td><td>容器名稱</td></tr>
+          <tr><td><code>-p 21822:80</code></td><td>把電腦的 21822 port 對應到容器的 80 port，所以瀏覽器開 <code>http://localhost:21822</code></td></tr>
+          <tr><td>最後的 <code>example</code></td><td>要執行的映像檔名稱</td></tr>
+        </tbody>
+      </table>
+
+      <h2>常用 Docker 指令</h2>
+      <table>
+        <thead><tr><th>對象</th><th>指令</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="5">映像檔</td><td><code>docker images</code></td><td>列出映像檔</td></tr>
+          <tr><td><code>docker rmi 名稱</code></td><td>刪除映像檔</td></tr>
+          <tr><td><code>docker build -t 名稱 路徑</code></td><td>建立映像檔</td></tr>
+          <tr><td><code>docker pull 名稱</code></td><td>下載映像檔</td></tr>
+          <tr><td><code>docker push 名稱</code></td><td>上傳映像檔</td></tr>
+          <tr><td rowspan="5">容器</td><td><code>docker run</code></td><td>把映像檔跑成容器</td></tr>
+          <tr><td><code>docker ps -a</code></td><td>列出容器（含已停止的）</td></tr>
+          <tr><td><code>docker rm -f 名稱</code></td><td>刪除容器</td></tr>
+          <tr><td><code>docker exec -it 名稱 bash</code></td><td>進入執行中的容器</td></tr>
+          <tr><td><code>docker start / stop / restart</code></td><td>啟動、停止、重啟容器</td></tr>
+        </tbody>
+      </table>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>VS Code 寫程式、Git 管版本、Docker 提供一致的執行環境。映像檔是「食譜」，容器是「照食譜做出來、正在跑的那一份」。改了程式就重新 build、再 run。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>
