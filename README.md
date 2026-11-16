@@ -4,6 +4,7 @@
 
 - 網站：<https://meimei7918.github.io/Homework9/>
 - 專案規則：[CLAUDE.md](./CLAUDE.md)（AI 與人共用的開發規範）
+- 修改紀錄：[CHANGELOG.md](./CHANGELOG.md)
 
 ## 目前內容
 

@@ -40,6 +40,7 @@
 ```
 .
 ├── CLAUDE.md / AGENTS.md / README.md
+├── CHANGELOG.md            修改紀錄：每一輪需求、修改與決定
 ├── index.html              首頁：週次卡片＋搜尋＋類型篩選（由 site.js 產生）
 ├── resources.html          資源總表（由 site.js 從 catalog 彙整）
 ├── .nojekyll
@@ -309,6 +310,7 @@
 ## 11. Git
 
 - 直接在 `main` 上工作，push 後 GitHub Pages 約 1 分鐘更新
+- 每次修改都要在 `CHANGELOG.md` 最下方新增一筆：「需求 → 修改 → 決定（使用者做的選擇）」，用使用者看得懂的話寫，不寫程式細節
 - Commit 訊息：`<type>: <說明>`，type 為 `add`（新內容）、`update`、`style`、`fix`、`docs`、`chore`
   例：`add: W07 PHP 講義筆記、範例與課後練習`
 
