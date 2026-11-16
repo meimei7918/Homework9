@@ -26,7 +26,7 @@
   const badge = (type, short) => `<span class="badge" data-type="${type}">${short ? TYPES[type].short : TYPES[type].label}</span>`;
 
   /* ---------- 頁首／頁尾 ---------- */
-  const LOGO = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 22 L13 13 L26 13" fill="none" stroke="#0070bd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 4 L13 13 L13 26" fill="none" stroke="#e3002c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="13" r="4.2" fill="#fff" stroke="#18252b" stroke-width="2.4"/></svg>`;
+  const LOGO = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 22 L13 13 L26 13" fill="none" stroke="#1f6f78" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 4 L13 13 L13 26" fill="none" stroke="#b8651b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="13" r="4.2" fill="#fff" stroke="#1d2a2a" stroke-width="2.4"/></svg>`;
 
   function renderChrome(page) {
     const header = document.createElement("header");
@@ -63,10 +63,11 @@
     const tagBox = document.querySelector(".active-tag");
     const list = document.querySelector("#line-map");
 
-    const row = (i) => `<li class="row" data-type="${i.type}"><a href="${url(i.path)}">
-        ${badge(i.type, true)}<span class="title">${esc(i.title)}</span>
-        <span class="summary">${esc(i.summary)}</span>
-        <span class="tags">${i.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</span></a></li>`;
+    const card = (i) => `<a class="card" data-type="${i.type}" href="${url(i.path)}">
+        <div class="meta">${badge(i.type)}<time>${i.date}</time></div>
+        <h3>${esc(i.title)}</h3>
+        <p>${esc(i.summary)}</p>
+        <div class="tags">${i.tags.map((t) => `<span class="tag">#${esc(t)}</span>`).join("")}</div></a>`;
 
     function draw() {
       chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.filter === state.type)));
@@ -85,10 +86,9 @@
       const weeks = Object.keys(cat.weeks).map(Number).filter((w) => items.some((i) => i.week === w));
       list.innerHTML = weeks.map((w) => {
         const wk = cat.weeks[pad(w)];
-        return `<section class="station" id="w${pad(w)}">
-          <div class="stop"><span class="dot"></span><span class="num">W${pad(w)}</span><span class="date">${esc(wk.date.slice(5).replace("-", "/"))}</span></div>
-          <div class="station-body"><h2>${esc(wk.topic)}</h2>
-            <ul class="rows">${items.filter((i) => i.week === w).map(row).join("")}</ul></div>
+        return `<section class="week" id="w${pad(w)}">
+          <div class="week-label"><div class="num">W${pad(w)}</div><div class="topic">${esc(wk.topic)}</div><div class="date">${esc(wk.date.slice(5).replace("-", "/"))}</div></div>
+          <div class="cards">${items.filter((i) => i.week === w).map(card).join("")}</div>
         </section>`;
       }).join("");
     }
