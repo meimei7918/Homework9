@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>PHP 入門：語法、陣列、JSON、檔案與 CORS · WebGIS 課程資料庫</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
+</head>
+<body data-id="w07-lecture-php-basics" data-type="lecture">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>學習目標</h2>
+      <ul class="goals">
+        <li>能說明 PHP 在伺服器端執行的流程，並用 Docker 或命令列跑 PHP 程式</li>
+        <li>能分辨 PHP 的區域、全域、static 變數，以及和 JavaScript 變數範圍的差別</li>
+        <li>能用陣列、foreach、json_decode／json_encode 處理資料，並讀寫檔案</li>
+        <li>能說出 CORS 錯誤的原因，以及「伺服器加標頭」和「PHP 代理」兩種解法</li>
+      </ul>
+
+      <h2>PHP 是什麼、怎麼執行</h2>
+      <p><dfn class="term">PHP<span>PHP: Hypertext Preprocessor</span></dfn> 是一種<strong>伺服器端</strong>的程式語言。前幾週的 HTML、CSS、JavaScript 都是瀏覽器下載後在使用者電腦上執行；PHP 則是在伺服器上先跑完，再把「結果」（通常是 HTML）送給瀏覽器。</p>
+      <ol>
+        <li>瀏覽器向網頁伺服器（例如 Apache）要求一個 <code>.php</code> 檔</li>
+        <li>伺服器交給 PHP 執行，程式可以讀檔、查資料庫、算資料</li>
+        <li>執行結果組成網頁回傳，瀏覽器只看得到結果，看不到 PHP 原始碼</li>
+      </ol>
+      <p>一個 <code>.php</code> 檔裡可以混合 HTML、CSS、JavaScript 和 PHP。只有包在 <code>&lt;?php … ?&gt;</code> 之間的部分會被當成 PHP 執行，其他內容原樣輸出。課程使用 PHP 8.5。</p>
+      <pre><code class="language-php">&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;body&gt;
+&lt;?php
+  echo "The first PHP script!";
+?&gt;
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+
+      <h3>用 Docker 建立執行環境</h3>
+      <p>老師的做法是用官方的 <code>php:8.5-cli</code> 映像檔，把 <code>src/</code> 裡的程式複製進容器，再用 PHP 內建的開發用伺服器 <code>php -S 0.0.0.0:80</code> 提供網頁。另外用 <code>custom.ini</code> 調整 PHP 設定：</p>
+      <table>
+        <thead><tr><th>設定</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>short_open_tag=On</code></td><td>允許用 <code>&lt;?</code> 取代 <code>&lt;?php</code>（短標籤）</td></tr>
+          <tr><td><code>display_errors=On</code></td><td>把錯誤訊息直接顯示在輸出裡，方便除錯</td></tr>
+          <tr><td><code>error_reporting=E_ALL &amp; ~E_NOTICE &amp; …</code></td><td>回報所有錯誤，但排除提示（notice）、嚴格模式與「已過時」類的訊息</td></tr>
+        </tbody>
+      </table>
+      <p>不開網頁，也可以在容器的命令列直接執行：</p>
+      <pre><code class="language-bash">docker run -it --rm --name example -p 20080:80 phptest bash   # 進入容器
+php -v                     # 查看 PHP 版本
+php -q showtime.php        # 執行程式，-q 表示不輸出 HTTP 標頭</code></pre>
+      <div class="callout tip">
+        <p>短標籤要伺服器開啟 <code>short_open_tag</code> 才能用，換一台伺服器可能就失效。自己寫程式時建議一律寫完整的 <code>&lt;?php</code>。</p>
+      </div>
+
+      <h2>語法、變數與變數範圍</h2>
+      <ul>
+        <li>每個敘述以分號 <code>;</code> 結尾；註解和 JavaScript 一樣用 <code>//</code> 與 <code>/* */</code></li>
+        <li><code>echo</code> 輸出字串；<code>exit</code> 立刻結束整支程式，後面的程式碼都不會執行</li>
+        <li>變數前面一定要加 <code>$</code>，例如 <code>$x = 10;</code>，不用事先宣告型別</li>
+        <li>字串用 <code>.</code> 串接，例如 <code>"WebGIS " . $x . " is fun"</code>（JavaScript 是用 <code>+</code>）</li>
+        <li>變數名稱以英文字母或底線開頭，<strong>大小寫有別</strong>；<code>$_POST</code>、<code>$_GET</code> 等保留名稱不能拿來用</li>
+      </ul>
+
+      <h3>PHP 的變數範圍</h3>
+      <table>
+        <thead><tr><th>種類</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td>區域（local）</td><td>在函式裡宣告，只能在該函式內使用</td></tr>
+          <tr><td>全域（global）</td><td>在函式外宣告，<strong>函式裡預設看不到</strong>；要在函式內用，必須先寫 <code>global $c;</code></td></tr>
+          <tr><td><code>$GLOBALS</code></td><td>存放所有全域變數的陣列，在函式裡可以用 <code>$GLOBALS['f']</code> 讀取</td></tr>
+          <tr><td>static</td><td>只存在函式內，但函式結束後值會保留，下次呼叫時接著用</td></tr>
+        </tbody>
+      </table>
+      <h3>對照 JavaScript 的變數範圍</h3>
+      <p>JavaScript 只有區域與全域兩種，而且<strong>函式裡可以直接讀到外面的全域變數</strong>，這點和 PHP 相反。另外，在函式裡對一個沒有宣告過的變數賦值（例如 <code>m = 400;</code>），它會自動變成全域變數。</p>
+      <div class="callout warn">
+        <p>「沒宣告就自動變全域」只發生在非嚴格模式。加上 <code>"use strict";</code> 或使用 ES module 時，這樣寫會直接丟出 ReferenceError；養成用 <code>let</code>／<code>const</code> 宣告的習慣比較安全。</p>
+      </div>
+
+      <h2>型別與運算子</h2>
+      <p>PHP 的型別有字串（String）、整數（Integer）、浮點數（Float）、布林（Boolean）、陣列（Array）、物件（Object）、NULL 等。除錯時用 <code>var_dump()</code> 同時印出型別與值，例如 <code>int(100)</code>、<code>float(200)</code>、<code>string(0) ""</code>。</p>
+      <table>
+        <thead><tr><th>類別</th><th>運算子</th><th>補充</th></tr></thead>
+        <tbody>
+          <tr><td>算術</td><td><code>+ - * / % ++ -- **</code></td><td><code>5**2</code> 是次方；<code>++$i</code> 先加再取值，<code>$i++</code> 先取值再加</td></tr>
+          <tr><td>指定</td><td><code>= += -= *= /= .= %=</code></td><td><code>.=</code> 是字串接在後面</td></tr>
+          <tr><td>比較</td><td><code>== != &lt;&gt; &lt; &gt; &lt;= &gt;=</code></td><td><code>!=</code> 也可以寫成 <code>&lt;&gt;</code></td></tr>
+          <tr><td>嚴格比較</td><td><code>=== !==</code></td><td>值和<strong>型別</strong>都要相同，例如 <code>1 == "1"</code> 成立、<code>1 === "1"</code> 不成立</td></tr>
+          <tr><td>邏輯</td><td><code>&amp;&amp; || !</code></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h2>流程控制與陣列</h2>
+      <p><code>if／elseif／else</code>、<code>switch</code>、<code>for</code>、<code>while</code>、<code>do…while</code> 的寫法和 JavaScript 幾乎一樣；注意 PHP 的「否則如果」寫成一個字 <code>elseif</code>。</p>
+      <p>陣列用 <code>[]</code> 或 <code>array()</code> 建立，分成三種：</p>
+      <table>
+        <thead><tr><th>種類</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td><dfn class="term">索引陣列<span>Indexed array</span></dfn></td><td><code>$cars = ["Volvo", "BMW", "Toyota"];</code>，索引從 0 開始</td></tr>
+          <tr><td><dfn class="term">關聯陣列<span>Associative array</span></dfn></td><td><code>$age = ["Peter" =&gt; 35, "Ben" =&gt; 37];</code>，用名稱當鍵，類似 JavaScript 的物件</td></tr>
+          <tr><td>多維陣列</td><td>陣列裡再放陣列，例如 <code>[["Peter", 35, 175], ["Ben", 37, 180]]</code></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>函式</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>array_push($cars, "Benz", "Porsche")</code></td><td>在尾端加入一個或多個值；也可以寫 <code>$cars[] = "Benz";</code></td></tr>
+          <tr><td><code>count($a)</code>／<code>count($a, 1)</code></td><td>元素個數；第二個參數為 1 時連內層陣列的元素一起算</td></tr>
+          <tr><td><code>is_array($a)</code></td><td>是不是陣列，常在加入資料前先檢查</td></tr>
+          <tr><td><code>in_array("Subaru", $cars)</code></td><td>某個值在不在陣列裡</td></tr>
+          <tr><td><code>sort()</code>／<code>rsort()</code></td><td>由小到大／由大到小排序，可指定 <code>SORT_NUMERIC</code>、<code>SORT_STRING</code></td></tr>
+        </tbody>
+      </table>
+      <p><code>foreach</code> 專門用來走訪陣列，可以只取值，也可以同時取鍵和值：</p>
+      <pre><code class="language-php">foreach ($age as $key =&gt; $item) {
+  echo "key:{$key} and age:{$item}\n";   // 雙引號字串裡可以用 {$變數} 直接嵌入
+}</code></pre>
+
+      <h2>輸出、函式與常用工具</h2>
+      <table>
+        <thead><tr><th>寫法</th><th>特性</th></tr></thead>
+        <tbody>
+          <tr><td><code>echo</code></td><td>輸出一個或多個字串，沒有回傳值；直接 echo 陣列只會印出 <code>Array</code></td></tr>
+          <tr><td><code>print</code></td><td>輸出一個字串，永遠回傳 1</td></tr>
+          <tr><td><code>print_r($a)</code></td><td>把陣列結構印出來；<code>print_r($a, 1)</code> 改成回傳字串而不直接印出</td></tr>
+          <tr><td><code>printf</code>／<code>sprintf</code></td><td>格式化輸出：<code>%d</code> 整數、<code>%s</code> 字串、<code>%X</code> 十六進位、<code>%.2f</code> 小數兩位、<code>%015.2f</code> 補零到 15 字元；<code>sprintf</code> 回傳字串而不輸出</td></tr>
+        </tbody>
+      </table>
+      <p>函式用 <code>function 名稱(參數) { … }</code> 定義，參數可以有預設值（例如 <code>$b = 100</code>），用 <code>return</code> 回傳結果。</p>
+      <p>要把另一個 PHP 檔的內容放進來（例如共用的函式），用 <code>include</code> 或 <code>require</code>：</p>
+      <table>
+        <thead><tr><th>寫法</th><th>檔案不存在時</th></tr></thead>
+        <tbody>
+          <tr><td><code>include "a.php";</code></td><td>只發出警告，程式繼續執行</td></tr>
+          <tr><td><code>require "a.php";</code></td><td>嚴重錯誤，程式停止</td></tr>
+          <tr><td><code>include_once</code>／<code>require_once</code></td><td>同一個檔案只載入一次，避免函式被重複定義</td></tr>
+        </tbody>
+      </table>
+      <h3>字串與陣列互轉</h3>
+      <ul>
+        <li><code>explode(" ", "Learning WebGIS is fun")</code>：依分隔字元把字串切成陣列</li>
+        <li><code>implode(",", $cars)</code>：把陣列接成一個字串</li>
+        <li><code>compact('Peter', 'Ben')</code>：用變數名稱與值組成關聯陣列</li>
+        <li><code>extract($arr)</code>：反過來，把關聯陣列的每個鍵變成變數（同名變數會被覆蓋）</li>
+      </ul>
+      <h3>時間與日期</h3>
+      <p><code>time()</code> 回傳 <dfn class="term">Unix 時間戳記<span>Unix timestamp</span></dfn>：從 1970-01-01 00:00:00（UTC）到現在經過的秒數。<code>date(格式, 時間戳記)</code> 把它轉成看得懂的日期，時間戳記省略時用現在。先用 <code>date_default_timezone_set("Asia/Taipei")</code> 設定時區，時間才會是臺灣時間。</p>
+      <table>
+        <thead><tr><th>格式字元</th><th>意思</th><th>格式字元</th><th>意思</th></tr></thead>
+        <tbody>
+          <tr><td><code>Y</code></td><td>四位數年份</td><td><code>H</code>／<code>h</code></td><td>24／12 小時制的時，補零</td></tr>
+          <tr><td><code>m</code>／<code>d</code></td><td>月、日，補零</td><td><code>i</code>／<code>s</code></td><td>分、秒，補零</td></tr>
+          <tr><td><code>l</code></td><td>星期幾的英文全名</td><td><code>A</code></td><td>AM 或 PM</td></tr>
+          <tr><td><code>z</code></td><td>一年中的第幾天（從 0 起算）</td><td><code>w</code></td><td>星期幾的數字，星期日是 0</td></tr>
+          <tr><td><code>L</code></td><td>是否閏年（1 或 0）</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h2>JSON 與超全域變數</h2>
+      <p>讀取 JSON 的步驟：</p>
+      <ol>
+        <li><code>file_get_contents("shelter.json")</code> 讀進整個檔案（也可以放網址）</li>
+        <li><code>json_decode($str, 1)</code> 轉成 PHP 陣列；第二個參數不給的話會變成物件</li>
+        <li>用 <code>foreach</code> 取出需要的欄位</li>
+      </ol>
+      <p>反過來，<code>json_encode($array)</code> 把陣列轉成 JSON 字串。索引陣列會變成 JSON 陣列 <code>[...]</code>，關聯陣列變成 JSON 物件 <code>{...}</code>。中文預設會被轉成 <code>喜美</code> 這種跳脫碼，加上 <code>JSON_UNESCAPED_UNICODE</code> 才會保留中文；<code>JSON_PRETTY_PRINT</code> 會排版縮排。這兩個常數的值是 256 和 128，所以講義中寫成 <code>json_encode($cars, 384)</code> 效果相同。</p>
+      <h3>超全域變數</h3>
+      <p><dfn class="term">超全域變數<span>Superglobals</span></dfn> 是 PHP 預先定義、在任何地方都能直接使用的變數，不需要寫 <code>global</code>：</p>
+      <table>
+        <thead><tr><th>變數</th><th>內容</th></tr></thead>
+        <tbody>
+          <tr><td><code>$_GET</code></td><td>網址 <code>?</code> 後面的參數，或 method="get" 的表單資料</td></tr>
+          <tr><td><code>$_POST</code></td><td>method="post" 送出的表單資料</td></tr>
+          <tr><td><code>$_REQUEST</code></td><td>表單送出的資料（包含 GET 與 POST）</td></tr>
+          <tr><td><code>$_FILES</code></td><td>上傳的檔案資訊</td></tr>
+          <tr><td><code>$_COOKIE</code>／<code>$_SESSION</code></td><td>Cookie 與 Session 的變數</td></tr>
+          <tr><td><code>$_SERVER</code></td><td>標頭、路徑、程式位置等伺服器資訊</td></tr>
+          <tr><td><code>$_ENV</code></td><td>環境變數</td></tr>
+          <tr><td><code>$GLOBALS</code></td><td>所有全域變數</td></tr>
+        </tbody>
+      </table>
+
+      <h2>檔案處理與上傳</h2>
+      <table>
+        <thead><tr><th>函式</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>file_exists()</code></td><td>檢查檔案是否存在</td></tr>
+          <tr><td><code>fopen($file, 模式)</code>／<code>fclose()</code></td><td>開啟／關閉檔案。模式 <code>r</code> 讀、<code>w</code> 寫（清空重寫，不存在就建立）、<code>a</code> 附加在最後；加 <code>+</code> 表示可讀也可寫</td></tr>
+          <tr><td><code>fgets()</code>／<code>fgetc()</code>／<code>fread()</code></td><td>讀一行／讀一個字元／讀指定長度</td></tr>
+          <tr><td><code>feof()</code></td><td>是否讀到檔案結尾，常寫成 <code>while (!feof($f))</code></td></tr>
+          <tr><td><code>fwrite()</code></td><td>寫入內容</td></tr>
+          <tr><td><code>file_get_contents()</code>／<code>file_put_contents()</code></td><td>一次讀完／一次寫完整個檔案，不需要 fopen 和 fclose，最常用</td></tr>
+        </tbody>
+      </table>
+      <p>中文 CSV 常是 Big5 編碼，直接輸出到 UTF-8 網頁會變亂碼，可以用 <code>mb_convert_encoding($str, "UTF-8", "big5")</code> 轉碼。函式前面加 <code>@</code>（例如 <code>@file_get_contents()</code>）可以隱藏警告訊息，再自行判斷回傳值是不是 <code>false</code>。</p>
+      <p>講義最後補充了 <dfn class="term">ASCII<span>American Standard Code for Information Interchange</span></dfn>：7 位元、共 128 個字元，包含數字、大小寫英文字母與一些符號和控制字元。範例 showtime.php 用 <code>chr(7)</code> 輸出的就是 ASCII 第 7 號「響鈴」控制字元。</p>
+      <h3>上傳檔案的流程</h3>
+      <ol>
+        <li>確認 php.ini 的 <code>file_uploads = On</code></li>
+        <li>HTML 表單要寫 <code>enctype="multipart/form-data"</code> 和 <code>method="post"</code>，裡面放 <code>&lt;input type="file" name="fileX"&gt;</code></li>
+        <li>伺服器先把檔案存成暫存檔，PHP 用 <code>move_uploaded_file($_FILES['fileX']['tmp_name'], 目的地)</code> 搬到要放的地方</li>
+        <li>檢查同名檔案是否已存在</li>
+        <li>視需要限制檔案大小、類型等</li>
+      </ol>
+      <p><code>$_FILES['fileX']</code> 裡有 <code>name</code>（原檔名）、<code>type</code>（檔案類型）、<code>size</code>（位元組）、<code>tmp_name</code>（伺服器上的暫存檔名）、<code>error</code>（錯誤代碼）。</p>
+      <div class="callout warn">
+        <p>直接用使用者上傳的原檔名存檔有安全風險：對方可以上傳 <code>.php</code> 檔，再從網址執行它。正式系統要限制副檔名、改用自己產生的檔名。</p>
+      </div>
+
+      <h2>AJAX、HTTP 方法與 CORS</h2>
+      <p>W03 學過的 jQuery AJAX（<code>$.ajax()</code>、<code>$.get()</code>、<code>$.getJSON()</code> 等）可以在背景向伺服器要資料、不重新整理整頁。這週的伺服器端就是 PHP。</p>
+      <table>
+        <thead><tr><th></th><th>GET</th><th>POST</th></tr></thead>
+        <tbody>
+          <tr><td>資料放在哪</td><td>網址後面的查詢字串（<code>?demo=1&amp;b=2</code>）</td><td>HTTP 請求的內容（body）</td></tr>
+          <tr><td>書籤、快取、瀏覽紀錄</td><td>可以加入書籤、會被快取、會留在瀏覽紀錄</td><td>都不會</td></tr>
+          <tr><td>長度與資料類型</td><td>有長度限制，只能是 ASCII 字元</td><td>沒有限制，可以傳二進位資料</td></tr>
+          <tr><td>適合</td><td>查詢資料</td><td>新增、修改資料；密碼等敏感資料不要用 GET</td></tr>
+        </tbody>
+      </table>
+      <p>其他 HTTP 方法還有 PUT、HEAD、DELETE、PATCH、OPTIONS、CONNECT、TRACE。</p>
+      <p>老師的兩個範例：網頁用 <code>$.ajax()</code> 以 POST 送出 <code>data: {id: 123}</code>，同時網址帶著 <code>?demo=1&amp;b=2</code>。PHP 端用 <code>print_r($_GET, 1)</code> 和 <code>print_r($_POST, 1)</code> 把收到的資料印回去，或用 <code>json_encode()</code> 包成 JSON，前端設定 <code>dataType: 'json'</code> 後就能用 <code>result.GET.demo</code> 取值。</p>
+
+      <h3>為什麼會被 CORS 擋下</h3>
+      <p>瀏覽器有<dfn class="term">同源政策<span>Same-origin policy</span></dfn>：網頁裡的 JavaScript 只能向「同一個來源」要資料。協定、網域、連接埠三者都相同才算同源：</p>
+      <table>
+        <thead><tr><th>和 <code>https://chiaoling.com/index.php</code> 比較</th><th>結果</th></tr></thead>
+        <tbody>
+          <tr><td><code>https://chiaoling.com/a.php</code></td><td>同源</td></tr>
+          <tr><td><code>http://chiaoling.com/</code></td><td>不同源（協定不同）</td></tr>
+          <tr><td><code>https://demo.chiaoling.com/</code></td><td>不同源（網域不同）</td></tr>
+          <tr><td><code>https://chiaoling.com:20080/</code></td><td>不同源（連接埠不同）</td></tr>
+        </tbody>
+      </table>
+      <p>跨來源要資料時，對方伺服器的回應必須帶有 <code>Access-Control-Allow-Origin</code> 標頭，瀏覽器才肯把資料交給你的程式，否則 Console 會出現「blocked by CORS policy」。這就是<dfn class="term">跨來源資源共用<span>CORS, Cross-Origin Resource Sharing</span></dfn>。講義舉了臺南市交通開放資料與一個收發器資料網址當例子，從自己的網頁直接 AJAX 都會被擋。</p>
+      <div class="callout warn">
+        <p>講義的標題寫成「CROS」、「same original」，正確名稱是 <strong>CORS</strong> 和 <strong>same origin</strong>（同源）。</p>
+      </div>
+      <h3>兩種解法</h3>
+      <ol>
+        <li><strong>伺服器開放</strong>：如果資料來源是自己的 PHP，在輸出前加一行 <code>header('Access-Control-Allow-Origin: *');</code>（<code>*</code> 表示任何來源都可以，也可以只寫特定網址）。</li>
+        <li><strong>用 PHP 當代理</strong>：別人的伺服器沒辦法改，就讓自己的 PHP 去抓。CORS 只限制瀏覽器，伺服器之間的請求不受影響。網頁再向自己的 PHP 要資料，就變成同源了。</li>
+      </ol>
+      <pre><code class="language-php">&lt;?php
+header('Access-Control-Allow-Origin: *');
+$s = file_get_contents("https://（外部資料網址）");    // 由伺服器去抓
+if ($s !== false) {
+  $data = json_decode($s, 1);
+  if (json_last_error() === JSON_ERROR_NONE) {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, 384);                      // 384 = 中文不跳脫＋排版
+  }
+} else {
+  header('500 Internal Server Error', true, 500);
+}</code></pre>
+
+      <h2>小結</h2>
+      <div class="callout key">
+        <p>PHP 在伺服器上執行，瀏覽器只收到結果；變數一律加 <code>$</code>，函式裡要用全域變數必須寫 <code>global</code>。陣列加上 <code>foreach</code>、<code>json_decode</code>／<code>json_encode</code>、<code>file_get_contents</code> 是處理資料最常用的組合。AJAX 被 CORS 擋下時，可以讓自己的伺服器加上 <code>Access-Control-Allow-Origin</code> 標頭，或用 PHP 代為抓取外部資料。</p>
+      </div>
+
+      <h2>外部資源</h2>
+      <div id="resources"></div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

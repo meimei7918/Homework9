@@ -354,10 +354,13 @@
         stage.innerHTML = `<pre><code>讀取中…</code></pre>`;
         try {
           const r = await fetch(path, { cache: "no-cache" });
-          let text = await r.text();
+          const buf = await r.arrayBuffer();
+          let text;
+          try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); }
+          catch (e) { text = new TextDecoder("big5").decode(buf); } // 老師的中文 CSV 常是 Big5
           if (text.length > 60000) text = text.slice(0, 60000) + "\n\n…（檔案太大，只顯示前 60,000 字；完整內容請按「新分頁開啟」）";
           const ext = f.file.split(".").pop();
-          const lang = { html: "xml", htm: "xml", js: "javascript", css: "css", json: "json", geojson: "json", php: "php", md: "markdown" }[ext] || "plaintext";
+          const lang = { html: "xml", htm: "xml", js: "javascript", css: "css", json: "json", geojson: "json", php: "php", md: "markdown", ini: "ini" }[ext] || "plaintext";
           stage.innerHTML = `<pre><code class="language-${lang}">${esc(text)}</code></pre>`;
           if (window.hljs && text.length < 60000) window.hljs.highlightElement(stage.querySelector("code"));
           addCopy(stage.querySelector("pre"));

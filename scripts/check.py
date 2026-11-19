@@ -120,6 +120,9 @@ def main() -> int:
                         err(f"{tag}: {d['dir']}/{rel} 沒有列在 demo.files")
                     if f.is_file() and re.search(r"[\s一-鿿]", rel):
                         err(f"{tag}: 檔名不可有空白或中文：{rel}")
+                    if f.is_file() and f.suffix in (".html", ".htm", ".js", ".php"):
+                        if "【說明】" not in f.read_bytes().decode("utf-8", "replace"):
+                            err(f"{tag}: {d['dir']}/{rel} 沒有【說明】註解（CLAUDE.md 9.2）")
             if d.get("zip") and not (ROOT / d["zip"]).exists():
                 err(f"{tag}: demo.zip 不存在")
         if t == "practice" and not it.get("related"):

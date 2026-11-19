@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>用 Docker 架 PHP 環境（phptest） · WebGIS 課程資料庫</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
+</head>
+<body data-id="w07-code-php-docker" data-type="code">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>老師用來建立課程 PHP 環境的設定：一個 <code>Dockerfile</code> 以官方 <code>php:8.5-cli</code> 映像檔為基礎，把 <code>src/</code> 的程式和 <code>custom.ini</code> 設定複製進容器，再用 PHP 內建的開發用伺服器提供網頁。<code>src/</code> 裡只有兩支測試程式：一支看網頁輸出，一支在命令列執行。</p>
+      <p>建議閱讀順序：<code>Dockerfile</code> → <code>custom.ini</code> → <code>src/first.php</code> → <code>src/showtime.php</code>。</p>
+      <div class="callout warn">
+        <p>GitHub Pages 只能放靜態檔案，<strong>沒辦法執行 PHP</strong>，所以這頁只能看原始碼。要跑起來，請在自己的電腦安裝 Docker，下載整包後照下面的指令做。</p>
+      </div>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>Dockerfile：從建立映像檔到開網頁</h3>
+      <pre><code class="language-plaintext">FROM php:8.5-cli
+WORKDIR /app
+COPY src/ /app
+COPY custom.ini /usr/local/etc/php/conf.d/
+EXPOSE 80
+CMD ["php", "-S", "0.0.0.0:80"]</code></pre>
+      <p>在這個資料夾裡執行：</p>
+      <pre><code class="language-bash">docker build -t phptest .                                   # 依 Dockerfile 建立映像檔
+docker run --rm -p 20080:80 phptest                         # 啟動伺服器，瀏覽器開 http://localhost:20080/first.php
+docker run -it --rm --name example -p 20080:80 phptest bash # 或進入容器的命令列
+php -v                                                      # （在容器裡）查看版本
+php -q showtime.php                                         # （在容器裡）執行命令列程式</code></pre>
+      <p><code>-p 20080:80</code> 把主機的 20080 埠接到容器的 80 埠；<code>EXPOSE</code> 只是標示用途，沒有這個 <code>-p</code> 主機就連不到。<code>COPY</code> 是建立映像檔當下複製進去，之後修改 <code>src/</code> 要重新 <code>docker build</code>。想邊改邊看，可以改用 <code>-v "$(pwd)/src:/app"</code> 把資料夾直接掛進容器。</p>
+
+      <h3>custom.ini：短標籤與錯誤顯示</h3>
+      <p><code>short_open_tag=On</code> 允許開頭標籤省略 <code>php</code> 三個字。<code>src/first.php</code> 的第一段就是短標籤；如果沒有這個設定，那段不會被執行，會原封不動送到瀏覽器。<code>display_errors=On</code> 讓錯誤直接顯示在畫面上，開發時方便，正式網站要關掉。</p>
+
+      <h3>src/first.php 與 src/showtime.php</h3>
+      <p><code>first.php</code> 先輸出 The first PHP script!，接著 <code>phpinfo()</code> 印出一整頁 PHP 設定，可以在裡面找 short_open_tag 確認 custom.ini 有沒有生效。<code>showtime.php</code> 是 <code>while(1)</code> 無窮迴圈，每秒印一次時間，要按 Ctrl＋C 停止；用瀏覽器開它，頁面會一直載入不完。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <p>無，這包範例沒有修改任何檔案。壓縮檔原本的最外層資料夾 <code>image/</code> 拿掉了，裡面的結構不變。</p>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>把 W07 script 包的 <code>php1_time.php</code> 放進 <code>src/</code>，重新 build 後用瀏覽器開，確認時間是臺灣時間</li>
+        <li>把 custom.ini 的 <code>short_open_tag</code> 改成 Off，重新 build，看看 first.php 的畫面有什麼變化</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

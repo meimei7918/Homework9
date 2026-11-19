@@ -1,0 +1,40 @@
+<!-- 【說明】JavaScript 的變數範圍，和 php1_v.php 對照。這個檔案可以直接在瀏覽器執行，結果看 Console（F12）。 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript Example</title>
+    <script><!--put your JavaScript here-->
+      // 【說明】x 在 head 的 script 宣告，是全域變數，整頁的 script 都讀得到。
+      let x=100;   //global    
+    </script>    
+  </head>
+  <body>    
+    <script>  <!--put your JavaScript here-->      
+      // 【說明】y 在函式外宣告，也是全域變數。和 PHP 不同，JavaScript 的函式裡可以直接讀全域變數。
+      let y = 200;   //global      
+      function tFun(){
+        // 【說明】z 是函式內的區域變數。
+        let z=300;  //local
+        // 【說明】m 沒有用 let／var 宣告就賦值，會自動變成全域變數（只在非嚴格模式下；加上 "use strict" 會直接出錯）。
+        m=400;      //automatically global
+        console.log("======== inside function========="); 
+        console.log("Variable x inside function is: ", x);
+        console.log("Variable y inside function is: ", y);
+        console.log("Variable z inside function is: ", z);
+        console.log("Variable m inside function is: ", m);
+      }
+      tFun();
+      console.log("======== outside function========="); 
+      console.log("Variable x outside function is: ", x);
+      console.log("Variable y outside function is: ", y);
+      // 【說明】實際執行：這一行會出錯 ReferenceError: z is not defined，因為 z 只存在函式裡。
+      //   錯誤發生後這個 script 後面的程式都不會執行，所以 m 那行和第二次 tFun() 都不會印出來。
+      //   把這行註解掉再執行，就能看到 m 在函式外也讀得到 400。
+      console.log("Variable z outside function is: ", z);
+      console.log("Variable m outside function is: ", m);
+      tFun();
+    </script>
+  </body>
+</html>
+
+

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>W07 課後練習：PHP 入門 · WebGIS 課程資料庫</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
+</head>
+<body data-id="w07-practice-php-basics" data-type="practice">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>觀念測驗</h2>
+      <p>點選項作答，作答後會顯示解析。</p>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">1. 使用者用瀏覽器打開一個 <code>.php</code> 網頁，按右鍵「檢視原始碼」，會看到什麼？</p>
+        <ol class="opts">
+          <li>完整的 PHP 原始碼，因為瀏覽器負責執行 PHP</li>
+          <li>PHP 原始碼，但 echo 的部分已經換成結果</li>
+          <li>只有 PHP 執行後輸出的 HTML，看不到 PHP 程式</li>
+          <li>什麼都看不到，因為 PHP 網頁不能檢視原始碼</li>
+        </ol>
+        <p class="explain">PHP 在伺服器上執行完，只把輸出結果（通常是 HTML）送給瀏覽器，所以檢視原始碼看到的是結果，PHP 程式本身不會傳出去。執行 PHP 的是伺服器，不是瀏覽器。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">2. 執行下面的程式會輸出什麼？<code>$a = 100; function f() { echo "a=" . $a; } f();</code></p>
+        <ol class="opts">
+          <li><code>a=</code>，並出現 Undefined variable $a 的警告</li>
+          <li><code>a=100</code>，函式可以直接讀外面的變數</li>
+          <li><code>a=0</code>，未定義的變數會自動變成 0</li>
+          <li>程式完全不執行，出現語法錯誤</li>
+        </ol>
+        <p class="explain">PHP 的函式裡預設看不到全域變數，必須寫 <code>global $a;</code> 或用 <code>$GLOBALS['a']</code>。未定義的變數在 PHP 8 會出現 Warning，值當成 null，串接後是空字串。「函式可以直接讀外面的變數」是 JavaScript 的規則，不是 PHP 的。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">3. <code>$i = 1; $z = $i++;</code> 執行後，<code>$i</code> 和 <code>$z</code> 各是多少？</p>
+        <ol class="opts">
+          <li><code>$i</code> 是 2、<code>$z</code> 是 2</li>
+          <li><code>$i</code> 是 2、<code>$z</code> 是 1</li>
+          <li><code>$i</code> 是 1、<code>$z</code> 是 2</li>
+          <li><code>$i</code> 是 1、<code>$z</code> 是 1</li>
+        </ol>
+        <p class="explain"><code>$i++</code> 是「先取值、再加 1」：<code>$z</code> 拿到原本的 1，之後 <code>$i</code> 變成 2。如果寫 <code>++$i</code>，就是先加再取值，兩個都是 2。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">4. 下列哪一個比較的結果是 <code>false</code>？</p>
+        <ol class="opts">
+          <li><code>1 == "1"</code></li>
+          <li><code>1 == 1.0</code></li>
+          <li><code>"1" == 1.0</code></li>
+          <li><code>1 === "1"</code></li>
+        </ol>
+        <p class="explain"><code>==</code> 只比較值，會先轉換型別，所以前三個都成立。<code>===</code> 還要比較型別，整數 1 和字串 "1" 型別不同，所以是 false。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">5. <code>$people = [["Peter",35,175], ["Ben",37,180], ["Joe",43,162], ["Amy",25,167]];</code>，<code>count($people, 1)</code> 是多少？</p>
+        <ol class="opts">
+          <li>16</li>
+          <li>4</li>
+          <li>12</li>
+          <li>3</li>
+        </ol>
+        <p class="explain">第二個參數 1（COUNT_RECURSIVE）會把每一層都算進去：外層 4 個元素，加上內層 4 × 3 = 12 個值，共 16。只寫 <code>count($people)</code> 才是 4；12 是只算內層的值，漏掉了外層的 4 個陣列。</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <p class="q">6. <code>json_decode($str, 1)</code> 的第二個參數 1 有什麼作用？</p>
+        <ol class="opts">
+          <li>只解析 JSON 的第一層</li>
+          <li>把 JSON 物件轉成 PHP 的關聯陣列，可以用 <code>$a['name']</code> 取值</li>
+          <li>保留中文，不轉成 <code>\u</code> 跳脫碼</li>
+          <li>解析失敗時回傳 1 而不是 null</li>
+        </ol>
+        <p class="explain">第二個參數為 true（1）時回傳關聯陣列；不給的話 JSON 物件會變成 PHP 物件，要用 <code>$a-&gt;name</code> 取值。「保留中文」是 <code>json_encode</code> 的 <code>JSON_UNESCAPED_UNICODE</code> 選項，和 json_decode 無關。</p>
+      </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">7. 程式第一行寫了 <code>require "function.php";</code>，但伺服器上沒有這個檔案，會發生什麼事？</p>
+        <ol class="opts">
+          <li>只出現警告，程式繼續往下執行</li>
+          <li>PHP 會自動建立一個空的 function.php</li>
+          <li>這行會被忽略，不會有任何訊息</li>
+          <li>出現致命錯誤，程式停止執行</li>
+        </ol>
+        <p class="explain"><code>require</code> 找不到檔案時是致命錯誤，程式立刻停止；換成 <code>include</code> 才是「只出現警告、繼續執行」。兩者都不會自動建立檔案。</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <p class="q">8. 網頁在 <code>https://mysite.github.io</code>，用 AJAX 讀別人網站的 JSON，Console 出現「blocked by CORS policy: No 'Access-Control-Allow-Origin' header」。在只能改自己程式的情況下，哪個做法能解決？</p>
+        <ol class="opts">
+          <li>在自己網頁的 <code>&lt;head&gt;</code> 加上 <code>&lt;meta&gt;</code> 寫 Access-Control-Allow-Origin</li>
+          <li>把 <code>$.ajax</code> 的 type 從 POST 改成 GET</li>
+          <li>寫一支 PHP 放在自己的伺服器，由 PHP 去抓那份 JSON，網頁再向自己的 PHP 要資料</li>
+          <li>把對方網址的 https 改成 http</li>
+        </ol>
+        <p class="explain">Access-Control-Allow-Origin 必須由「提供資料的伺服器」在回應裡給，網頁自己寫沒有用；改 GET／POST 也不影響同源檢查；改成 http 反而更容易被擋。CORS 只限制瀏覽器，伺服器之間的請求不受影響，所以用自己的 PHP 當代理可以解決。注意 GitHub Pages 不能跑 PHP，代理要放在能執行 PHP 的伺服器上。</p>
+      </div>
+
+      <h2>實作題</h2>
+      <p>以下解答都已用 PHP 實際執行，資料檔使用 <a href="../code/w07-php-script.html">W07 script 範例</a>裡的 <code>shelter.json</code> 與 <code>WaterQ.csv</code>。沒有安裝 PHP 的話，可以用 <a href="../code/w07-php-docker.html">phptest 的 Docker 環境</a>。</p>
+
+      <div class="task">
+        <h3>1. 算平均年齡、找出高個子<span class="level">陣列＋foreach＋printf</span></h3>
+        <p>使用 php1_foreach.php 裡的多維陣列 <code>$people</code>（每筆是姓名、年齡、身高），輸出平均年齡（小數兩位）以及身高超過 170 公分的人名，用逗號隔開。完成後輸出應該是：</p>
+<pre><code class="language-plaintext">平均年齡：35.00
+身高超過 170：Peter, Ben</code></pre>
+        <details class="hint"><summary>提示</summary><p>foreach 取出每個人後，<code>$p[1]</code> 是年齡、<code>$p[2]</code> 是身高。名字先收集到一個陣列，最後用 <code>implode(", ", …)</code> 接起來；平均用 <code>printf("%.2f", …)</code> 輸出。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-php">&lt;?php
+$people = [
+  ["Peter", 35, 175], ["Ben", 37, 180], ["Joe", 43, 162], ["Amy", 25, 167]
+];
+$total = 0;
+$tall = [];
+foreach ($people as $p) {
+  $total += $p[1];              // 第 2 個值是年齡
+  if ($p[2] &gt; 170) {            // 第 3 個值是身高
+    $tall[] = $p[0];
+  }
+}
+printf("平均年齡：%.2f\n", $total / count($people));
+echo "身高超過 170：" . implode(", ", $tall) . "\n";</code></pre>
+        <p>(35 + 37 + 43 + 25) ÷ 4 = 35.00。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>2. 統計每個鄉鎮的收容所數量<span class="level">JSON＋關聯陣列</span></h3>
+        <p>讀取 <code>shelter.json</code>，依「所在鄉鎮市」欄位統計收容所數量，由多到少排序，輸出總筆數、鄉鎮數，以及收容所有 20 處以上的鄉鎮（JSON 格式，中文不要變成跳脫碼）。正確結果：</p>
+<pre><code class="language-plaintext">總筆數：194
+鄉鎮數：14
+{"花蓮市":28,"吉安鄉":22,"新城鄉":20,"壽豐鄉":20}</code></pre>
+        <details class="hint"><summary>提示</summary><p>用一個關聯陣列當計數器：鍵是鄉鎮名稱、值是數量，第一次遇到時先設成 0。<code>arsort()</code> 依值由大到小排序並保留鍵（<code>rsort</code> 會把鍵弄丟）。輸出用 <code>json_encode(…, JSON_UNESCAPED_UNICODE)</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-php">&lt;?php
+$data = json_decode(file_get_contents("shelter.json"), 1);
+$count = [];
+foreach ($data as $item) {
+  $town = $item["所在鄉鎮市"];
+  if (!isset($count[$town])) $count[$town] = 0;
+  $count[$town]++;
+}
+arsort($count);                         // 依值由大到小排序，保留鍵
+echo "總筆數：" . count($data) . "\n";
+echo "鄉鎮數：" . count($count) . "\n";
+
+$many = [];
+foreach ($count as $town =&gt; $n) {
+  if ($n &gt;= 20) $many[$town] = $n;
+}
+echo json_encode($many, JSON_UNESCAPED_UNICODE) . "\n";</code></pre>
+        <p>新城鄉和壽豐鄉同樣是 20 處，所以這題用「20 處以上」而不是「前三名」，避免名次並列時答案不確定。PHP 也有現成的 <code>array_count_values(array_column($data, "所在鄉鎮市"))</code> 可以一行完成計數。</p></details>
+      </div>
+
+      <div class="task">
+        <h3>3. 把水質 CSV 變成開放 CORS 的 JSON API<span class="level">檔案＋編碼＋header</span></h3>
+        <p>寫一支 <code>waterq.php</code>：讀取 Big5 編碼的 <code>WaterQ.csv</code>，每一行轉成一個物件（河川、測站、經度、緯度、污染程度、RPI，數字要是數值而不是字串），輸出成 JSON。加上 CORS 標頭，讓其他來源的網頁也能用 AJAX 讀取。完成後應有 16 筆資料，第一筆是：</p>
+<pre><code class="language-json">{ "河川": "新店溪", "測站": "永福橋", "經度": 121.527564, "緯度": 25.01096173, "污染程度": "輕度污染", "RPI": 2.25 }</code></pre>
+        <details class="hint"><summary>提示</summary><p>先用 <code>mb_convert_encoding(…, "UTF-8", "CP950")</code> 轉碼（用 "big5" 時「未／稍受污染」的斜線會變問號）。<code>explode("\n", …)</code> 切行，第一行是欄位名稱，用 <code>array_shift</code> 取出；每行再用 <code>explode(",", …)</code> 切欄，<code>array_combine</code> 可以把欄位名稱和值配成關聯陣列。檔案是 Windows 換行（\r\n），記得 <code>trim</code>。</p></details>
+        <details class="solution"><summary>參考解答</summary>
+<pre><code class="language-php">&lt;?php
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json; charset=utf-8');
+
+$text = mb_convert_encoding(file_get_contents("WaterQ.csv"), "UTF-8", "CP950");
+$lines = explode("\n", trim($text));
+$head = explode(",", trim(array_shift($lines)));   // 第一行是欄位名稱
+
+$result = [];
+foreach ($lines as $line) {
+  $v = explode(",", trim($line));                  // trim 去掉行尾的 \r
+  $row = array_combine($head, $v);
+  $result[] = [
+    "河川" =&gt; $row["河川名稱"],
+    "測站" =&gt; $row["監測站"],
+    "經度" =&gt; (float)$row["經度"],
+    "緯度" =&gt; (float)$row["緯度"],
+    "污染程度" =&gt; $row["污染程度"],
+    "RPI" =&gt; (float)$row["RPI"],
+  ];
+}
+echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);</code></pre>
+        <p>測試方式：在資料夾裡執行 <code>php -S 127.0.0.1:8899</code>，再從另一個來源（例如 <code>python3 -m http.server 8000</code> 開的網頁）用 <code>fetch("http://127.0.0.1:8899/waterq.php")</code> 讀取。實測有加 header 時讀到 16 筆；拿掉第一行 header，Console 就出現 blocked by CORS policy。RPI 大於 3 的測站有台北橋 4.5、大直橋 4、承德橋 5.75、大豐停車場旁 3.25，之後可以用 OpenLayers 把這些點畫在地圖上。</p></details>
+      </div>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

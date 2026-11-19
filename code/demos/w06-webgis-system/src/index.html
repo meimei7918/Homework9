@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- 【說明】11/19 版的 WebGIS 展示系統：介面和 W06 framework 相同（導覽列＋左側面板＋地圖），新增了：
+         1. 側邊欄多了「繪圖」區塊，並在最後載入 draw.js，可以畫點、線、面、編輯、下載 GeoJSON。
+         2. 載入 proj4，map.js 因此能讀 TWD97（EPSG:3826）座標的 bike.geojson。
+         3. map.js 新增台北捷運站、自行車站圖層、點擊站點跳出資訊表（popup），樣式也真正套用了。
+         操作：按導覽列「圖層列表」打開側邊欄 → 勾選套疊圖資；展開「繪圖」可以畫圖；Alt＋點選圖徵後按 Delete 可刪除。 -->
+    <title>WebGIS demo system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 【說明】jQuery UI 的 smoothness 主題（側邊欄的 Accordion 折疊面板用）。 -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <!-- 【說明】Bootstrap 3 的 CSS（導覽列、按鈕、表單樣式）。
+         [網站版修改] 原為 http://maxcdn.bootstrapcdn.com，改成 https，否則 HTTPS 網站會擋下。 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <!-- 【說明】Font Awesome 4 圖示（側邊欄收合按鈕上的箭頭）。 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- 【說明】自己的樣式檔：bar_style.css 管導覽列與側邊欄，style.css 是其他樣式，這版在最後加了 popup 資訊表（.info）的樣式。 -->
+    <link rel="stylesheet" href="./css/bar_style.css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    
+    <!-- 【說明】載入順序很重要：jQuery → jQuery UI（依賴 jQuery）→ Bootstrap JS（依賴 jQuery）。 -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- 【說明】[網站版修改] 原為 http://maxcdn.bootstrapcdn.com，改成 https。 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!--Openlayers-->
+    <!-- 【說明】OpenLayers 10.2.1 完整版。 -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css"> 
+    <!-- 【說明】新增：proj4（座標轉換函式庫）。要放在 map.js 之前，map.js 一開頭就會用到 proj4.defs。 -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js'></script>
+    
+  </head>
+  <body>
+    <!-- 【說明】Bootstrap 3 導覽列。navbar-inverse 是深色樣式。 -->
+    <nav class="nav navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <!-- 【說明】畫面變窄時出現的漢堡選單按鈕；data-toggle / data-target 交給 Bootstrap 處理展開收合，不用自己寫程式。 -->
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand">WebGIS 展示系統</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+            <!-- 【說明】按「圖層列表」會由 main.js 打開或收起側邊欄。 -->
+            <li><a data-toggle="tab" href="#layerlist" id="nav_layerlist">圖層列表</a></li>
+            <!-- 【說明】「功能1」「功能2」仍是預留的選單項目，還沒有對應程式。 -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">功能選單<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" id="fun1">功能1</a></li>
+                    <li><a href="#" id="fun2">功能2</a></li>
+                </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id="logout" href="#"><span class="glyphicon glyphicon-log-out"></span>登出</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="container">
+      <!-- 【說明】側邊欄一開始用 inline style 隱藏（display:none）。 -->
+      <div id="sidebar" style="display:none">
+        <!-- 【說明】accordion：jQuery UI 折疊面板，h3 是標題、緊接的 div 是內容，一次只展開一個區塊。這版有三個區塊：圖層列表、資料查詢、繪圖。 -->
+        <div id="accordion">
+          <h3>圖層列表<button type="button" id="btn-hide" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button></h3>
+          <div id="acc_layerlist">
+            <!-- 【說明】map.js 的 initLayers() 會把底圖的單選鈕、套疊圖層的勾選框動態加在這兩個標題後面。 -->
+            <h4 id="baselayerlist">基本底圖</h4>
+            <h4 id="overlayerlist">套疊圖資</h4>
+          </div>
+          <!-- 【說明】「資料查詢」區塊目前只有輸入框，還沒有查詢程式。 -->
+          <h3>資料查詢</h3>
+          <div id="query_data">
+            <div role="form">
+              <div class="form-group">
+                <label for="tid" class="text-inline">
+                    請輸入文字
+                </label>
+                <input type="text" id="tid" class="form-control" name="tid"/>
+                <span></span>
+              </div>
+            </div>
+          </div> 
+          <!-- 【說明】新增的「繪圖」區塊，按鈕由 draw.js 接上功能：
+               .btn-draw 三個按鈕用自訂屬性 drawType 告訴程式要畫哪一種幾何（Point／LineString／Polygon）。
+               三個按鈕的 id 都是 btn-line，id 重複不合規範，但程式是用 class .btn-draw 抓按鈕，所以不影響功能。 -->
+          <h3>繪圖</h3>
+          <div id="draw_data">
+            <button class='btn btn-info btn-draw' id='btn-line' drawType='Point'>Point</button>
+            <button class='btn btn-info btn-draw' id='btn-line' drawType='LineString'>LineString</button>
+            <button class='btn btn-info btn-draw' id='btn-line' drawType='Polygon'>Polygon</button>
+            <br />
+            <!-- 【說明】Edit：先點選一個畫好的圖徵，再拖曳它的節點修改形狀。 -->
+            <button class='btn btn-warning' id='btn-edit'>Edit</button><br />
+            <!-- 【說明】Download GeoJSON：把畫好的圖徵轉成 GeoJSON 下載（檔名 draw.geojson）。 -->
+            <a href='javascript:void(0);' class='btn btn-info' id='btn-json'>Download GeoJSON</a>
+          </div>         
+        </div>
+      </div>
+      <!-- 【說明】地圖容器。 -->
+      <div id="map"></div>
+    </div>
+    <!-- 【說明】載入順序：map.js（建立 map）→ main.js（介面）→ draw.js（繪圖，會用到 map）。
+         map.js 要放在 #map 之後，因為它一執行就要把地圖掛到 #map 上。 -->
+    <script src="./js/map.js"></script>         <!-- include map.js here because it must appear after <div id="map"> -->
+    <script src="./js/main.js"></script>
+    <script src="./js/draw.js"></script>    
+  </body>
+</html>

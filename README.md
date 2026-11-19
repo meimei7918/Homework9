@@ -15,7 +15,8 @@
 | W03 | jQuery | 1 | jQuery | ✓ |
 | W04 | GIS 資料模型、OpenGIS、Map API | 2 | — | ✓ |
 | W05 | OpenLayers 入門 | 1 | basicMap | ✓ |
-| W06 | OpenLayers 框架、樣式、互動 | 1 | framework | ✓ |
+| W06 | OpenLayers 框架、樣式、互動 | 1 | framework、11/19 展示系統 | ✓ |
+| W07 | PHP | 1 | script、phptest（PHP 只能看原始碼） | ✓ |
 
 ## 怎麼新增內容
 

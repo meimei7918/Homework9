@@ -30,6 +30,10 @@
     "06": {
       "date": "2026-11-12",
       "topic": "WebGIS 前端（二）：框架、樣式與互動"
+    },
+    "07": {
+      "date": "2026-11-19",
+      "topic": "伺服器端程式：PHP"
     }
   },
   "items": [
@@ -1623,7 +1627,8 @@
       "source": "WebGISfrontend2.pdf",
       "related": [
         "w06-lecture-openlayers-framework",
-        "w06-code-framework"
+        "w06-code-framework",
+        "w06-code-webgis-system"
       ]
     },
     {
@@ -1757,6 +1762,466 @@
         "kind": "text",
         "ref": "Notion 匯出文字（GIS data model）"
       }
+    },
+    {
+      "id": "w06-code-webgis-system",
+      "type": "code",
+      "week": 6,
+      "title": "WebGIS 展示系統：繪圖、刪除與 Popup",
+      "date": "2026-11-12",
+      "tags": [
+        "OpenLayers",
+        "Bootstrap",
+        "互動",
+        "proj4"
+      ],
+      "summary": "老師 11/19 更新的 framework：把繪圖功能接上介面、Alt＋點選後按 Delete 刪除圖徵、點站點跳出資訊表，並加入 proj4 與自行車站資料。",
+      "path": "code/w06-webgis-system.html",
+      "related": [
+        "w06-code-framework",
+        "w06-lecture-openlayers-framework"
+      ],
+      "demo": {
+        "dir": "code/demos/w06-webgis-system",
+        "zip": "code/demos/w06-webgis-system.zip",
+        "files": [
+          {
+            "file": "src/index.html",
+            "title": "index.html：介面",
+            "desc": "導覽列＋側邊欄（圖層列表、資料查詢、繪圖三個區塊）＋地圖；最後依序載入 map.js、main.js、draw.js。建議按「新分頁開啟」操作。"
+          },
+          {
+            "file": "src/js/map.js",
+            "title": "map.js：地圖、圖層、資訊表",
+            "desc": "proj4 註冊 TWD97、底圖與 6 個套疊圖層、樣式（這版有套用）、點擊機場捷運站跳出資訊表。"
+          },
+          {
+            "file": "src/js/draw.js",
+            "title": "draw.js：繪圖、編輯、刪除",
+            "desc": "畫點線面、Edit 修改節點、下載 GeoJSON；新增 Alt＋點選後按 Delete 刪除圖徵。"
+          },
+          {
+            "file": "src/js/main.js",
+            "title": "main.js：介面互動",
+            "desc": "側邊欄開關與視窗大小改變時重算地圖尺寸，和上一版相同。"
+          },
+          {
+            "file": "src/css/style.css",
+            "title": "style.css",
+            "desc": "版面樣式，最後新增 popup 資訊表（.info）的配色。"
+          },
+          {
+            "file": "src/css/bar_style.css",
+            "title": "bar_style.css",
+            "desc": "導覽列與側邊欄樣式。"
+          },
+          {
+            "file": "src/data/metro.geojson",
+            "title": "data/metro.geojson",
+            "desc": "機場捷運站 22 站（EPSG:4326），有 name、lat、lng、stype 屬性。"
+          },
+          {
+            "file": "src/data/taipei-metro.geojson",
+            "title": "data/taipei-metro.geojson",
+            "desc": "新增：台北捷運站 121 站（EPSG:4326），屬性是中文欄位（中文站名、路線名、地址…）。"
+          },
+          {
+            "file": "src/data/bike.geojson",
+            "title": "data/bike.geojson",
+            "desc": "新增：河濱公園自行車租借站 10 處，座標是 TWD97（EPSG:3826）。"
+          },
+          {
+            "file": "src/data/metroline.geojson",
+            "title": "data/metroline.geojson",
+            "desc": "捷運路線。"
+          },
+          {
+            "file": "src/data/county.geojson",
+            "title": "data/county.geojson",
+            "desc": "縣市界，約 14 MB，原始碼只顯示前段。"
+          },
+          {
+            "file": "Dockerfile",
+            "title": "Dockerfile",
+            "desc": "老師用 Docker 在本機架伺服器（php -S）用的設定，網站上不需要，無法在這裡執行。",
+            "run": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "w07-lecture-php-basics",
+      "type": "lecture",
+      "week": 7,
+      "title": "PHP 入門：語法、陣列、JSON、檔案與 CORS",
+      "date": "2026-11-19",
+      "tags": [
+        "PHP",
+        "伺服器端",
+        "JSON",
+        "AJAX",
+        "Docker"
+      ],
+      "summary": "PHP 在伺服器執行、用 Docker 架環境；變數範圍、型別、運算子、陣列與 foreach、常用函式、時間、JSON、檔案讀寫與上傳，以及 AJAX 遇到 CORS 時的兩種解法。",
+      "path": "lectures/w07-php-basics.html",
+      "source": "PHP.pdf",
+      "resources": [
+        {
+          "kind": "mentioned",
+          "title": "W3Schools PHP 教學",
+          "url": "https://www.w3schools.com/php/",
+          "desc": "講義介紹 PHP 時引用的入門教學。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "PHP 手冊：PHP 是什麼",
+          "url": "https://www.php.net/manual/en/intro-whatis.php",
+          "desc": "官方對 PHP 的簡介。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "PHP 官方網站",
+          "url": "https://php.net/",
+          "desc": "下載、版本消息與線上手冊，講義用來介紹 PHP 8.5。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "PHP 手冊：跳脫序列",
+          "url": "https://www.php.net/manual/en/regexp.reference.escape.php",
+          "desc": "講義在說明語法時附上的參考頁（\\n 等跳脫字元）。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "PHP 手冊：保留字",
+          "url": "https://www.php.net/manual/en/reserved.keywords.php",
+          "desc": "不能拿來當名稱的關鍵字列表。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "W3Schools：PHP 陣列排序",
+          "url": "https://www.w3schools.com/php/php_arrays_sort.asp",
+          "desc": "sort、rsort 等排序函式。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "EpochConverter",
+          "url": "https://www.epochconverter.com/",
+          "desc": "Unix 時間戳記與日期互相換算。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "PHP 手冊：支援的時區",
+          "url": "https://www.php.net/manual/en/timezones.php",
+          "desc": "date_default_timezone_set 可以用的時區名稱，例如 Asia/Taipei。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "W3Schools：jQuery AJAX 方法",
+          "url": "https://www.w3schools.com/jquery/jquery_ref_ajax.asp",
+          "desc": "$.ajax、$.get、$.getJSON 等方法一覽。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "W3Schools：HTTP 請求方法",
+          "url": "https://www.w3schools.com/tags/ref_httpmethods.asp",
+          "desc": "GET 與 POST 的比較表。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "老師的 AJAX 示範網址",
+          "url": "https://demo.chiaoling.com/ajax001.php?demo=1&b=2",
+          "desc": "ajax1.html 範例中註解掉的絕對網址版本，用來說明跨來源請求。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "臺南市交通開放資料（CORS 範例）",
+          "url": "https://traffic.tainan.gov.tw/opendata/0d56af62-d124-4485-b4c0-12160eb07e8e?format=json",
+          "desc": "講義 EXAMPLE 1：從網頁直接 AJAX 會被 CORS 擋下的資料來源。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "CORS 範例資料網址（mw.cbe.tw）",
+          "url": "https://mw.cbe.tw/receiver/info",
+          "desc": "講義 EXAMPLE 2 用的外部 API，也是 php1_proxy.php 代理抓取的對象。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "W3Schools：ASCII 字元表",
+          "url": "https://www.w3schools.com/charsets/ref_html_ascii.asp",
+          "desc": "ASCII 128 個字元的對照表。"
+        },
+        {
+          "kind": "mentioned",
+          "title": "The ASCII Code：控制字元",
+          "url": "https://theasciicode.com.ar/ascii-control-characters/vertical-tab-male-symbol-mars-ascii-code-11.html",
+          "desc": "講義 ASCII 表的出處之一。"
+        },
+        {
+          "kind": "practice",
+          "title": "3v4l.org 線上 PHP 執行",
+          "url": "https://3v4l.org/",
+          "desc": "不用安裝，貼上 PHP 程式就能在數百個版本中執行並比較結果，適合驗證本週的範例。"
+        },
+        {
+          "kind": "practice",
+          "title": "W3Schools PHP Exercises",
+          "url": "https://www.w3schools.com/php/php_exercises.asp",
+          "desc": "依章節分類的選擇與填空練習，答錯可以看答案。"
+        },
+        {
+          "kind": "reference",
+          "title": "MDN：跨來源資源共用（CORS）",
+          "url": "https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Access_control_CORS",
+          "desc": "繁體中文說明 CORS 標頭、預檢請求與同源政策。"
+        },
+        {
+          "kind": "reference",
+          "title": "PHP 手冊：內建網頁伺服器",
+          "url": "https://www.php.net/manual/en/features.commandline.webserver.php",
+          "desc": "Dockerfile 裡 php -S 的用法與限制（只適合開發，不要用在公開網路）。"
+        },
+        {
+          "kind": "reference",
+          "title": "Docker Hub：官方 PHP 映像檔",
+          "url": "https://hub.docker.com/_/php",
+          "desc": "php:8.5-cli 等映像檔的說明，以及如何安裝擴充套件。"
+        }
+      ],
+      "related": [
+        "w07-code-php-script",
+        "w07-code-php-docker"
+      ]
+    },
+    {
+      "id": "w07-code-php-docker",
+      "type": "code",
+      "week": 7,
+      "title": "用 Docker 架 PHP 環境（phptest）",
+      "date": "2026-11-19",
+      "tags": [
+        "PHP",
+        "Docker"
+      ],
+      "summary": "老師的 phptest：用 Dockerfile 建 PHP 8.5 容器、custom.ini 開啟短標籤與錯誤顯示，附兩支測試程式。",
+      "path": "code/w07-php-docker.html",
+      "related": [
+        "w07-lecture-php-basics"
+      ],
+      "demo": {
+        "dir": "code/demos/w07-php-docker",
+        "zip": "code/demos/w07-php-docker.zip",
+        "files": [
+          {
+            "file": "Dockerfile",
+            "title": "Dockerfile",
+            "desc": "以 php:8.5-cli 為基礎，複製 src/ 與 custom.ini，用 php -S 啟動伺服器。需要在自己電腦上用 Docker 執行。",
+            "run": false
+          },
+          {
+            "file": "custom.ini",
+            "title": "custom.ini",
+            "desc": "開啟短標籤與錯誤顯示，設定要回報的錯誤等級。",
+            "run": false
+          },
+          {
+            "file": "src/first.php",
+            "title": "src/first.php",
+            "desc": "短標籤輸出一行字，再用 phpinfo() 顯示 PHP 設定。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "src/showtime.php",
+            "title": "src/showtime.php",
+            "desc": "命令列每秒報時（和 script 包裡的同名檔案相同）。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "w07-code-php-script",
+      "type": "code",
+      "week": 7,
+      "title": "PHP 語法範例集（script）",
+      "date": "2026-11-19",
+      "tags": [
+        "PHP",
+        "JSON",
+        "伺服器端"
+      ],
+      "summary": "24 個檔案：變數範圍、var_dump、運算子、陣列、輸出、printf、foreach、時間、JSON、檔案讀寫與上傳；附實際執行結果。",
+      "path": "code/w07-php-script.html",
+      "related": [
+        "w07-lecture-php-basics"
+      ],
+      "demo": {
+        "dir": "code/demos/w07-php-script",
+        "zip": "code/demos/w07-php-script.zip",
+        "files": [
+          {
+            "file": "first.php",
+            "title": "first.php：第一個 PHP",
+            "desc": "HTML 裡夾一段 echo。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "index.php",
+            "title": "index.php：HTML＋JS＋PHP",
+            "desc": "同一個檔案混合三種語言；PHP 輸出被放在 body 外面。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "test.php",
+            "title": "test.php：註解、echo、exit",
+            "desc": "rand 隨機數、兩種註解、exit 之後的程式不會執行。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "info.php",
+            "title": "info.php：phpinfo()",
+            "desc": "顯示伺服器的 PHP 設定。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "showtime.php",
+            "title": "showtime.php：每秒報時",
+            "desc": "命令列執行的無窮迴圈，按 Ctrl＋C 停止。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_v.php",
+            "title": "php1_v.php：PHP 變數範圍",
+            "desc": "local、global、$GLOBALS、static 的差別；函式裡讀全域變數會出現 Warning。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_jsvScope.html",
+            "title": "php1_jsvScope.html：JS 變數範圍",
+            "desc": "可以直接執行，結果在 Console（F12）；執行到函式外讀 z 時會出錯停止。"
+          },
+          {
+            "file": "php1_vdump.php",
+            "title": "php1_vdump.php：var_dump",
+            "desc": "印出型別與值；echo 和 var_dump 混用造成輸出順序顛倒。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_operators.php",
+            "title": "php1_operators.php：遞增與串接",
+            "desc": "++$i 與 $i++；125 和 22 黏在一起看起來像 12522。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_operators2.php",
+            "title": "php1_operators2.php：== 與 ===",
+            "desc": "只比值和連型別一起比。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_array.php",
+            "title": "php1_array.php：三種陣列",
+            "desc": "索引、關聯、多維陣列與 count；最後兩行在 PHP 8 會因變數未定義而停止。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_array2.php",
+            "title": "php1_array2.php：陣列函式",
+            "desc": "is_array、in_array、sort、count 遞迴計算。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_print.php",
+            "title": "php1_print.php：echo／print／print_r",
+            "desc": "三種輸出方式的回傳值差異。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_printf.php",
+            "title": "php1_printf.php：printf 格式化",
+            "desc": "%d、%s、%X、%.2f、補零與補 # 號。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_foreach.php",
+            "title": "php1_foreach.php：foreach",
+            "desc": "走訪索引、關聯、多維陣列。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_explode.php",
+            "title": "php1_explode.php：explode／implode",
+            "desc": "字串與陣列互轉，以及 compact、extract。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_time.php",
+            "title": "php1_time.php：時間與日期",
+            "desc": "time()、date() 各種格式、時區、閏年判斷。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_json.php",
+            "title": "php1_json.php：讀取 JSON",
+            "desc": "讀 shelter.json、json_decode 成陣列，收集不重複的聯絡人姓名（36 個）。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "shelter.json",
+            "title": "shelter.json",
+            "desc": "php1_json.php 用的資料：194 筆災民收容所（政府開放資料），中文以 \\u 跳脫碼儲存。",
+            "run": false
+          },
+          {
+            "file": "php1_jsonCh.php",
+            "title": "php1_jsonCh.php：輸出 JSON",
+            "desc": "json_encode 與保留中文、排版的選項。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_header.php",
+            "title": "php1_header.php：header()",
+            "desc": "設定編碼、轉址、強制下載的 HTTP 標頭。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "php1_file.php",
+            "title": "php1_file.php：讀寫檔案",
+            "desc": "fopen／fgets 讀 WaterQ.csv，寫入 chiao.csv（預設關閉）；Big5 轉 UTF-8。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          },
+          {
+            "file": "WaterQ.csv",
+            "title": "WaterQ.csv",
+            "desc": "php1_file.php 讀的河川水質資料（17 行，Big5 編碼）。",
+            "run": false
+          },
+          {
+            "file": "php1_fileupload.php",
+            "title": "php1_fileupload.php：上傳檔案",
+            "desc": "Bootstrap 表單＋move_uploaded_file，上傳後列出 files/ 裡的檔案。需要 PHP 伺服器，網站上無法執行，請看原始碼與頁面上的執行結果。",
+            "run": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "w07-practice-php-basics",
+      "type": "practice",
+      "week": 7,
+      "title": "W07 課後練習：PHP 入門",
+      "date": "2026-11-19",
+      "tags": [
+        "PHP",
+        "JSON",
+        "伺服器端"
+      ],
+      "summary": "8 題觀念測驗（變數範圍、運算子、陣列、JSON、CORS）與 3 題實作：陣列計算、讀 JSON 統計、CSV 轉 JSON 並開放 CORS。",
+      "path": "practice/w07-php-basics.html",
+      "related": [
+        "w07-lecture-php-basics",
+        "w07-code-php-script",
+        "w07-code-php-docker"
+      ]
     }
   ]
 }

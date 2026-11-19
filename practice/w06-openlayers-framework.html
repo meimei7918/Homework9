@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
   <title>W06 課後練習：樣式、Popup、座標轉換與繪圖 · WebGIS 課程資料庫</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
-  <link rel="stylesheet" href="../assets/css/style.css?v=20261116g">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
-  <script src="../assets/js/site.js?v=20261116g" data-root=".." defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
 </head>
 <body data-id="w06-practice-openlayers-framework" data-type="practice">
   <div class="page">
@@ -67,6 +67,29 @@
         <ol class="opts"><li>只要 Draw</li><li>Draw 加 Snap</li><li>只要 Overlay</li><li>Select 加 Modify</li></ol>
         <p class="explain">Select 選取圖徵，Modify 讓被選取的圖徵可以拖動節點。Draw 是新增圖徵用的。</p>
       </div>
+
+      <div class="quiz" data-answer="4">
+        <p class="q">9. 在老師 11/19 版的展示系統中，點機場捷運站會跳出資訊表，點台北捷運站卻沒有反應。原因是？</p>
+        <ol class="opts">
+          <li>台北捷運站圖層沒有加進地圖，只是畫在畫面上</li>
+          <li><code>forEachFeatureAtPixel</code> 只會找最上層那個圖層的圖徵</li>
+          <li>台北捷運站的座標是 TWD97，需要先用 proj4 轉換才點得到</li>
+          <li>程式只替有 <code>name</code> 屬性的圖徵建立資訊表，台北捷運站的欄位叫「中文站名」</li>
+        </ol>
+        <p class="explain">singleclick 裡寫的是 <code>if (feature.get('name') != undefined)</code>，台北捷運站的屬性是「中文站名、路線名…」，沒有 name，所以不會建立 Overlay。圖層確實有加進地圖；forEachFeatureAtPixel 會檢查所有可見的向量圖層；台北捷運站的資料本來就是經緯度，需要 proj4 的是自行車站。</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <p class="q">10. 11/19 版用「Alt＋點選，再按 Delete」刪除圖徵。下列敘述何者正確？</p>
+        <ol class="opts">
+          <li>選取不限圖層，機場捷運站也刪得掉，但只刪在瀏覽器記憶體，重新整理就回來</li>
+          <li>只能刪除自己用繪圖工具畫的圖徵</li>
+          <li>刪除後會直接從伺服器上的 metro.geojson 移除那一站</li>
+          <li>不按 Alt、直接單擊也能選取，Alt 只是用來多選</li>
+        </ol>
+        <p class="explain">這個 <code>ol.interaction.Select</code> 沒有設定 <code>layers</code>，所以任何向量圖層的圖徵都能被選取並刪除；<code>removeFeature</code> 只改變瀏覽器裡的 source，不會寫回檔案。condition 要求 click 而且只按著 Alt，單擊不會選取。想限制只能刪自己畫的，要加上 <code>layers: [drawLayer]</code>。</p>
+      </div>
+
 
       <h2>實作題</h2>
 

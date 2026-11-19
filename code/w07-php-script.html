@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>PHP 語法範例集（script） · WebGIS 課程資料庫</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
+</head>
+<body data-id="w07-code-php-script" data-type="code">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>老師配合 W07 PHP 講義的 22 支小程式和 2 個資料檔，幾乎每張投影片都有對應的檔案：變數範圍、var_dump、運算子、陣列、輸出、printf、foreach、字串函式、時間、JSON、header、檔案讀寫與上傳。另外附了一支 JavaScript 版的變數範圍範例 <code>php1_jsvScope.html</code>，可以和 PHP 對照。</p>
+      <p>建議閱讀順序就是下方檔案列表的順序（大致依講義順序排）。</p>
+      <div class="callout warn">
+        <p>GitHub Pages 無法執行 PHP，所以 <code>.php</code> 檔只能看原始碼。下面的「重點解說」附了我們用 PHP 8.3 實際執行的輸出（課程用 8.5，這些範例的結果相同）。想自己跑，可以用 <a href="w07-php-docker.html">phptest 的 Docker 環境</a>，或把程式貼到資源列表裡的線上 PHP 執行網站。</p>
+      </div>
+      <div class="callout tip">
+        <p>講義中還提到 function.php、php1_include.php、ajax1.html、ajax2.html、ajax001.php、ajax002.php、php1_proxy.php、getdatafp.html，這幾個檔案<strong>不在這次的壓縮檔裡</strong>，內容請看講義筆記。</p>
+      </div>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>php1_v.php 與 php1_jsvScope.html：兩種語言的變數範圍</h3>
+      <p>PHP 的函式裡預設看不到外面的全域變數。實際執行 <code>php1_v.php</code>，函式裡讀 <code>$a</code> 會出現 <code>Warning: Undefined variable $a</code>；用 <code>global</code> 宣告的 <code>$c</code>、<code>$d</code> 和用 <code>$GLOBALS['f']</code> 讀的都正常。static 的 <code>$e</code> 第一次呼叫是 600，第二次是 700：</p>
+      <pre><code class="language-plaintext">======== inside function=========
+Warning: Undefined variable $a
+Variable a inside function is:
+Variable b inside function is: 200
+Variable c inside function is: 300
+Variable d inside function is: 400
+Variable e inside function is: 600     ← 第二次呼叫變成 700
+Variable f inside function is: 600</code></pre>
+      <p>JavaScript 剛好相反，函式裡可以直接讀全域變數。<code>php1_jsvScope.html</code> 可以在網站上執行，打開 Console 會看到：函式內四個變數都印得出來，但函式外讀 <code>z</code> 時出現 <code>ReferenceError: z is not defined</code>，程式就此中斷，後面的 <code>m</code> 和第二次 <code>tFun()</code> 都沒有執行。把那一行註解掉再跑，就能看到 <code>m</code> 這個沒宣告的變數在函式外也讀得到 400。</p>
+
+      <h3>php1_vdump.php、php1_operators.php：輸出看起來怪怪的</h3>
+      <p><code>echo "Data type of variable b:" . var_dump($b)</code> 的實際輸出是先出現 <code>float(200)</code>，下一行才是 <code>Data type of variable b:</code>。PHP 要先把整串字算完才 echo，而 <code>var_dump</code> 在計算過程中就已經直接印出來了，它本身回傳 null。</p>
+      <p><code>php1_operators.php</code> 的輸出是 <code>2、2、1、12522、mn</code>。12522 不是一個數字，而是 <code>5**3</code> 的 125 後面沒換行，緊接著 <code>$i .= $j . "&lt;br /&gt;"</code> 的結果 22。<code>.=</code> 的優先順序比 <code>.</code> 低，所以先算右邊。</p>
+
+      <h3>php1_array.php：在 PHP 8 會停在最後兩行</h3>
+      <p>老師用 <code>/* … /**/</code> 的技巧開關一段程式：刪掉開頭的 <code>/*</code>，結尾的 <code>/**/</code> 就變成空註解，整段恢復執行。目前 <code>$carinfo</code> 那段是關著的，所以最後的 <code>count($carinfo)</code> 拿到 null。舊版 PHP 只會出警告，<strong>PHP 8 會變成致命錯誤</strong>：</p>
+      <pre><code class="language-plaintext">age:3
+people:4
+Warning: Undefined variable $carinfo
+Fatal error: Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given</code></pre>
+      <p>把 <code>$carinfo</code> 那段開頭的 <code>/*</code> 刪掉就能正常執行。</p>
+
+      <h3>php1_json.php：讀取 JSON 並整理資料</h3>
+      <pre><code class="language-php">$jsonArray = json_decode($jsonfile, 1);     // 1：轉成關聯陣列
+foreach ($jsonArray as $key =&gt; $item) {
+  foreach ($item as $tkey =&gt; $subitem) {
+    if ($tkey == '聯絡人姓名') {
+      if (!in_array($subitem, $nameArray)) $nameArray[] = $subitem;
+    }
+  }
+}</code></pre>
+      <p><code>shelter.json</code> 有 194 筆收容所，跑完得到 36 個不重複的聯絡人姓名。檔案開頭有 BOM，第一個欄位名稱前多了一個看不見的字元；這裡比對的是第四個欄位，所以不受影響，但如果要用第一個欄位「災民收容所編號」比對，就會對不到。</p>
+
+      <h3>php1_file.php：Big5 的 CSV</h3>
+      <p><code>WaterQ.csv</code> 是 Big5 編碼，直接輸出在 UTF-8 的網頁或終端機上是亂碼（網站的原始碼檢視已經自動用 Big5 解碼）。老師準備了 <code>mb_convert_encoding(…, "UTF-8", "big5")</code> 那行但註解掉了。實際測試發現資料裡的全形斜線「未／稍受污染」用 <code>"big5"</code> 會變成問號，改用 <code>"CP950"</code>（Windows 的 Big5）才完全正確。另外，檔案不存在時的分支印的是 <code>File exists!!</code>，訊息寫反了。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <p>無，這包範例沒有修改任何檔案。壓縮檔原本的最外層資料夾 <code>script/</code> 拿掉了，裡面的結構不變。</p>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>修改 <code>php1_json.php</code>：只輸出位於「玉里鎮」的收容所名稱（欄位「所在鄉鎮市」）</li>
+        <li>在 <code>php1_file.php</code> 打開 mb_convert_encoding 那行，改成 <code>"CP950"</code>，確認中文全部正確</li>
+        <li>參考講義的 php1_proxy.php，寫一支 PHP 讀取 <code>WaterQ.csv</code>，用 <code>json_encode</code> 輸出成 JSON，並加上 <code>Access-Control-Allow-Origin</code> 標頭</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>

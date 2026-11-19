@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+  <title>WebGIS 展示系統：繪圖、刪除與 Popup · WebGIS 課程資料庫</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20261119a">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
+  <script src="../assets/js/site.js?v=20261119a" data-root=".." defer></script>
+</head>
+<body data-id="w06-code-webgis-system" data-type="code">
+  <div class="page">
+    <article>
+      <header id="page-head"></header>
+
+      <h2>這包範例在做什麼</h2>
+      <p>這是老師 11/19 上課發的 WebGIS 展示系統，是 <a href="w06-framework.html">W06 framework 範例</a>的延伸版。介面一樣是導覽列、左側圖層面板和地圖，這一版把上次「寫好但沒接上」的功能都接起來了：</p>
+      <ul>
+        <li><strong>繪圖</strong>：側邊欄新增「繪圖」區塊並載入 draw.js，可以畫點、線、面，編輯節點，下載成 GeoJSON。</li>
+        <li><strong>刪除</strong>：按住 Alt（Mac 是 Option）點選圖徵，再按 Delete 鍵刪除。</li>
+        <li><strong>資訊表</strong>：點機場捷運站會跳出一個表格，顯示名稱、經緯度、車站類型。</li>
+        <li><strong>新資料與座標轉換</strong>：新增台北捷運站與自行車租借站；自行車站的座標是 TWD97（EPSG:3826），靠 proj4 轉換才能放對位置。</li>
+        <li><strong>樣式生效</strong>：上一版被註解掉的 <code>setStyle</code> 打開了，捷運站、捷運線、縣市界都用自訂樣式。</li>
+      </ul>
+      <p>用到 OpenLayers 10.2.1、proj4、jQuery＋jQuery UI、Bootstrap 3。建議閱讀順序：<code>src/index.html</code> → <code>src/js/map.js</code> → <code>src/js/draw.js</code> → <code>src/js/main.js</code>。最外層的 <code>Dockerfile</code> 是老師在自己電腦上架伺服器用的，網站上用不到。</p>
+      <div class="callout tip">
+        <p>內嵌框比較窄，建議按「新分頁開啟」看完整介面：先按導覽列的「圖層列表」打開側邊欄，勾選套疊圖資，再展開「繪圖」試試。原始碼裡以 <code>【說明】</code> 開頭的註解是 AI 逐段加上的中文解說，程式本身沒有因此改變。</p>
+      </div>
+
+      <h2>範例檔案</h2>
+      <div id="demo"></div>
+
+      <h2>重點解說</h2>
+      <h3>map.js 開頭：用 proj4 讓 OpenLayers 認得 TWD97</h3>
+      <pre><code class="language-javascript">proj4.defs('EPSG:3826', "+title=二度分帶：TWD97 TM2 台灣 +proj=tmerc +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=公尺 +no_defs");
+proj4.defs('urn:ogc:def:crs:EPSG::3826', proj4.defs('EPSG:3826'));
+ol.proj.proj4.register(proj4);</code></pre>
+      <p><code>bike.geojson</code> 的檔頭寫著 <code>"crs": {"properties": {"name": "urn:ogc:def:crs:EPSG::3826"}}</code>，座標像 <code>[296599.9, 2779290.4]</code>（公尺）。註冊之後，OpenLayers 讀檔時會自動把它從 EPSG:3826 轉成地圖用的 EPSG:3857。實際執行確認：關渡水岸公園轉換後是經度 121.4621、緯度 25.1213，位置正確。</p>
+      <div class="callout warn">
+        <p>老師把單位寫成 <code>+units=公尺</code>。proj4 不認得這個字，會改用預設的公尺，所以結果剛好正確；正式寫法是 <code>+units=m</code>。</p>
+      </div>
+
+      <h3>map.js：點擊跳出資訊表（ol.Overlay）</h3>
+      <pre><code class="language-javascript">map.on('singleclick', function(evt) {
+  let feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) { return feature; });
+  if (typeof(popup) != undefined) { map.removeOverlay(popup); }
+  if (feature) {
+    if (feature.get('name') != undefined) {
+      popup = new ol.Overlay({ element: $("&lt;div /&gt;").addClass('info').append(/* 用 jQuery 組表格 */)[0] });
+      popup.setPosition(evt.coordinate);
+      map.addOverlay(popup);</code></pre>
+      <p>實際執行後發現兩件事：</p>
+      <ul>
+        <li><strong>只有機場捷運站會跳出資訊表</strong>。程式只處理有 <code>name</code> 屬性的圖徵；台北捷運站的欄位是「中文站名、路線名…」，自行車站是「河濱公園、位置…」，都沒有 <code>name</code>，點了沒反應。</li>
+        <li><code>typeof(popup) != undefined</code> 永遠成立：<code>typeof</code> 回傳字串，例如 <code>"undefined"</code>，和值 <code>undefined</code> 比較永遠不相等。第一次點擊等於呼叫 <code>removeOverlay(undefined)</code>，OpenLayers 會忽略，所以沒出錯。正確寫法是 <code>popup !== undefined</code>。</li>
+      </ul>
+
+      <h3>map.js：styles 的 'metro' 寫了兩次</h3>
+      <p><code>styles</code> 物件裡 <code>'metro'</code> 先定義成黑色圓點，緊接著又定義成 Google 的紅色圖釘（<code>ol.style.Icon</code>）。物件的鍵重複時，後面的會蓋掉前面的，所以機場捷運站顯示的是紅色圖釘，黑色圓點那段用不到。自行車站沒有定義樣式，顯示 OpenLayers 預設的藍色圓點。</p>
+
+      <h3>draw.js：Alt＋點選、Delete 刪除</h3>
+      <pre><code class="language-javascript">var selectAltClick = new ol.interaction.Select({
+  condition: function(e) { return ol.events.condition.click(e) &amp;&amp; ol.events.condition.altKeyOnly(e); }
+});
+map.addInteraction(selectAltClick);
+document.addEventListener('keydown', function(evt) {
+  if (evt.which == 46) {   // Delete 鍵
+    selectAltClick.getFeatures().forEach(function(feature) {
+      selectAltClick.getLayer(feature).getSource().removeFeature(feature);
+    });
+    selectAltClick.getFeatures().clear();
+  }
+});</code></pre>
+      <p><code>condition</code> 決定什麼操作算「選取」：這裡是單擊，而且只按著 Alt。這個選取工具<strong>不限圖層</strong>，所以實測可以把機場捷運站也刪掉（22 站變 21 站）。不過刪除只發生在瀏覽器記憶體裡，重新整理後資料又會回來。Mac 筆電的 delete 鍵其實是 Backspace，要按 fn＋delete 才是 Delete。</p>
+      <p>繪圖的部分和上一版的 draw.js 相同：每按一次繪圖按鈕只能畫一個圖徵，畫完 Draw 互動就被移除；下載時 <code>writeFeatures</code> 把座標從 EPSG:3857 轉回 EPSG:4326。</p>
+
+      <h2>為了在網站上執行所做的修改</h2>
+      <ul>
+        <li><code>src/index.html</code>：Bootstrap 3 的 CSS 與 JS 從 <code>http://maxcdn.bootstrapcdn.com</code> 改為 <code>https://</code>，否則 HTTPS 網站會擋下。</li>
+        <li><code>src/js/map.js</code>：國土測繪中心 WMTS 網址從 <code>http://</code> 改為 <code>https://</code>。</li>
+        <li>壓縮檔原本的最外層是 <code>webgis/image/</code>，網站上從 <code>image/</code> 這層開始放（<code>Dockerfile</code> 和 <code>src/</code>），讓 Dockerfile 裡的 <code>COPY src/</code> 仍然對得上。</li>
+      </ul>
+
+      <h2>動手改改看</h2>
+      <ul class="todo">
+        <li>讓台北捷運站也能跳出資訊表：在 singleclick 裡判斷 <code>feature.get('中文站名')</code>，顯示站名、路線名和地址</li>
+        <li>幫 bike 圖層在 <code>styles</code> 加一個樣式（例如綠色圓點），並把圖層名稱 <code>'bike'</code> 改成中文「自行車租借站」</li>
+        <li>讓 Alt＋點選只能選到自己畫的圖徵：在 draw.js 的 <code>selectAltClick</code> 加上 <code>layers: [drawLayer]</code>（兩者在同一個 <code>$(function(){…})</code> 裡，可以直接取用）</li>
+      </ul>
+
+      <nav id="pager"></nav>
+    </article>
+    <aside id="toc"></aside>
+  </div>
+</body>
+</html>
